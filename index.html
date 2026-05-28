@@ -1,131 +1,167 @@
-<!DOCTYPE html>
-<html lang="he" dir="rtl">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>קמפוס למידה דיגיטלי</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+// קובץ Code.gs המלא והמאוחד - יצירת טוקנים אוטומטית וסנכרון לגיטהאב
+const CONFIG = {
+  get SCHEDULE_SS_ID() { return PropertiesService.getScriptProperties().getProperty('SCHEDULE_SS_ID'); },
+  get REPORTS_SS_ID() { return PropertiesService.getScriptProperties().getProperty('REPORTS_SS_ID'); },
+  get GITHUB_TOKEN() { return PropertiesService.getScriptProperties().getProperty('GITHUB_TOKEN'); },
+  get GITHUB_REPO() { return PropertiesService.getScriptProperties().getProperty('GITHUB_REPO'); }, // פורמט: username/repo
+  DAYS_OF_WEEK: ["ראשון", "שני", "שלישי", "רביעי", "חמישי"],
+  STUDENTS_SHEET_NAME: "רשימת נערי יחידה"
+};
+
+// פונקציית הטריגר המרכזית - מריצים אותה כדי לעדכן את גיטהאב
+function exportAndSyncToGitHub() {
+  try {
+    // 1. קודם כל בודקים ומייצרים טוקנים חסרים בגיליון השעות
+    generateMissingTokens();
+    
+    // 2. אוספים את כל הנתונים המעודכנים (כולל הטוקנים החדשים שנוצרו)
+    const payloadData = getCombinedRawData();
+    const githubUrl = `https://api.github.com/repos/${CONFIG.GITHUB_REPO}/contents/data.json`;
+    
+    // 3. בדיקה אם הקובץ כבר קיים בגיטהאב כדי לקבל את ה-SHA שלו (חובה ב-API של GitHub)
+    let sha = null;
+    const checkResponse = UrlFetchApp.fetch(githubUrl, {
+      method: "GET",
+      headers: { "Authorization": "token " + CONFIG.GITHUB_TOKEN },
+      muteHttpExceptions: true
+    });
+    
+    if (checkResponse.getResponseCode() === 200) {
+      sha = JSON.parse(checkResponse.getContentText()).sha;
+    }
+
+    // 4. הכנת הבקשה לעדכון הקובץ
+    const commitBody = {
+      message: "🔄 עדכון אוטומטי של נתוני מרכז למידה טוקנים ומערכות",
+      content: Utilities.base64Encode(JSON.stringify(payloadData, null, 2), Utilities.Charset.UTF_8)
+    };
+    if (sha) commitBody.sha = sha;
+
+    const options = {
+      method: "PUT",
+      headers: {
+        "Authorization": "token " + CONFIG.GITHUB_TOKEN,
+        "Content-Type": "application/json"
+      },
+      payload: JSON.stringify(commitBody),
+      muteHttpExceptions: true
+    };
+
+    const uploadResponse = UrlFetchApp.fetch(githubUrl, options);
+    Logger.log("GitHub Response: " + uploadResponse.getContentText());
+  } catch (err) {
+    Logger.log("Error Syncing to GitHub: " + err.message);
+  }
+}
+
+// בדיקת תלמידים חדשים מה-IMPORTRANGE ויצירת טוקנים קבועים עבורם בשורה המתאימה
+function generateMissingTokens() {
+  try {
+    const scheduleSS = SpreadsheetApp.openById(CONFIG.SCHEDULE_SS_ID);
+    const sheet = scheduleSS.getSheetByName(CONFIG.STUDENTS_SHEET_NAME); 
+    if (!sheet) {
+      Logger.log("שגיאה ביצירת טוקנים: לא נמצא גיליון בשם " + CONFIG.STUDENTS_SHEET_NAME);
+      return;
+    }
+    
+    var lastRow = sheet.getLastRow();
+    if (lastRow < 2) return; 
+    
+    // עמודה A = שם פרטי (1), עמודה H = טוקן (8)
+    var nameColumn = 1;  
+    var tokenColumn = 8; 
+    
+    var names = sheet.getRange(2, nameColumn, lastRow - 1, 1).getValues();
+    var tokensRange = sheet.getRange(2, tokenColumn, lastRow - 1, 1);
+    var tokens = tokensRange.getValues();
+    
+    var updated = false;
+    
+    for (var i = 0; i < names.length; i++) {
+      var studentName = names[i][0].toString().trim();
+      var currentToken = tokens[i][0].toString().trim();
+      
+      // אם נוצר שם חדש ב-IMPORTRANGE ועמודת הטוקן שלו בגיליון ריקה
+      if (studentName !== "" && currentToken === "") {
+        tokens[i][0] = makeRandomTokenString(6); 
+        updated = true;
+        Logger.log(`מפתח חדש נוצר עבור: ${studentName}`);
+      }
+    }
+    
+    if (updated) {
+      tokensRange.setValues(tokens);
+      SpreadsheetApp.flush(); // דוחף את השינוי פיזית לתוך הגוגל שיטס מיד
+    }
+  } catch (err) {
+    Logger.log("Error generating tokens: " + err.message);
+  }
+}
+
+// פונקציית עזר להגרלת מחרוזת אקראית באנגלית (אותיות גדולות ומספרים)
+function makeRandomTokenString(length) {
+  var result = '';
+  var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
+}
+
+// איסוף ועיבוד הנתונים הגולמיים מהטבלאות לאחר עדכון הטוקנים
+function getCombinedRawData() {
+  const scheduleSS = SpreadsheetApp.openById(CONFIG.SCHEDULE_SS_ID);
+  const reportsSS = SpreadsheetApp.openById(CONFIG.REPORTS_SS_ID);
   
-  <style>
-    :root { --primary: #1e3a8a; --accent: #0d9488; --bg-main: #f8fafc; --card-bg: #ffffff; }
-    body { background-color: var(--bg-main); font-family: 'Assistant', sans-serif; color: #1f2937; }
-    .main-container { max-width: 1100px; margin: 40px auto; background: var(--card-bg); padding: 40px; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
-    
-    /* תצוגת מסך מלא */
-    body.kiosk-mode { background-color: #ffffff !important; padding: 0 !important; }
-    body.kiosk-mode #topNav, body.kiosk-mode .no-print, body.kiosk-mode .site-header-area { display: none !important; }
-    body.kiosk-mode .main-container { max-width: 100% !important; width: 100vw !important; min-height: 100vh !important; margin: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
-    
-    /* עיצוב השיעור הנוכחי */
-    .current-slot { border: 4px solid var(--accent) !important; background-color: #f0fdfa !important; transform: scale(1.02); box-shadow: 0 0 15px rgba(13, 148, 136, 0.3); }
-    .current-slot .slot-header { background-color: var(--accent) !important; color: white !important; }
-
-    .teacher-row { background: var(--card-bg); border: 1px solid #e2e8f0; margin-bottom: 25px; padding: 20px; border-radius: 12px; }
-    .teacher-label-zone { font-weight: 700; color: var(--primary); font-size: 1.1rem; border-bottom: 2px solid #eff6ff; padding-bottom: 8px; margin-bottom: 15px; }
-    .slots-grid-container { display: flex; flex-wrap: wrap; gap: 15px; }
-    .slot-card { background: var(--bg-main); border: 1px solid #e2e8f0; border-radius: 10px; min-width: 220px; flex: 1; display: flex; flex-direction: column; }
-    .slot-header { background: #e2e8f0; font-size: 0.85rem; padding: 8px 14px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
-    .slot-content { font-size: 0.95rem; padding: 12px; font-weight: 600; flex-grow: 1; }
-    
-    .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; display: flex; justify-content: center; align-items: center; z-index: 9999; }
-  </style>
-</head>
-<body>
-
-<div id="loader" class="loading-overlay"><div class="spinner-border text-primary"></div></div>
-
-<div id="appScreen" class="main-container container" style="display: none;">
-  <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3 no-print site-header-area">
-    <h5 class="fw-bold m-0"><i class="fa-solid fa-school me-2"></i>קמפוס למידה דיגיטלי</h5>
-  </div>
-
-  <ul class="nav nav-pills nav-justified mb-4 no-print" id="topNav">
-    <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-personal">👤 תלמיד</button></li>
-    <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-daily" onclick="drawDaily('ראשון')">📅 לו"ז יומי</button></li>
-    <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-archive">📊 ארכיון</button></li>
-  </ul>
-
-  <div class="tab-content">
-    <div class="tab-pane fade show active" id="tab-personal">
-        <input type="text" id="pSearch" class="form-control rounded-pill py-3 px-4 shadow-sm" placeholder="חפש תלמיד..." oninput="searchPersonal()">
-        <div id="pGrid" class="row row-cols-1 row-cols-md-5 g-3 mt-3"></div>
-    </div>
-    <div class="tab-pane fade" id="tab-daily">
-      <div id="dailyContent"></div>
-    </div>
-    <div class="tab-pane fade" id="tab-archive">
-        <div id="archiveContent" class="text-center py-5">הארכיון ייטען אוטומטית...</div>
-    </div>
-  </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-  let GLOBAL_DB = null;
-  window.onload = async () => {
-    const res = await fetch('data.json');
-    GLOBAL_DB = await res.json();
-    document.getElementById('loader').style.display = 'none';
-    document.getElementById('appScreen').style.display = 'block';
+  // איסוף מערכת שעות
+  const schedule = {};
+  CONFIG.DAYS_OF_WEEK.forEach(day => {
+    const sheet = scheduleSS.getSheetByName(day);
+    schedule[day] = sheet ? sheet.getDataRange().getDisplayValues() : [];
+  });
+  
+  // איסוף רשימת תלמידים (שם מול טוקן)
+  const studentSheet = scheduleSS.getSheetByName(CONFIG.STUDENTS_SHEET_NAME);
+  const studentData = studentSheet ? studentSheet.getDataRange().getDisplayValues() : [];
+  const studentsMapping = {};
+  if (studentData.length > 1) {
+    for (let i = 1; i < studentData.length; i++) {
+      if (studentData[i][0] && studentData[i][7]) {
+        studentsMapping[studentData[i][7].toString().trim()] = studentData[i][0].toString().trim();
+      }
+    }
+  }
+  
+  // איסוף וסינון דיווחים
+  const reportSheet = reportsSS.getSheets()[0];
+  const reportData = reportSheet ? reportSheet.getDataRange().getDisplayValues() : [];
+  const months = new Set(), teachers = new Set();
+  
+  const reports = reportData.slice(1).filter(r => r[0] !== "").map(row => {
+    const ts = row[0].toString(); 
+    let monthLabel = "כללי";
+    if (ts.includes('/')) {
+      const parts = ts.split('/');
+      if (parts.length >= 3) {
+        monthLabel = parts[1].padStart(2, '0') + '/' + parts[2].split(' ')[0];
+        months.add(monthLabel);
+      }
+    }
+    if (row[1]) teachers.add(row[1].trim());
+    return { 
+      timestamp: ts, month: monthLabel, teacher: row[1] || "לא ידוע", 
+      studentName: row[2] || "", content: row.slice(3, 8).join(" | "),
+      allText: row.join(" ").toLowerCase()
+    };
+  });
+  
+  return { 
+    schedule, 
+    reports, 
+    studentsMapping,
+    availableMonths: Array.from(months).sort().reverse(), 
+    availableTeachers: Array.from(teachers).sort(),
+    adminPw: PropertiesService.getScriptProperties().getProperty('ADMIN_PW'),
+    studentPw: PropertiesService.getScriptProperties().getProperty('STUDENT_PW')
   };
-
-  function drawDaily(activeDay) {
-    const now = new Date();
-    const currentHour = now.getHours() + (now.getMinutes() / 60);
-    let isKiosk = document.body.classList.contains('kiosk-mode');
-    
-    const rows = GLOBAL_DB.schedule[activeDay] || [];
-    let contentHtml = `
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h5>לו"ז יום ${activeDay}</h5>
-        <button class="btn btn-sm ${isKiosk ? 'btn-danger' : 'btn-outline-primary'} rounded-pill" onclick="toggleKioskMode('${activeDay}')">
-          ${isKiosk ? '<i class="fa-solid fa-compress me-1"></i> יציאה' : '<i class="fa-solid fa-expand me-1"></i> מסך מלא'}
-        </button>
-      </div>`;
-
-    if (rows.length > 1) {
-      const headers = rows[0];
-      rows.slice(1).forEach(row => {
-        let slotsHtml = "";
-        for (let j = 2; j < headers.length; j++) {
-          if (row[j] && row[j].trim()) {
-            const [start, end] = headers[j].split('-').map(t => {
-                const [h, m] = t.split(':').map(Number);
-                return h + (m/60);
-            });
-            const isCurrent = (currentHour >= start && currentHour < end) ? "current-slot" : "";
-            slotsHtml += `
-              <div class="slot-card shadow-sm ${isCurrent}">
-                <div class="slot-header">
-                  <span>${headers[j]}</span>
-                  ${isCurrent ? '<small class="badge bg-white text-dark">כעת</small>' : ''}
-                </div>
-                <div class="slot-content">${row[j].split('-').slice(1).join('-')}</div>
-              </div>`;
-          }
-        }
-        contentHtml += `<div class="teacher-row"><div class="teacher-label-zone">${row[1]}</div><div class="slots-grid-container">${slotsHtml}</div></div>`;
-      });
-    }
-    document.getElementById('dailyContent').innerHTML = contentHtml;
-  }
-
-  function toggleKioskMode(day) {
-    document.body.classList.toggle('kiosk-mode');
-    drawDaily(day);
-  }
-
-  // רענון אוטומטי כל דקה
-  setInterval(() => {
-    if(document.getElementById('tab-daily').classList.contains('active')) {
-       const activeDay = document.querySelector('.btn-primary')?.innerText.replace('לו"ז יום ','') || 'ראשון';
-       drawDaily(activeDay);
-    }
-  }, 60000);
-
-  function searchPersonal() { /* לוגיקה קיימת */ }
-</script>
-</body>
-</html>
+}
