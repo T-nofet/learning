@@ -55,43 +55,69 @@
     .day-card:hover { transform: translateY(-3px); box-shadow: 0 12px 20px -8px rgba(0,0,0,0.05); border-color: #cbd5e1; }
     .lesson-box { background: var(--primary-light); padding: 14px; border-radius: 10px; margin-bottom: 12px; border-right: 4px solid var(--primary); font-size: 0.95rem; font-weight: 500; }
 
+    /* אזור הודעות ואירועים כלליים */
     .general-announcement { 
       background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); 
       border: 1px solid #bbf7d0; 
       border-radius: var(--radius-md); 
-      padding: 24px; 
-      margin-bottom: 30px; 
+      padding: 20px; 
+      margin-bottom: 25px; 
     }
 
+    /* מבנה שורות השעה המקורי והנקי שלך */
     .time-row { 
       background: var(--card-bg); 
       border-radius: var(--radius-md); 
       border: 1px solid #e2e8f0; 
       margin-bottom: 20px; 
-      padding: 15px 20px; 
+      padding: 20px; 
       display: flex; 
       align-items: center; 
+      justify-content: space-between;
       transition: var(--transition); 
       box-shadow: 0 2px 4px rgba(0,0,0,0.01);
     }
     .time-row:hover { border-color: #cbd5e1; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
-    .time-display { min-width: 120px; font-weight: 700; color: var(--primary); font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
     
+    .time-display { 
+      min-width: 140px; 
+      font-weight: 700; 
+      color: var(--primary); 
+      font-size: 1.1rem; 
+      display: flex; 
+      align-items: center; 
+      gap: 8px;
+    }
+    
+    .slots-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      width: 100%;
+    }
+
     .slot-card {
-      background: var(--bg-main); border: 1px solid #e2e8f0; border-radius: 10px; margin: 6px; min-width: 200px; flex: 1; transition: var(--transition); overflow: hidden;
+      background: var(--bg-main); 
+      border: 1px solid #e2e8f0; 
+      border-radius: 10px; 
+      min-width: 240px; 
+      flex: 1; 
+      transition: var(--transition); 
+      overflow: hidden;
     }
     .slot-card:hover { background: #ffffff; border-color: var(--primary); transform: translateY(-1px); }
-    .slot-header { background: #e2e8f0; font-size: 0.85rem; padding: 6px 14px; font-weight: 700; color: var(--text-muted); display: flex; justify-content: space-between; }
+    .slot-header { background: #e2e8f0; font-size: 0.85rem; padding: 8px 14px; font-weight: 700; color: var(--text-muted); }
     .slot-room { font-size: 0.85rem; color: var(--accent); padding: 10px 14px 0 14px; font-weight: 700; }
-    .slot-content { font-size: 1rem; padding: 4px 14px 14px 14px; color: var(--text-main); font-weight: 600; }
+    .slot-content { font-size: 1rem; padding: 6px 14px 14px 14px; color: var(--text-main); font-weight: 600; }
 
-    /* תיקון קריטי: הגדרת ריפוד מיוחד לתיבות בחירה כדי למנוע את חיתוך האות כ' */
     .form-control { border: 1px solid #e2e8f0; background-color: #ffffff; padding: 12px 20px; transition: var(--transition); }
+    
+    /* תיקון נקודתי לאות כ' מבלי לשבור את ריפודי ה-Bootstrap */
     .form-select { 
       border: 1px solid #e2e8f0; 
       background-color: #ffffff; 
-      padding: 12px 12px 12px 35px; /* פותר את בעיית ה-RTL והחיתוך */
-      padding-right: 35px !important;
+      padding: 12px 20px;
+      text-indent: 5px; /* דוחף בעדינות את הטקסט ימינה בתוך השדה ומציל את האות כ' */
       transition: var(--transition); 
     }
     .form-control:focus, .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.08); }
@@ -106,9 +132,9 @@
     .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); display: flex; justify-content: center; align-items: center; z-index: 9999; }
     
     @media (max-width: 768px) {
-      .time-row { flex-direction: column; align-items: flex-start; padding: 15px; }
-      .time-display { border-bottom: 2px solid #e2e8f0; margin-bottom: 12px; width: 100%; padding-bottom: 6px; }
-      .slot-card { width: 100%; margin: 4px 0; }
+      .time-row { flex-direction: column; align-items: flex-start; padding: 15px; gap: 12px; }
+      .time-display { border-bottom: 2px solid #e2e8f0; width: 100%; padding-bottom: 6px; }
+      .slot-card { width: 100%; min-width: 100%; }
     }
     @media print { .no-print { display: none !important; } .main-container { box-shadow: none; margin: 0; width: 100%; padding: 0; } }
   </style>
@@ -310,6 +336,7 @@
     setTimeout(() => copyBtn.innerHTML = '<i class="fa-solid fa-link me-1"></i> העתק קישור מוגן לתלמיד', 2500);
   }
 
+  // פונקציית ציור יציבה השומרת על מבנה ה-Grid המקורי והנקי שלך
   function drawDaily(activeDay) {
     const days = ["ראשון", "שני", "שלישי", "רביעי", "חמישי"];
     let tabsHtml = `<div class="d-flex justify-content-center gap-2 mb-4 no-print">`;
@@ -332,6 +359,7 @@
         return parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim();
       }
 
+      // סריקה חכמה למציאת אירועים משותפים (כמו ארוחת בוקר)
       for (let i = 2; i < headers.length; i++) {
         let uniqueCleanContents = {};
         let countNotEmpty = 0;
@@ -352,6 +380,7 @@
         }
       }
 
+      // הצגת אירועים כלליים בחלק העליון
       let globalHtml = "";
       for (let slotIndex in globalSlots) {
         globalHtml += `
@@ -360,7 +389,7 @@
               <span class="badge bg-success me-2">${headers[slotIndex]}</span>
               <strong class="text-dark" style="font-size:1.05rem;">${globalSlots[slotIndex]}</strong>
             </div>
-            <span class="text-muted small fw-bold"><i class="fa-solid fa-users me-1"></i>אירוע כללי לכולם</span>
+            <span class="text-muted small fw-bold"><i class="fa-solid fa-users me-1"></i>פעילות מרוכזת לכולם</span>
           </div>`;
       }
 
@@ -372,8 +401,9 @@
           </div>`;
       }
 
+      // הצגת השעות הפרטניות במבנה Flexbox מיושר וקבוע שלא נשבר
       for (let i = 2; i < headers.length; i++) {
-        if (globalSlots[i]) continue;
+        if (globalSlots[i]) continue; // מדלג על שעות שאוחדו למעלה
 
         let slotCardsInRow = "";
         rows.slice(1).forEach(row => {
@@ -385,7 +415,7 @@
             slotCardsInRow += `
               <div class="slot-card shadow-sm">
                 <div class="slot-header">
-                  <span><i class="fa-solid fa-chalkboard-user me-1"></i>${row[1]}</span>
+                  <i class="fa-solid fa-chalkboard-user me-1"></i>${row[1]}
                 </div>
                 ${room ? `<div class="slot-room"><i class="fa-solid fa-location-dot me-1"></i>${room}</div>` : ''}
                 <div class="slot-content">${info}</div>
@@ -400,7 +430,7 @@
                 <i class="fa-regular fa-clock text-secondary"></i>
                 <span>${headers[i]}</span>
               </div>
-              <div class="d-flex flex-wrap w-100">${slotCardsInRow}</div>
+              <div class="slots-container">${slotCardsInRow}</div>
             </div>`;
         }
       }
