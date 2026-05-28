@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>מרכז למידה - פורטל ניהול</title>
+  <title>קמפוס למידה דיגיטלי</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -54,14 +54,6 @@
     .day-card { background: var(--card-bg); border: 1px solid #e2e8f0; border-radius: var(--radius-md); padding: 20px; height: 100%; transition: var(--transition); }
     .day-card:hover { transform: translateY(-3px); box-shadow: 0 12px 20px -8px rgba(0,0,0,0.05); border-color: #cbd5e1; }
     .lesson-box { background: var(--primary-light); padding: 14px; border-radius: 10px; margin-bottom: 12px; border-right: 4px solid var(--primary); font-size: 0.95rem; font-weight: 500; }
-
-    .general-announcement { 
-      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); 
-      border: 1px solid #bbf7d0; 
-      border-radius: var(--radius-md); 
-      padding: 20px; 
-      margin-bottom: 25px; 
-    }
 
     .teacher-row {
       background: var(--card-bg);
@@ -339,7 +331,7 @@
     setTimeout(() => copyBtn.innerHTML = '<i class="fa-solid fa-link me-1"></i> העתק קישור מוגן לתלמיד', 2500);
   }
 
-  // פונקציית הציור היומית - סריקה ארוכית חכמה ואיחוד מוחלט של שעות זהות לבלוק רוחבי יחיד
+  // פונקציית הציור היומית - שומרת על מבנה השורות המקורי והעיצוב היפה שלך לפי מורים/חדרים
   function drawDaily(activeDay) {
     const days = ["ראשון", "שני", "שלישי", "רביעי", "חמישי"];
     let tabsHtml = `<div class="d-flex justify-content-center gap-2 mb-4 no-print">`;
@@ -353,10 +345,10 @@
     let contentHtml = `<h5 class="fw-bold mb-4 text-dark text-center">לוח זמנים מפורט - יום ${activeDay}</h5>`;
     
     if (rows.length > 1) {
-      const headers = rows[0]; // שורת השעות (אינדקס 2 ומעלה)
-      let globalHours = {};    // יכיל שעות שזהות לחלוטין בכל החדרים
+      const headers = rows[0]; // שורת השעות הראשונה
+      let globalHours = {};    // יכיל שעות שבהן התוכן זהה אצל כולם
 
-      // 1. איתור שעות שבהן כל התאים מכילים בדיוק את אותו הטקסט
+      // בדיקה אילו שעות הן "כלליות" (אותו תוכן אצל כולם)
       for (let j = 2; j < headers.length; j++) {
         let uniqueContents = new Set();
         let countRowsWithData = 0;
@@ -371,64 +363,61 @@
           }
         });
 
-        // אם יש רק תוכן ייחודי אחד לכל החדרים הפעילים בשעה הזו (ויש לפחות 2 חדרים פעילים)
         if (uniqueContents.size === 1 && countRowsWithData >= 2) {
           globalHours[j] = Array.from(uniqueContents)[0]; 
         }
       }
 
-      // 2. בניית הלוח לפי שעות (Time-First Grid) כדי לאפשר בלוקים מאוחדים לרוחב המסך
-      for (let j = 2; j < headers.length; j++) {
-        
-        // א': במידה והשעה מאוחדת (למשל "בתאבון לכולם") - נייצר משבצת רוחבית גדולה אחת ללא חלוקה
-        if (globalHours[j]) {
-          contentHtml += `
-            <div class="mb-4 shadow-sm rounded-3 overflow-hidden border border-success" style="border-right: 6px solid var(--accent) !important;">
-              <div class="bg-success bg-opacity-10 px-3 py-2 border-bottom d-flex justify-content-between align-items-center">
-                <span class="fw-bold text-success"><i class="fa-regular fa-clock me-1"></i>${headers[j]}</span>
-                <span class="badge bg-success px-3 rounded-pill"><i class="fa-solid fa-users me-1"></i>כללי לכולם</span>
-              </div>
-              <div class="p-3 bg-white text-center">
-                <h4 class="m-0 fw-bold text-dark">${globalHours[j]}</h4>
-              </div>
-            </div>`;
-        } 
-        // ב': במידה והשעה מכילה שיעורים שונים בחדרים שונים - נציג אותה כסדרה של חדרים זה לצד זה
-        else {
-          let slotCardsInRow = "";
+      // ציור השורות בדיוק לפי המבנה המקורי שלך (מורה אחרי מורה)
+      rows.slice(1).forEach(row => {
+        let teacherInfo = row[1]; // כותרת החדר/המורה
+        let hasDataInRow = false;
+        let slotsHtml = "";
 
-          rows.slice(1).forEach(row => {
-            let teacherInfo = row[1]; // למשל: "אורי - חדר 2"
+        for (let j = 2; j < headers.length; j++) {
+          if (row[j] && row[j].trim()) {
+            hasDataInRow = true;
             
-            if (row[j] && row[j].trim()) {
+            // אם השעה הזו זוהתה כשעה כללית (כמו ארוחת בוקר) - מציגים אותה נקייה ללא שם מקצוע/חדר
+            if (globalHours[j]) {
+              slotsHtml += `
+                <div class="slot-card shadow-sm">
+                  <div class="slot-header">
+                    <span><i class="fa-regular fa-clock me-1"></i>${headers[j]}</span>
+                  </div>
+                  <div class="slot-content text-center text-success fw-bold py-4">${globalHours[j]}</div>
+                </div>`;
+            } 
+            // שעה רגילה עם מקצוע וחדר ספציפי
+            else {
               const parts = row[j].split('-');
               let subjectOrRoom = parts.length > 1 ? parts[0].trim() : "";
               let info = parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim();
 
-              slotCardsInRow += `
-                <div class="slot-card shadow-sm" style="min-width: 280px; flex: 1;">
-                  <div class="slot-header" style="background: #f1f5f9;">
-                    <span><i class="fa-solid fa-chalkboard-user me-1"></i>${teacherInfo}</span>
+              slotsHtml += `
+                <div class="slot-card shadow-sm">
+                  <div class="slot-header">
+                    <span><i class="fa-regular fa-clock me-1"></i>${headers[j]}</span>
                   </div>
                   ${subjectOrRoom ? `<div class="slot-room"><i class="fa-solid fa-tag me-1"></i>${subjectOrRoom}</div>` : ''}
                   <div class="slot-content">${info}</div>
                 </div>`;
             }
-          });
-
-          if (slotCardsInRow) {
-            contentHtml += `
-              <div class="mb-4 shadow-sm rounded-3 overflow-hidden border border-light">
-                <div class="bg-light px-3 py-2 border-bottom text-primary fw-bold">
-                  <i class="fa-regular fa-clock me-1"></i> שעה: ${headers[j]}
-                </div>
-                <div class="p-3 bg-white">
-                  <div class="d-flex flex-wrap gap-3">${slotCardsInRow}</div>
-                </div>
-              </div>`;
           }
         }
-      }
+
+        if (hasDataInRow) {
+          contentHtml += `
+            <div class="teacher-row shadow-sm">
+              <div class="teacher-label-zone">
+                <i class="fa-solid fa-id-card text-primary"></i> ${teacherInfo}
+              </div>
+              <div class="slots-grid-container">
+                ${slotsHtml}
+              </div>
+            </div>`;
+        }
+      });
 
     } else {
       contentHtml += `<p class="text-center text-muted py-5">אין נתונים להצגה ליום ${activeDay}</p>`;
