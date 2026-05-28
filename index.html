@@ -128,6 +128,36 @@
 
     .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); display: flex; justify-content: center; align-items: center; z-index: 9999; }
     
+    /* עיצוב ייחודי למצב מסך מלא (קיוסק) */
+    body.kiosk-mode {
+      background-color: #ffffff !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    body.kiosk-mode #topNav, 
+    body.kiosk-mode .no-print, 
+    body.kiosk-mode .nav-pills,
+    body.kiosk-mode .site-header-area {
+      display: none !important;
+    }
+    body.kiosk-mode .main-container {
+      max-width: 100% !important;
+      width: 100vw !important;
+      min-height: 100vh !important;
+      margin: 0 !important;
+      padding: 30px !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+    }
+    body.kiosk-mode .teacher-row {
+      margin-bottom: 30px !important;
+      padding: 25px !important;
+      background: #f8fafc;
+    }
+    body.kiosk-mode .slot-card {
+      min-width: 260px !important;
+    }
+
     @media (max-width: 768px) {
       .slot-card { min-width: 100%; width: 100%; }
     }
@@ -157,7 +187,7 @@
 </div>
 
 <div id="appScreen" class="main-container container" style="display: none;">
-  <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3 no-print">
+  <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3 no-print site-header-area">
     <div class="d-flex align-items-center gap-2">
       <div class="bg-primary text-white p-2 rounded-3"><i class="fa-solid fa-graduation-cap"></i></div>
       <h5 class="fw-bold m-0 text-dark">קמפוס למידה דיגיטלי</h5>
@@ -331,7 +361,6 @@
     setTimeout(() => copyBtn.innerHTML = '<i class="fa-solid fa-link me-1"></i> העתק קישור מוגן לתלמיד', 2500);
   }
 
-  // פונקציית הציור היומית - שומרת על מבנה השורות המקורי והעיצוב היפה שלך לפי מורים/חדרים
   function drawDaily(activeDay) {
     const days = ["ראשון", "שני", "שלישי", "רביעי", "חמישי"];
     let tabsHtml = `<div class="d-flex justify-content-center gap-2 mb-4 no-print">`;
@@ -341,14 +370,25 @@
     });
     tabsHtml += `</div>`;
 
+    let isKiosk = document.body.classList.contains('kiosk-mode');
+    let contentHtml = `
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="flex-grow-1"></div>
+        <h5 class="fw-bold m-0 text-dark text-center">${isKiosk ? '🖥️ תצוגת מסך מלא: ' : ''}לוח זמנים מפורט - יום ${activeDay}</h5>
+        <div class="flex-grow-1 text-start">
+          <button class="btn btn-sm ${isKiosk ? 'btn-danger' : 'btn-outline-primary'} rounded-pill px-3 fw-bold" onclick="toggleKioskMode('${activeDay}')">
+            ${isKiosk ? '<i class="fa-solid fa-compress me-1"></i> חזור למערכת' : '<i class="fa-solid fa-expand me-1"></i> מצב מסך מלא'}
+          </button>
+        </div>
+      </div>
+    `;
+    
     const rows = GLOBAL_DB.schedule[activeDay] || [];
-    let contentHtml = `<h5 class="fw-bold mb-4 text-dark text-center">לוח זמנים מפורט - יום ${activeDay}</h5>`;
     
     if (rows.length > 1) {
-      const headers = rows[0]; // שורת השעות הראשונה
-      let globalHours = {};    // יכיל שעות שבהן התוכן זהה אצל כולם
+      const headers = rows[0]; 
+      let globalHours = {};    
 
-      // בדיקה אילו שעות הן "כלליות" (אותו תוכן אצל כולם)
       for (let j = 2; j < headers.length; j++) {
         let uniqueContents = new Set();
         let countRowsWithData = 0;
@@ -368,9 +408,8 @@
         }
       }
 
-      // ציור השורות בדיוק לפי המבנה המקורי שלך (מורה אחרי מורה)
       rows.slice(1).forEach(row => {
-        let teacherInfo = row[1]; // כותרת החדר/המורה
+        let teacherInfo = row[1]; 
         let hasDataInRow = false;
         let slotsHtml = "";
 
@@ -378,7 +417,6 @@
           if (row[j] && row[j].trim()) {
             hasDataInRow = true;
             
-            // אם השעה הזו זוהתה כשעה כללית (כמו ארוחת בוקר) - מציגים אותה נקייה ללא שם מקצוע/חדר
             if (globalHours[j]) {
               slotsHtml += `
                 <div class="slot-card shadow-sm">
@@ -387,9 +425,7 @@
                   </div>
                   <div class="slot-content text-center text-success fw-bold py-4">${globalHours[j]}</div>
                 </div>`;
-            } 
-            // שעה רגילה עם מקצוע וחדר ספציפי
-            else {
+            } else {
               const parts = row[j].split('-');
               let subjectOrRoom = parts.length > 1 ? parts[0].trim() : "";
               let info = parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim();
@@ -423,6 +459,11 @@
       contentHtml += `<p class="text-center text-muted py-5">אין נתונים להצגה ליום ${activeDay}</p>`;
     }
     document.getElementById('dailyContent').innerHTML = tabsHtml + contentHtml;
+  }
+
+  function toggleKioskMode(activeDay) {
+    document.body.classList.toggle('kiosk-mode');
+    drawDaily(activeDay);
   }
 
   function renderSummary(reports, containerId) {
