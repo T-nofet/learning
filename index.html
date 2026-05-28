@@ -53,9 +53,19 @@
 
     .day-card { background: var(--card-bg); border: 1px solid #e2e8f0; border-radius: var(--radius-md); padding: 20px; height: 100%; transition: var(--transition); }
     .day-card:hover { transform: translateY(-3px); box-shadow: 0 12px 20px -8px rgba(0,0,0,0.05); border-color: #cbd5e1; }
-    .lesson-box { background: var(--primary-light); padding: 14px; border-radius: 10px; margin-bottom: 12px; border-right: 4px solid var(--primary); font-size: 0.95rem; font-weight: 500; }
+    
+    /* קופסת שיעור מעוצבת בתוך כרטיס אישי */
+    .lesson-box { 
+      background: var(--primary-light); 
+      padding: 12px; 
+      border-radius: 10px; 
+      margin-bottom: 10px; 
+      border-right: 4px solid var(--primary); 
+      font-size: 0.95rem; 
+      font-weight: 500; 
+    }
+    .lesson-box:last-child { margin-bottom: 0; }
 
-    /* אזור הודעות ואירועים כלליים מאוחדים */
     .general-announcement { 
       background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); 
       border: 1px solid #bbf7d0; 
@@ -64,7 +74,6 @@
       margin-bottom: 25px; 
     }
 
-    /* מבנה שורת מורה/חדר מקורי */
     .teacher-row {
       background: var(--card-bg);
       border-radius: var(--radius-md);
@@ -91,7 +100,6 @@
       gap: 15px;
     }
 
-    /* כרטיס שעה בודד בתוך שורת מורה */
     .slot-card {
       background: var(--bg-main);
       border: 1px solid #e2e8f0;
@@ -121,7 +129,6 @@
 
     .form-control { border: 1px solid #e2e8f0; background-color: #ffffff; padding: 12px 20px; transition: var(--transition); }
     
-    /* תיקון ממוקד לחיתוך האות כ' בדרופדאון */
     .form-select { 
       border: 1px solid #e2e8f0; 
       background-color: #ffffff; 
@@ -301,25 +308,92 @@
     }
   }
 
+  // פונקציית החיפוש האישי החדשה והחכמה - מאחדת שעות זהות לריבוע משותף אחד אצל התלמיד!
   function searchPersonal(studentMode = false) {
     const q = document.getElementById('pSearch').value.trim().toLowerCase();
     const grid = document.getElementById('pGrid');
     if (q.length < 2) { grid.innerHTML = ""; return; }
     
     let html = '';
-    ["ראשון", "שני", "שלישי", "רביעי", "חמישי"].forEach(day => {
-      let lessons = '';
+    const days = ["ראשון", "שני", "שלישי", "רביעי", "חמישי"];
+
+    days.forEach(day => {
+      // אובייקט זמני לאיחוד שיעורים לפי שעה באותו היום
+      let mergedHoursForDay = {};
+
       if (GLOBAL_DB.schedule[day]) {
-        GLOBAL_DB.schedule[day].forEach(row => {
-          for (let i = 2; i < row.length; i++) {
-            if (row[i].toLowerCase().includes(q)) {
-              lessons += `<div class="lesson-box"><b>${row[1]}</b><br>${row[i]}</div>`;
+        const headers = GLOBAL_DB.schedule[day][0]; // שורת השעות
+
+        GLOBAL_DB.schedule[day].slice(1).forEach(row => {
+          let teacherName = row[1]; // שם המורה
+
+          for (let j = 2; j < row.length; j++) {
+            let cellText = (row[j] || "").trim();
+            
+            // אם נמצא שיבוץ התואם לשם התלמיד
+            if (cellText.toLowerCase().includes(q)) {
+              let hourLabel = headers[j]; // השעה (למשל 10:00-10:45)
+              
+              const parts = cellText.split('-');
+              let roomInfo = parts.length > 1 ? parts[0].trim() : "";
+              let lessonInfo = parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim();
+
+              // אם השעה הזו עוד לא קיימת ביום הנוכחי, נפתח לה מערך חדש
+              if (!mergedHoursForDay[hourLabel]) {
+                mergedHoursForDay[hourLabel] = [];
+              }
+
+              // נדחוף את פרטי המורה והשיעור לתוך אותה השעה
+              mergedHoursForDay[hourLabel].push({
+                teacher: teacherName,
+                room: roomInfo,
+                content: lessonInfo
+              });
             }
           }
         });
       }
-      html += `<div class="col"><div class="day-card"><h6 class="text-center border-bottom pb-2 mb-3 fw-bold text-primary">יום ${day}</h6>${lessons || '<div class="text-center text-muted small py-3">אין שעות רשומות</div>'}</div></div>`;
+
+      // כעת נבנה את תוכן הריבועים מתוך המידע המאוחד
+      let dayLessonsHtml = '';
+      
+      // נעבור על השעות שאוחדו לפי סדר הופעתן המקורית
+      for (let hour in mergedHoursForDay) {
+        let hourBlockContent = '';
+        
+        mergedHoursForDay[hour].forEach(lesson => {
+          hourBlockContent += `
+            <div class="lesson-box">
+              <span class="d-block fw-bold text-dark small" style="opacity: 0.85;">
+                <i class="fa-solid fa-chalkboard-user me-1 text-primary"></i>${lesson.teacher}
+              </span>
+              <span class="d-block mt-0.5" style="font-size: 0.95rem; font-weight:600;">
+                ${lesson.room ? `[${lesson.room}] ` : ''}${lesson.content}
+              </span>
+            </div>`;
+        });
+
+        dayLessonsHtml += `
+          <div class="mb-3 border rounded-3 overflow-hidden shadow-sm bg-light">
+            <div class="bg-secondary bg-opacity-10 px-3 py-1.5 border-bottom small fw-bold text-muted d-flex justify-content-between align-items-center">
+              <span><i class="fa-regular fa-clock me-1"></i>${hour}</span>
+              ${mergedHoursForDay[hour].length > 1 ? '<span class="badge bg-warning text-dark px-2 py-0.5" style="font-size:0.7rem;">שיבוץ משולב</span>' : ''}
+            </div>
+            <div class="p-2 bg-white">
+              ${hourBlockContent}
+            </div>
+          </div>`;
+      }
+
+      html += `
+        <div class="col">
+          <div class="day-card">
+            <h6 class="text-center border-bottom pb-2 mb-3 fw-bold text-primary"><i class="fa-solid fa-calendar-day me-1"></i>יום ${day}</h6>
+            ${dayLessonsHtml || '<div class="text-center text-muted small py-4">אין שעות רשומות</div>'}
+          </div>
+        </div>`;
     });
+    
     grid.innerHTML = html;
 
     if (!studentMode) {
@@ -329,21 +403,6 @@
     }
   }
 
-  function copyShareUrl() {
-    const studentName = document.getElementById('pSearch').value.trim();
-    const copyBtn = document.getElementById('copyBtn');
-    let foundToken = null;
-    for (let token in GLOBAL_DB.studentsMapping) {
-      if (GLOBAL_DB.studentsMapping[token].toLowerCase() === studentName.toLowerCase()) { foundToken = token; break; }
-    }
-    if (!foundToken) { alert("לא נמצא מפתח אישי לתלמיד זה."); return; }
-    const finalUrl = `${window.location.href.split('?')[0]}?pw=${GLOBAL_DB.studentPw}&id=${foundToken}`;
-    navigator.clipboard.writeText(finalUrl);
-    copyBtn.innerHTML = "✅ הקישור הועתק!";
-    setTimeout(() => copyBtn.innerHTML = '<i class="fa-solid fa-link me-1"></i> העתק קישור מוגן לתלמיד', 2500);
-  }
-
-  // פונקציית הציור היומית החדשה והמתוקנת - מותאמת ב-100% למבנה המקורי מבוסס המורים
   function drawDaily(activeDay) {
     const days = ["ראשון", "שני", "שלישי", "רביעי", "חמישי"];
     let tabsHtml = `<div class="d-flex justify-content-center gap-2 mb-4 no-print">`;
@@ -357,8 +416,8 @@
     let contentHtml = `<h5 class="fw-bold mb-4 text-dark text-center">לוח זמנים מפורט - יום ${activeDay}</h5>`;
     
     if (rows.length > 1) {
-      const headers = rows[0]; // שורת הכותרות שמכילה את השעות (אינדקס 2 ומעלה)
-      let globalHours = {}; // יכיל שעות שמאוחדות לכולם
+      const headers = rows[0]; 
+      let globalHours = {}; 
 
       function getCleanContent(cellText) {
         if (!cellText) return "";
@@ -366,7 +425,6 @@
         return parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim();
       }
 
-      // 1. איתור חכם של שעות מאוחדות (כמו ארוחת בוקר / בתאבון לכולם)
       for (let j = 2; j < headers.length; j++) {
         let uniqueContents = {};
         let countRowsWithData = 0;
@@ -380,7 +438,6 @@
           }
         });
 
-        // אם אותו הטקסט מופיע אצל כל המורים הפעילים בשעה הזו (לפחות 2 מורים)
         for (let text in uniqueContents) {
           if (uniqueContents[text] === countRowsWithData && countRowsWithData >= 2) {
             globalHours[j] = text; 
@@ -388,7 +445,6 @@
         }
       }
 
-      // 2. רינדור בלוק עליון לאירועים הכלליים שאוחדו
       let globalAnnouncementsHtml = "";
       for (let hourIndex in globalHours) {
         globalAnnouncementsHtml += `
@@ -409,14 +465,12 @@
           </div>`;
       }
 
-      // 3. רינדור שורות המורים המקוריות שלך (מבנה רוחבי נקי)
       rows.slice(1).forEach(row => {
-        let teacherInfo = row[1]; // למשל: "נטלי - חדר 1" או "אילנה - חדר 4"
+        let teacherInfo = row[1]; 
         let slotCardsInRow = "";
 
-        // סריקת השעות של אותו מורה
         for (let j = 2; j < headers.length; j++) {
-          if (globalHours[j]) continue; // מדלג על שעות שאוחדו וכבר מוצגות למעלה לכולם
+          if (globalHours[j]) continue; 
 
           if (row[j] && row[j].trim()) {
             const parts = row[j].split('-');
@@ -434,7 +488,6 @@
           }
         }
 
-        // מציג את שורת המורה רק אם נשארו לו שעות פרטניות להציג
         if (slotCardsInRow) {
           contentHtml += `
             <div class="teacher-row shadow-sm">
@@ -479,7 +532,7 @@
       list.innerHTML = reports.map(r => `
         <div class="report-item p-3 border-bottom">
           <div class="d-flex justify-content-between small mb-2">
-            <span class="fw-bold text-primary" style="font-size:1rem">${r.teacher} 💻 תלמיד: ${r.studentName}</span>
+            <span class="fw-bold text-primary" style="font-size:1rem">${r.teacher} | תלמיד: ${r.studentName}</span>
             <span class="text-muted"><i class="fa-regular fa-clock me-1"></i>${r.timestamp}</span>
           </div>
           <div class="text-dark bg-light p-2.5 rounded-2" style="font-size:0.95rem;">${r.content}</div>
