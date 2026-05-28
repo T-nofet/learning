@@ -10,40 +10,29 @@
   
   <style>
     :root {
-      --primary: #1e3a8a;
-      --primary-light: #eff6ff;
-      --accent: #0d9488;
-      --text-main: #1f2937;
-      --text-muted: #4b5563;
-      --bg-main: #f8fafc;
-      --card-bg: #ffffff;
-      --radius-lg: 20px;
-      --radius-md: 12px;
-      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --primary: #1e3a8a; --accent: #0d9488; --bg-main: #f8fafc; --card-bg: #ffffff;
+      --transition: all 0.3s ease;
     }
-
-    body { background-color: var(--bg-main); font-family: 'Assistant', sans-serif; color: var(--text-main); }
-    .main-container { max-width: 1100px; margin: 40px auto; background: var(--card-bg); padding: 40px; border-radius: var(--radius-lg); box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03); }
+    body { background-color: var(--bg-main); font-family: 'Assistant', sans-serif; }
+    .main-container { max-width: 1100px; margin: 40px auto; background: var(--card-bg); padding: 40px; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
     
-    /* תצוגת מסך מלא */
-    body.kiosk-mode { background-color: #ffffff !important; padding: 0 !important; margin: 0 !important; }
-    body.kiosk-mode #topNav, body.kiosk-mode .no-print, body.kiosk-mode .nav-pills, body.kiosk-mode .site-header-area { display: none !important; }
-    body.kiosk-mode .main-container { max-width: 100% !important; width: 100vw !important; min-height: 100vh !important; margin: 0 !important; padding: 30px !important; border-radius: 0 !important; box-shadow: none !important; }
+    /* מצב מסך מלא */
+    body.kiosk-mode { background-color: #ffffff !important; padding: 0 !important; }
+    body.kiosk-mode #topNav, body.kiosk-mode .no-print, body.kiosk-mode .site-header-area { display: none !important; }
+    body.kiosk-mode .main-container { max-width: 100% !important; width: 100vw !important; min-height: 100vh !important; margin: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
     
     /* עיצוב השיעור הנוכחי */
     .current-slot { border: 3px solid var(--accent) !important; background-color: #f0fdfa !important; transform: scale(1.02); }
     .current-slot .slot-header { background-color: var(--accent) !important; color: white !important; }
 
-    .teacher-row { background: var(--card-bg); border-radius: var(--radius-md); border: 1px solid #e2e8f0; margin-bottom: 25px; padding: 20px; }
-    .teacher-label-zone { font-weight: 700; color: var(--primary); font-size: 1.1rem; border-bottom: 2px solid var(--primary-light); padding-bottom: 8px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+    .teacher-row { background: var(--card-bg); border: 1px solid #e2e8f0; margin-bottom: 25px; padding: 20px; border-radius: 12px; }
+    .teacher-label-zone { font-weight: 700; color: var(--primary); font-size: 1.1rem; border-bottom: 2px solid #eff6ff; padding-bottom: 8px; margin-bottom: 15px; }
     .slots-grid-container { display: flex; flex-wrap: wrap; gap: 15px; }
-    .slot-card { background: var(--bg-main); border: 1px solid #e2e8f0; border-radius: 10px; min-width: 220px; flex: 1; transition: var(--transition); overflow: hidden; display: flex; flex-direction: column; }
-    .slot-header { background: #e2e8f0; font-size: 0.85rem; padding: 8px 14px; font-weight: 700; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center; }
-    .slot-room { font-size: 0.85rem; color: var(--accent); padding: 10px 14px 0 14px; font-weight: 700; }
-    .slot-content { font-size: 0.95rem; padding: 8px 14px 14px 14px; color: var(--text-main); font-weight: 600; flex-grow: 1; }
+    .slot-card { background: var(--bg-main); border: 1px solid #e2e8f0; border-radius: 10px; min-width: 220px; flex: 1; display: flex; flex-direction: column; }
+    .slot-header { background: #e2e8f0; font-size: 0.85rem; padding: 8px 14px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
+    .slot-content { font-size: 0.95rem; padding: 12px; font-weight: 600; flex-grow: 1; }
     
-    .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); display: flex; justify-content: center; align-items: center; z-index: 9999; }
-    @media (max-width: 768px) { .slot-card { min-width: 100%; width: 100%; } }
+    .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; display: flex; justify-content: center; align-items: center; z-index: 9999; }
   </style>
 </head>
 <body>
@@ -52,7 +41,7 @@
 
 <div id="appScreen" class="main-container container" style="display: none;">
   <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3 no-print site-header-area">
-    <h5 class="fw-bold m-0 text-dark">קמפוס למידה דיגיטלי</h5>
+    <h5 class="fw-bold m-0">קמפוס למידה דיגיטלי</h5>
   </div>
 
   <ul class="nav nav-pills nav-justified mb-4 no-print" id="topNav">
@@ -111,7 +100,7 @@
               <div class="slot-card shadow-sm ${isCurrent}">
                 <div class="slot-header">
                   <span>${headers[j]}</span>
-                  ${isCurrent ? '<small class="badge bg-accent text-white">כעת</small>' : ''}
+                  ${isCurrent ? '<small class="badge bg-white text-dark">כעת</small>' : ''}
                 </div>
                 <div class="slot-content">${row[j].split('-').slice(1).join('-')}</div>
               </div>`;
@@ -128,14 +117,36 @@
     drawDaily(day);
   }
 
-  // רענון אוטומטי כל דקה
+  // רענון אוטומטי כל דקה כדי להזיז את הסימון
   setInterval(() => {
-    const activeBtn = document.querySelector('.btn-primary');
     if(document.getElementById('tab-daily').classList.contains('active')) {
-       // רענון אוטומטי בהתאם ליום שנבחר
-       drawDaily(document.querySelector('.btn-primary')?.innerText.replace('יום ','') || 'ראשון');
+       // מוצא איזה יום פעיל כרגע ומרענן אותו
+       const activeDay = document.querySelector('.btn-primary')?.innerText.replace('יום ','') || 'ראשון';
+       drawDaily(activeDay);
     }
   }, 60000);
+
+  // פונקציית חיפוש בסיסית לתלמיד
+  function searchPersonal() {
+    const q = document.getElementById('pSearch').value.trim().toLowerCase();
+    const grid = document.getElementById('pGrid');
+    if (q.length < 2) { grid.innerHTML = ""; return; }
+    let html = '';
+    ["ראשון", "שני", "שלישי", "רביעי", "חמישי"].forEach(day => {
+      let lessons = '';
+      if (GLOBAL_DB.schedule[day]) {
+        GLOBAL_DB.schedule[day].forEach(row => {
+          for (let i = 2; i < row.length; i++) {
+            if (row[i].toLowerCase().includes(q)) {
+              lessons += `<div class="p-2 bg-light mb-1 rounded small"><b>${row[1]}</b><br>${row[i]}</div>`;
+            }
+          }
+        });
+      }
+      html += `<div class="col"><div class="card p-3"><h6 class="text-center">${day}</h6>${lessons}</div></div>`;
+    });
+    grid.innerHTML = html;
+  }
 </script>
 </body>
 </html>
