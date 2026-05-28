@@ -38,7 +38,6 @@
       box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 2px 10px -1px rgba(0, 0, 0, 0.02); 
     }
     
-    /* מסך אימות נקי */
     .auth-card {
       max-width: 400px;
       margin: 120px auto;
@@ -48,39 +47,58 @@
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
     }
 
-    /* ניווט מודרני מינימליסטי */
     .nav-pills { background: #f1f5f9; padding: 6px; border-radius: 30px; border: 1px solid #e2e8f0; }
     .nav-pills .nav-link { border-radius: 24px; color: var(--text-muted); font-weight: 600; transition: var(--transition); border: none; padding: 10px 20px; }
     .nav-pills .nav-link.active { background-color: var(--primary) !important; color: white; box-shadow: 0 4px 12px rgba(30, 58, 138, 0.15); }
 
-    /* כרטיסי מבט אישי */
     .day-card { background: var(--card-bg); border: 1px solid #e2e8f0; border-radius: var(--radius-md); padding: 20px; height: 100%; transition: var(--transition); }
     .day-card:hover { transform: translateY(-3px); box-shadow: 0 12px 20px -8px rgba(0,0,0,0.05); border-color: #cbd5e1; }
     .lesson-box { background: var(--primary-light); padding: 14px; border-radius: 10px; margin-bottom: 12px; border-right: 4px solid var(--primary); font-size: 0.95rem; font-weight: 500; }
 
-    /* אזור הודעות/לוח כללי חדש */
-    .general-announcement { background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1px solid #bbf7d0; border-radius: var(--radius-md); padding: 20px; margin-bottom: 25px; }
+    .general-announcement { 
+      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); 
+      border: 1px solid #bbf7d0; 
+      border-radius: var(--radius-md); 
+      padding: 24px; 
+      margin-bottom: 30px; 
+    }
 
-    /* מבנה לוח יומי משופר */
-    .teacher-row { background: var(--card-bg); border-radius: var(--radius-md); border: 1px solid #e2e8f0; margin-bottom: 16px; padding: 20px; display: flex; align-items: center; transition: var(--transition); }
-    .teacher-row:hover { border-color: #cbd5e1; }
-    .teacher-name { min-width: 140px; font-weight: 700; color: var(--primary); font-size: 1.15rem; }
+    .time-row { 
+      background: var(--card-bg); 
+      border-radius: var(--radius-md); 
+      border: 1px solid #e2e8f0; 
+      margin-bottom: 20px; 
+      padding: 15px 20px; 
+      display: flex; 
+      align-items: center; 
+      transition: var(--transition); 
+      box-shadow: 0 2px 4px rgba(0,0,0,0.01);
+    }
+    .time-row:hover { border-color: #cbd5e1; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+    .time-display { min-width: 120px; font-weight: 700; color: var(--primary); font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
     
     .slot-card {
-      background: var(--bg-main); border: 1px solid #e2e8f0; border-radius: 10px; margin: 6px; min-width: 170px; flex: 1; transition: var(--transition);
+      background: var(--bg-main); border: 1px solid #e2e8f0; border-radius: 10px; margin: 6px; min-width: 200px; flex: 1; transition: var(--transition); overflow: hidden;
     }
-    .slot-card:hover { background: #ffffff; border-color: var(--primary); }
-    .slot-header { background: #e2e8f0; font-size: 0.8rem; padding: 6px 12px; font-weight: 700; color: var(--text-muted); letter-spacing: 0.5px; }
-    .slot-room { font-size: 0.85rem; color: var(--accent); padding: 8px 12px 0 12px; font-weight: 700; }
-    .slot-content { font-size: 0.95rem; padding: 4px 12px 12px 12px; color: var(--text-main); font-weight: 600; }
+    .slot-card:hover { background: #ffffff; border-color: var(--primary); transform: translateY(-1px); }
+    .slot-header { background: #e2e8f0; font-size: 0.85rem; padding: 6px 14px; font-weight: 700; color: var(--text-muted); display: flex; justify-content: space-between; }
+    .slot-room { font-size: 0.85rem; color: var(--accent); padding: 10px 14px 0 14px; font-weight: 700; }
+    .slot-content { font-size: 1rem; padding: 4px 14px 14px 14px; color: var(--text-main); font-weight: 600; }
 
-    /* חיפוש וכפתורים */
-    .form-control, .form-select { border: 1px solid #e2e8f0; background-color: #ffffff; padding: 12px 20px; transition: var(--transition); }
+    /* תיקון קריטי: הגדרת ריפוד מיוחד לתיבות בחירה כדי למנוע את חיתוך האות כ' */
+    .form-control { border: 1px solid #e2e8f0; background-color: #ffffff; padding: 12px 20px; transition: var(--transition); }
+    .form-select { 
+      border: 1px solid #e2e8f0; 
+      background-color: #ffffff; 
+      padding: 12px 12px 12px 35px; /* פותר את בעיית ה-RTL והחיתוך */
+      padding-right: 35px !important;
+      transition: var(--transition); 
+    }
     .form-control:focus, .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.08); }
+    
     .btn-primary { background-color: var(--primary); border: none; padding: 10px 24px; font-weight: 600; border-radius: 30px; transition: var(--transition); }
     .btn-primary:hover { background-color: #1e40af; transform: translateY(-1px); }
 
-    /* תגיות ארכיון */
     .badge { font-size: 0.85rem; padding: 8px 14px; border-radius: 20px; cursor: pointer; transition: var(--transition); font-weight: 500; }
     .bg-custom-teacher { background-color: #f1f5f9 !important; color: var(--text-muted) !important; border: 1px solid #e2e8f0; }
     .bg-custom-teacher:hover { background-color: var(--primary-light) !important; color: var(--primary) !important; }
@@ -88,8 +106,8 @@
     .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); display: flex; justify-content: center; align-items: center; z-index: 9999; }
     
     @media (max-width: 768px) {
-      .teacher-row { flex-direction: column; align-items: flex-start; padding: 15px; }
-      .teacher-name { border-bottom: 2px solid #e2e8f0; margin-bottom: 12px; width: 100%; padding-bottom: 6px; }
+      .time-row { flex-direction: column; align-items: flex-start; padding: 15px; }
+      .time-display { border-bottom: 2px solid #e2e8f0; margin-bottom: 12px; width: 100%; padding-bottom: 6px; }
       .slot-card { width: 100%; margin: 4px 0; }
     }
     @media print { .no-print { display: none !important; } .main-container { box-shadow: none; margin: 0; width: 100%; padding: 0; } }
@@ -292,7 +310,6 @@
     setTimeout(() => copyBtn.innerHTML = '<i class="fa-solid fa-link me-1"></i> העתק קישור מוגן לתלמיד', 2500);
   }
 
-  // הפונקציה החכמה המזהה משבצות זהות ומאחדת אותן לבלוק כללי עליון!
   function drawDaily(activeDay) {
     const days = ["ראשון", "שני", "שלישי", "רביעי", "חמישי"];
     let tabsHtml = `<div class="d-flex justify-content-center gap-2 mb-4 no-print">`;
@@ -307,80 +324,87 @@
     
     if (rows.length > 1) {
       const headers = rows[0]; 
-      
-      // שלב א': זיהוי משבצות זהות רוחביות (איחוד לוח כללי)
       let globalSlots = {}; 
+
+      function getCleanContent(cellText) {
+        if (!cellText) return "";
+        const parts = cellText.split('-');
+        return parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim();
+      }
+
       for (let i = 2; i < headers.length; i++) {
-        let uniqueContents = {};
+        let uniqueCleanContents = {};
         let countNotEmpty = 0;
         
         rows.slice(1).forEach(row => {
           let cell = (row[i] || "").trim();
           if (cell) {
             countNotEmpty++;
-            uniqueContents[cell] = (uniqueContents[cell] || 0) + 1;
+            let clean = getCleanContent(cell);
+            uniqueCleanContents[clean] = (uniqueCleanContents[clean] || 0) + 1;
           }
         });
 
-        // אם אותו תוכן מופיע אצל כל המורים הפעילים באותה שעה (מינימום 2 מורים)
-        for (let content in uniqueContents) {
-          if (uniqueContents[content] === countNotEmpty && countNotEmpty >= 2) {
-            globalSlots[i] = content; 
+        for (let cleanText in uniqueCleanContents) {
+          if (uniqueCleanContents[cleanText] === countNotEmpty && countNotEmpty >= 2) {
+            globalSlots[i] = cleanText; 
           }
         }
       }
 
-      // רינדור הבלוק הכללי אם נמצאו משבצות זהות
       let globalHtml = "";
       for (let slotIndex in globalSlots) {
-        const parts = globalSlots[slotIndex].split('-');
-        let room = parts.length > 1 ? parts[0].trim() : "";
-        let info = parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim();
-        
         globalHtml += `
-          <div class="p-3 mb-2 bg-light border border-primary rounded-3 d-flex justify-content-between align-items-center" style="border-right: 6px solid var(--primary) !important;">
+          <div class="p-3 mb-2 bg-light border border-success rounded-3 d-flex justify-content-between align-items-center" style="border-right: 6px solid var(--accent) !important;">
             <div>
-              <span class="badge bg-primary me-2">${headers[slotIndex]}</span>
-              <strong class="text-dark" style="font-size:1.05rem;">${info}</strong>
+              <span class="badge bg-success me-2">${headers[slotIndex]}</span>
+              <strong class="text-dark" style="font-size:1.05rem;">${globalSlots[slotIndex]}</strong>
             </div>
-            ${room ? `<span class="text-accent fw-bold small"><i class="fa-solid fa-location-dot me-1"></i>${room}</span>` : ""}
+            <span class="text-muted small fw-bold"><i class="fa-solid fa-users me-1"></i>אירוע כללי לכולם</span>
           </div>`;
       }
 
       if (globalHtml) {
         contentHtml += `
           <div class="general-announcement shadow-sm">
-            <h6 class="fw-bold text-success mb-3"><i class="fa-solid fa-circle-exclamation me-1"></i>פעילויות ולוח כללי מרוכז:</h6>
+            <h6 class="fw-bold text-success mb-3"><i class="fa-solid fa-circle-info me-1"></i>לוח זמנים ופעילות כללית:</h6>
             ${globalHtml}
           </div>`;
       }
 
-      // שלב ב': רינדור השעות הפרטניות של המורים (בנטרול המשבצות שכבר הופיעו בכללי)
-      rows.slice(1).forEach(row => {
-        let teacherSlots = '';
-        for (let i = 2; i < row.length; i++) {
-          // מציג רק אם המשבצת אינה חלק מאיחוד כללי
-          if (row[i] && row[i].trim() && !globalSlots[i]) {
+      for (let i = 2; i < headers.length; i++) {
+        if (globalSlots[i]) continue;
+
+        let slotCardsInRow = "";
+        rows.slice(1).forEach(row => {
+          if (row[i] && row[i].trim()) {
             const parts = row[i].split('-'); 
             let room = parts.length > 1 ? parts[0].trim() : "";
             let info = parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim();
 
-            teacherSlots += `
+            slotCardsInRow += `
               <div class="slot-card shadow-sm">
-                <div class="slot-header"><span>${headers[i]}</span></div>
+                <div class="slot-header">
+                  <span><i class="fa-solid fa-chalkboard-user me-1"></i>${row[1]}</span>
+                </div>
                 ${room ? `<div class="slot-room"><i class="fa-solid fa-location-dot me-1"></i>${room}</div>` : ''}
                 <div class="slot-content">${info}</div>
               </div>`;
           }
-        }
-        if (teacherSlots) {
+        });
+
+        if (slotCardsInRow) {
           contentHtml += `
-            <div class="teacher-row">
-              <div class="teacher-name"><i class="fa-solid fa-chalkboard-user me-2 text-secondary"></i>${row[1]}</div>
-              <div class="d-flex flex-wrap w-100">${teacherSlots}</div>
+            <div class="time-row">
+              <div class="time-display">
+                <i class="fa-regular fa-clock text-secondary"></i>
+                <span>${headers[i]}</span>
+              </div>
+              <div class="d-flex flex-wrap w-100">${slotCardsInRow}</div>
             </div>`;
         }
-      });
+      }
+
     } else {
       contentHtml += `<p class="text-center text-muted py-5">אין נתונים להצגה ליום ${activeDay}</p>`;
     }
