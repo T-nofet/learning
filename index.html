@@ -53,18 +53,7 @@
 
     .day-card { background: var(--card-bg); border: 1px solid #e2e8f0; border-radius: var(--radius-md); padding: 20px; height: 100%; transition: var(--transition); }
     .day-card:hover { transform: translateY(-3px); box-shadow: 0 12px 20px -8px rgba(0,0,0,0.05); border-color: #cbd5e1; }
-    
-    /* קופסת שיעור מעוצבת בתוך כרטיס אישי */
-    .lesson-box { 
-      background: var(--primary-light); 
-      padding: 12px; 
-      border-radius: 10px; 
-      margin-bottom: 10px; 
-      border-right: 4px solid var(--primary); 
-      font-size: 0.95rem; 
-      font-weight: 500; 
-    }
-    .lesson-box:last-child { margin-bottom: 0; }
+    .lesson-box { background: var(--primary-light); padding: 14px; border-radius: 10px; margin-bottom: 12px; border-right: 4px solid var(--primary); font-size: 0.95rem; font-weight: 500; }
 
     .general-announcement { 
       background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); 
@@ -308,92 +297,25 @@
     }
   }
 
-  // פונקציית החיפוש האישי החדשה והחכמה - מאחדת שעות זהות לריבוע משותף אחד אצל התלמיד!
   function searchPersonal(studentMode = false) {
     const q = document.getElementById('pSearch').value.trim().toLowerCase();
     const grid = document.getElementById('pGrid');
     if (q.length < 2) { grid.innerHTML = ""; return; }
     
     let html = '';
-    const days = ["ראשון", "שני", "שלישי", "רביעי", "חמישי"];
-
-    days.forEach(day => {
-      // אובייקט זמני לאיחוד שיעורים לפי שעה באותו היום
-      let mergedHoursForDay = {};
-
+    ["ראשון", "שני", "שלישי", "רביעי", "חמישי"].forEach(day => {
+      let lessons = '';
       if (GLOBAL_DB.schedule[day]) {
-        const headers = GLOBAL_DB.schedule[day][0]; // שורת השעות
-
-        GLOBAL_DB.schedule[day].slice(1).forEach(row => {
-          let teacherName = row[1]; // שם המורה
-
-          for (let j = 2; j < row.length; j++) {
-            let cellText = (row[j] || "").trim();
-            
-            // אם נמצא שיבוץ התואם לשם התלמיד
-            if (cellText.toLowerCase().includes(q)) {
-              let hourLabel = headers[j]; // השעה (למשל 10:00-10:45)
-              
-              const parts = cellText.split('-');
-              let roomInfo = parts.length > 1 ? parts[0].trim() : "";
-              let lessonInfo = parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim();
-
-              // אם השעה הזו עוד לא קיימת ביום הנוכחי, נפתח לה מערך חדש
-              if (!mergedHoursForDay[hourLabel]) {
-                mergedHoursForDay[hourLabel] = [];
-              }
-
-              // נדחוף את פרטי המורה והשיעור לתוך אותה השעה
-              mergedHoursForDay[hourLabel].push({
-                teacher: teacherName,
-                room: roomInfo,
-                content: lessonInfo
-              });
+        GLOBAL_DB.schedule[day].forEach(row => {
+          for (let i = 2; i < row.length; i++) {
+            if (row[i].toLowerCase().includes(q)) {
+              lessons += `<div class="lesson-box"><b>${row[1]}</b><br>${row[i]}</div>`;
             }
           }
         });
       }
-
-      // כעת נבנה את תוכן הריבועים מתוך המידע המאוחד
-      let dayLessonsHtml = '';
-      
-      // נעבור על השעות שאוחדו לפי סדר הופעתן המקורית
-      for (let hour in mergedHoursForDay) {
-        let hourBlockContent = '';
-        
-        mergedHoursForDay[hour].forEach(lesson => {
-          hourBlockContent += `
-            <div class="lesson-box">
-              <span class="d-block fw-bold text-dark small" style="opacity: 0.85;">
-                <i class="fa-solid fa-chalkboard-user me-1 text-primary"></i>${lesson.teacher}
-              </span>
-              <span class="d-block mt-0.5" style="font-size: 0.95rem; font-weight:600;">
-                ${lesson.room ? `[${lesson.room}] ` : ''}${lesson.content}
-              </span>
-            </div>`;
-        });
-
-        dayLessonsHtml += `
-          <div class="mb-3 border rounded-3 overflow-hidden shadow-sm bg-light">
-            <div class="bg-secondary bg-opacity-10 px-3 py-1.5 border-bottom small fw-bold text-muted d-flex justify-content-between align-items-center">
-              <span><i class="fa-regular fa-clock me-1"></i>${hour}</span>
-              ${mergedHoursForDay[hour].length > 1 ? '<span class="badge bg-warning text-dark px-2 py-0.5" style="font-size:0.7rem;">שיבוץ משולב</span>' : ''}
-            </div>
-            <div class="p-2 bg-white">
-              ${hourBlockContent}
-            </div>
-          </div>`;
-      }
-
-      html += `
-        <div class="col">
-          <div class="day-card">
-            <h6 class="text-center border-bottom pb-2 mb-3 fw-bold text-primary"><i class="fa-solid fa-calendar-day me-1"></i>יום ${day}</h6>
-            ${dayLessonsHtml || '<div class="text-center text-muted small py-4">אין שעות רשומות</div>'}
-          </div>
-        </div>`;
+      html += `<div class="col"><div class="day-card"><h6 class="text-center border-bottom pb-2 mb-3 fw-bold text-primary">יום ${day}</h6>${lessons || '<div class="text-center text-muted small py-3">אין שעות רשומות</div>'}</div></div>`;
     });
-    
     grid.innerHTML = html;
 
     if (!studentMode) {
@@ -403,6 +325,21 @@
     }
   }
 
+  function copyShareUrl() {
+    const studentName = document.getElementById('pSearch').value.trim();
+    const copyBtn = document.getElementById('copyBtn');
+    let foundToken = null;
+    for (let token in GLOBAL_DB.studentsMapping) {
+      if (GLOBAL_DB.studentsMapping[token].toLowerCase() === studentName.toLowerCase()) { foundToken = token; break; }
+    }
+    if (!foundToken) { alert("לא נמצא מפתח אישי לתלמיד זה."); return; }
+    const finalUrl = `${window.location.href.split('?')[0]}?pw=${GLOBAL_DB.studentPw}&id=${foundToken}`;
+    navigator.clipboard.writeText(finalUrl);
+    copyBtn.innerHTML = "✅ הקישור הועתק!";
+    setTimeout(() => copyBtn.innerHTML = '<i class="fa-solid fa-link me-1"></i> העתק קישור מוגן לתלמיד', 2500);
+  }
+
+  // פונקציית הציור היומית - סריקה ארוכית חכמה ואיחוד מוחלט של שעות זהות לבלוק רוחבי יחיד
   function drawDaily(activeDay) {
     const days = ["ראשון", "שני", "שלישי", "רביעי", "חמישי"];
     let tabsHtml = `<div class="d-flex justify-content-center gap-2 mb-4 no-print">`;
@@ -416,89 +353,82 @@
     let contentHtml = `<h5 class="fw-bold mb-4 text-dark text-center">לוח זמנים מפורט - יום ${activeDay}</h5>`;
     
     if (rows.length > 1) {
-      const headers = rows[0]; 
-      let globalHours = {}; 
+      const headers = rows[0]; // שורת השעות (אינדקס 2 ומעלה)
+      let globalHours = {};    // יכיל שעות שזהות לחלוטין בכל החדרים
 
-      function getCleanContent(cellText) {
-        if (!cellText) return "";
-        const parts = cellText.split('-');
-        return parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim();
-      }
-
+      // 1. איתור שעות שבהן כל התאים מכילים בדיוק את אותו הטקסט
       for (let j = 2; j < headers.length; j++) {
-        let uniqueContents = {};
+        let uniqueContents = new Set();
         let countRowsWithData = 0;
 
         rows.slice(1).forEach(row => {
           let cell = (row[j] || "").trim();
           if (cell) {
             countRowsWithData++;
-            let clean = getCleanContent(cell);
-            uniqueContents[clean] = (uniqueContents[clean] || 0) + 1;
+            const parts = cell.split('-');
+            let cleanText = parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim();
+            if (cleanText) uniqueContents.add(cleanText);
           }
         });
 
-        for (let text in uniqueContents) {
-          if (uniqueContents[text] === countRowsWithData && countRowsWithData >= 2) {
-            globalHours[j] = text; 
-          }
+        // אם יש רק תוכן ייחודי אחד לכל החדרים הפעילים בשעה הזו (ויש לפחות 2 חדרים פעילים)
+        if (uniqueContents.size === 1 && countRowsWithData >= 2) {
+          globalHours[j] = Array.from(uniqueContents)[0]; 
         }
       }
 
-      let globalAnnouncementsHtml = "";
-      for (let hourIndex in globalHours) {
-        globalAnnouncementsHtml += `
-          <div class="p-3 mb-2 bg-light border border-success rounded-3 d-flex justify-content-between align-items-center" style="border-right: 6px solid var(--accent) !important;">
-            <div>
-              <span class="badge bg-success me-2">${headers[hourIndex]}</span>
-              <strong class="text-dark" style="font-size:1.05rem;">${globalHours[hourIndex]}</strong>
-            </div>
-            <span class="text-muted small fw-bold"><i class="fa-solid fa-users me-1"></i>פעילות מרוכזת לכולם</span>
-          </div>`;
-      }
+      // 2. בניית הלוח לפי שעות (Time-First Grid) כדי לאפשר בלוקים מאוחדים לרוחב המסך
+      for (let j = 2; j < headers.length; j++) {
+        
+        // א': במידה והשעה מאוחדת (למשל "בתאבון לכולם") - נייצר משבצת רוחבית גדולה אחת ללא חלוקה
+        if (globalHours[j]) {
+          contentHtml += `
+            <div class="mb-4 shadow-sm rounded-3 overflow-hidden border border-success" style="border-right: 6px solid var(--accent) !important;">
+              <div class="bg-success bg-opacity-10 px-3 py-2 border-bottom d-flex justify-content-between align-items-center">
+                <span class="fw-bold text-success"><i class="fa-regular fa-clock me-1"></i>${headers[j]}</span>
+                <span class="badge bg-success px-3 rounded-pill"><i class="fa-solid fa-users me-1"></i>כללי לכולם</span>
+              </div>
+              <div class="p-3 bg-white text-center">
+                <h4 class="m-0 fw-bold text-dark">${globalHours[j]}</h4>
+              </div>
+            </div>`;
+        } 
+        // ב': במידה והשעה מכילה שיעורים שונים בחדרים שונים - נציג אותה כסדרה של חדרים זה לצד זה
+        else {
+          let slotCardsInRow = "";
 
-      if (globalAnnouncementsHtml) {
-        contentHtml += `
-          <div class="general-announcement shadow-sm">
-            <h6 class="fw-bold text-success mb-3"><i class="fa-solid fa-circle-info me-1"></i>לוח זמנים ופעילות כללית:</h6>
-            ${globalAnnouncementsHtml}
-          </div>`;
-      }
+          rows.slice(1).forEach(row => {
+            let teacherInfo = row[1]; // למשל: "אורי - חדר 2"
+            
+            if (row[j] && row[j].trim()) {
+              const parts = row[j].split('-');
+              let subjectOrRoom = parts.length > 1 ? parts[0].trim() : "";
+              let info = parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim();
 
-      rows.slice(1).forEach(row => {
-        let teacherInfo = row[1]; 
-        let slotCardsInRow = "";
+              slotCardsInRow += `
+                <div class="slot-card shadow-sm" style="min-width: 280px; flex: 1;">
+                  <div class="slot-header" style="background: #f1f5f9;">
+                    <span><i class="fa-solid fa-chalkboard-user me-1"></i>${teacherInfo}</span>
+                  </div>
+                  ${subjectOrRoom ? `<div class="slot-room"><i class="fa-solid fa-tag me-1"></i>${subjectOrRoom}</div>` : ''}
+                  <div class="slot-content">${info}</div>
+                </div>`;
+            }
+          });
 
-        for (let j = 2; j < headers.length; j++) {
-          if (globalHours[j]) continue; 
-
-          if (row[j] && row[j].trim()) {
-            const parts = row[j].split('-');
-            let subjectOrRoom = parts.length > 1 ? parts[0].trim() : "";
-            let info = parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim();
-
-            slotCardsInRow += `
-              <div class="slot-card shadow-sm">
-                <div class="slot-header">
-                  <span><i class="fa-regular fa-clock me-1"></i>${headers[j]}</span>
+          if (slotCardsInRow) {
+            contentHtml += `
+              <div class="mb-4 shadow-sm rounded-3 overflow-hidden border border-light">
+                <div class="bg-light px-3 py-2 border-bottom text-primary fw-bold">
+                  <i class="fa-regular fa-clock me-1"></i> שעה: ${headers[j]}
                 </div>
-                ${subjectOrRoom ? `<div class="slot-room"><i class="fa-solid fa-tag me-1"></i>${subjectOrRoom}</div>` : ''}
-                <div class="slot-content">${info}</div>
+                <div class="p-3 bg-white">
+                  <div class="d-flex flex-wrap gap-3">${slotCardsInRow}</div>
+                </div>
               </div>`;
           }
         }
-
-        if (slotCardsInRow) {
-          contentHtml += `
-            <div class="teacher-row shadow-sm">
-              <div class="teacher-label-zone">
-                <i class="fa-solid fa-chalkboard-user"></i>
-                <span>${teacherInfo}</span>
-              </div>
-              <div class="slots-grid-container">${slotCardsInRow}</div>
-            </div>`;
-        }
-      });
+      }
 
     } else {
       contentHtml += `<p class="text-center text-muted py-5">אין נתונים להצגה ליום ${activeDay}</p>`;
