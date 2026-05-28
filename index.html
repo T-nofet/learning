@@ -116,12 +116,16 @@
       <div id="adminSearchArea" class="mb-4 no-print">
         <input type="text" id="pSearch" class="form-control form-control-lg rounded-pill shadow-sm py-3 px-4 fs-6" placeholder="הקלד שם תלמיד לחיפוש..." oninput="searchPersonal()">
       </div>
+      
       <div id="shareArea" class="no-print text-center mb-4" style="display: none;">
-        <div class="d-inline-flex align-items-center bg-light border rounded-pill p-2 shadow-sm">
-          <span id="shareUrlText" class="me-3 ms-2 fw-bold text-primary small">נמצא תלמיד! באפשרותך לייצר קישור מוגן עבורו:</span>
-          <button id="copyBtn" class="btn btn-sm btn-primary rounded-pill px-3" onclick="copyShareUrl()">🔗 העתק קישור אישי</button>
+        <div class="d-inline-flex flex-wrap align-items-center justify-content-center bg-light border rounded-pill py-2 px-4 shadow-sm gap-2">
+          <span class="fw-bold text-secondary small"><i class="fa-solid fa-user-check text-success me-1"></i> התלמיד זוהה בהצלחה!</span>
+          <button id="copyBtn" class="btn btn-sm btn-primary rounded-pill px-3 fw-bold" onclick="copyShareUrl()">
+            <i class="fa-solid fa-link me-1"></i> העתק קישור אישי מוגן
+          </button>
         </div>
       </div>
+
       <div id="studentHeader" style="display:none;" class="text-center mb-4">
         <h4 class="fw-bold text-primary" id="studentNameDisplay"></h4>
       </div>
@@ -176,12 +180,10 @@
       document.getElementById('loader').style.display = 'none';
 
       if (urlPw === GLOBAL_DB.studentPw && urlId && GLOBAL_DB.studentsMapping[urlId]) {
-        // כניסת תלמיד מורשה ישירות מהURL
         isStudentMode = true;
         identifiedStudent = GLOBAL_DB.studentsMapping[urlId];
         startApp();
       } else {
-        // כניסה רגילה - דורש מסך אימות סיסמה
         document.getElementById('authScreen').style.display = 'block';
       }
     } catch (err) {
@@ -199,7 +201,6 @@
       document.getElementById('authScreen').style.display = 'none';
       startApp();
     } else if (inputPw === GLOBAL_DB.studentPw) {
-      // אם הוא הקיש סיסמת תלמיד כללית ללא מפתח אישי, נבקש ממנו להשתמש בקישור מלא
       alert("סיסמת תלמיד דורשת כניסה דרך הקישור האישי שסופק לך על ידי המנהל.");
     } else {
       errorEl.style.display = 'block';
@@ -209,7 +210,6 @@
   function startApp() {
     document.getElementById('appScreen').style.display = 'block';
     
-    // מילוי סלקטורים של חודשים ומורים
     if (GLOBAL_DB.availableMonths) {
       ['fMonth', 'pMonth'].forEach(id => {
         const el = document.getElementById(id);
@@ -274,7 +274,6 @@
     const studentName = document.getElementById('pSearch').value.trim();
     const copyBtn = document.getElementById('copyBtn');
     
-    // מציאת הטוקן המתאים לשם התלמיד
     let foundToken = null;
     for (let token in GLOBAL_DB.studentsMapping) {
       if (GLOBAL_DB.studentsMapping[token].toLowerCase() === studentName.toLowerCase()) {
@@ -296,7 +295,7 @@
     document.execCommand('copy'); document.body.removeChild(el);
     
     copyBtn.innerHTML = "✅ הועתק בהצלחה!";
-    setTimeout(() => copyBtn.innerHTML = "🔗 העתק קישור אישי", 3000);
+    setTimeout(() => copyBtn.innerHTML = '<i class="fa-solid fa-link me-1"></i> העתק קישור אישי מוגן', 3000);
   }
 
   function drawDaily(activeDay) {
