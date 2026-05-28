@@ -55,7 +55,7 @@
     .day-card:hover { transform: translateY(-3px); box-shadow: 0 12px 20px -8px rgba(0,0,0,0.05); border-color: #cbd5e1; }
     .lesson-box { background: var(--primary-light); padding: 14px; border-radius: 10px; margin-bottom: 12px; border-right: 4px solid var(--primary); font-size: 0.95rem; font-weight: 500; }
 
-    /* אזור הודעות ואירועים כלליים */
+    /* אזור הודעות ואירועים כלליים מאוחדים */
     .general-announcement { 
       background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); 
       border: 1px solid #bbf7d0; 
@@ -64,60 +64,69 @@
       margin-bottom: 25px; 
     }
 
-    /* מבנה שורות השעה המקורי והנקי שלך */
-    .time-row { 
-      background: var(--card-bg); 
-      border-radius: var(--radius-md); 
-      border: 1px solid #e2e8f0; 
-      margin-bottom: 20px; 
-      padding: 20px; 
-      display: flex; 
-      align-items: center; 
-      justify-content: space-between;
-      transition: var(--transition); 
-      box-shadow: 0 2px 4px rgba(0,0,0,0.01);
+    /* מבנה שורת מורה/חדר מקורי */
+    .teacher-row {
+      background: var(--card-bg);
+      border-radius: var(--radius-md);
+      border: 1px solid #e2e8f0;
+      margin-bottom: 25px;
+      padding: 20px;
     }
-    .time-row:hover { border-color: #cbd5e1; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
     
-    .time-display { 
-      min-width: 140px; 
-      font-weight: 700; 
-      color: var(--primary); 
-      font-size: 1.1rem; 
-      display: flex; 
-      align-items: center; 
+    .teacher-label-zone {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 1.1rem;
+      border-bottom: 2px solid var(--primary-light);
+      padding-bottom: 8px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
       gap: 8px;
     }
-    
-    .slots-container {
+
+    .slots-grid-container {
       display: flex;
       flex-wrap: wrap;
       gap: 15px;
-      width: 100%;
     }
 
+    /* כרטיס שעה בודד בתוך שורת מורה */
     .slot-card {
-      background: var(--bg-main); 
-      border: 1px solid #e2e8f0; 
-      border-radius: 10px; 
-      min-width: 240px; 
-      flex: 1; 
-      transition: var(--transition); 
+      background: var(--bg-main);
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      min-width: 220px;
+      flex: 1;
+      transition: var(--transition);
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
     .slot-card:hover { background: #ffffff; border-color: var(--primary); transform: translateY(-1px); }
-    .slot-header { background: #e2e8f0; font-size: 0.85rem; padding: 8px 14px; font-weight: 700; color: var(--text-muted); }
+    
+    .slot-header { 
+      background: #e2e8f0; 
+      font-size: 0.85rem; 
+      padding: 8px 14px; 
+      font-weight: 700; 
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
     .slot-room { font-size: 0.85rem; color: var(--accent); padding: 10px 14px 0 14px; font-weight: 700; }
-    .slot-content { font-size: 1rem; padding: 6px 14px 14px 14px; color: var(--text-main); font-weight: 600; }
+    .slot-content { font-size: 0.95rem; padding: 8px 14px 14px 14px; color: var(--text-main); font-weight: 600; flex-grow: 1; }
 
     .form-control { border: 1px solid #e2e8f0; background-color: #ffffff; padding: 12px 20px; transition: var(--transition); }
     
-    /* תיקון נקודתי לאות כ' מבלי לשבור את ריפודי ה-Bootstrap */
+    /* תיקון ממוקד לחיתוך האות כ' בדרופדאון */
     .form-select { 
       border: 1px solid #e2e8f0; 
       background-color: #ffffff; 
       padding: 12px 20px;
-      text-indent: 5px; /* דוחף בעדינות את הטקסט ימינה בתוך השדה ומציל את האות כ' */
+      text-indent: 6px; 
       transition: var(--transition); 
     }
     .form-control:focus, .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.08); }
@@ -132,9 +141,7 @@
     .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); display: flex; justify-content: center; align-items: center; z-index: 9999; }
     
     @media (max-width: 768px) {
-      .time-row { flex-direction: column; align-items: flex-start; padding: 15px; gap: 12px; }
-      .time-display { border-bottom: 2px solid #e2e8f0; width: 100%; padding-bottom: 6px; }
-      .slot-card { width: 100%; min-width: 100%; }
+      .slot-card { min-width: 100%; width: 100%; }
     }
     @media print { .no-print { display: none !important; } .main-container { box-shadow: none; margin: 0; width: 100%; padding: 0; } }
   </style>
@@ -336,7 +343,7 @@
     setTimeout(() => copyBtn.innerHTML = '<i class="fa-solid fa-link me-1"></i> העתק קישור מוגן לתלמיד', 2500);
   }
 
-  // פונקציית ציור יציבה השומרת על מבנה ה-Grid המקורי והנקי שלך
+  // פונקציית הציור היומית החדשה והמתוקנת - מותאמת ב-100% למבנה המקורי מבוסס המורים
   function drawDaily(activeDay) {
     const days = ["ראשון", "שני", "שלישי", "רביעי", "חמישי"];
     let tabsHtml = `<div class="d-flex justify-content-center gap-2 mb-4 no-print">`;
@@ -350,8 +357,8 @@
     let contentHtml = `<h5 class="fw-bold mb-4 text-dark text-center">לוח זמנים מפורט - יום ${activeDay}</h5>`;
     
     if (rows.length > 1) {
-      const headers = rows[0]; 
-      let globalSlots = {}; 
+      const headers = rows[0]; // שורת הכותרות שמכילה את השעות (אינדקס 2 ומעלה)
+      let globalHours = {}; // יכיל שעות שמאוחדות לכולם
 
       function getCleanContent(cellText) {
         if (!cellText) return "";
@@ -359,81 +366,86 @@
         return parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim();
       }
 
-      // סריקה חכמה למציאת אירועים משותפים (כמו ארוחת בוקר)
-      for (let i = 2; i < headers.length; i++) {
-        let uniqueCleanContents = {};
-        let countNotEmpty = 0;
-        
+      // 1. איתור חכם של שעות מאוחדות (כמו ארוחת בוקר / בתאבון לכולם)
+      for (let j = 2; j < headers.length; j++) {
+        let uniqueContents = {};
+        let countRowsWithData = 0;
+
         rows.slice(1).forEach(row => {
-          let cell = (row[i] || "").trim();
+          let cell = (row[j] || "").trim();
           if (cell) {
-            countNotEmpty++;
+            countRowsWithData++;
             let clean = getCleanContent(cell);
-            uniqueCleanContents[clean] = (uniqueCleanContents[clean] || 0) + 1;
+            uniqueContents[clean] = (uniqueContents[clean] || 0) + 1;
           }
         });
 
-        for (let cleanText in uniqueCleanContents) {
-          if (uniqueCleanContents[cleanText] === countNotEmpty && countNotEmpty >= 2) {
-            globalSlots[i] = cleanText; 
+        // אם אותו הטקסט מופיע אצל כל המורים הפעילים בשעה הזו (לפחות 2 מורים)
+        for (let text in uniqueContents) {
+          if (uniqueContents[text] === countRowsWithData && countRowsWithData >= 2) {
+            globalHours[j] = text; 
           }
         }
       }
 
-      // הצגת אירועים כלליים בחלק העליון
-      let globalHtml = "";
-      for (let slotIndex in globalSlots) {
-        globalHtml += `
+      // 2. רינדור בלוק עליון לאירועים הכלליים שאוחדו
+      let globalAnnouncementsHtml = "";
+      for (let hourIndex in globalHours) {
+        globalAnnouncementsHtml += `
           <div class="p-3 mb-2 bg-light border border-success rounded-3 d-flex justify-content-between align-items-center" style="border-right: 6px solid var(--accent) !important;">
             <div>
-              <span class="badge bg-success me-2">${headers[slotIndex]}</span>
-              <strong class="text-dark" style="font-size:1.05rem;">${globalSlots[slotIndex]}</strong>
+              <span class="badge bg-success me-2">${headers[hourIndex]}</span>
+              <strong class="text-dark" style="font-size:1.05rem;">${globalHours[hourIndex]}</strong>
             </div>
             <span class="text-muted small fw-bold"><i class="fa-solid fa-users me-1"></i>פעילות מרוכזת לכולם</span>
           </div>`;
       }
 
-      if (globalHtml) {
+      if (globalAnnouncementsHtml) {
         contentHtml += `
           <div class="general-announcement shadow-sm">
             <h6 class="fw-bold text-success mb-3"><i class="fa-solid fa-circle-info me-1"></i>לוח זמנים ופעילות כללית:</h6>
-            ${globalHtml}
+            ${globalAnnouncementsHtml}
           </div>`;
       }
 
-      // הצגת השעות הפרטניות במבנה Flexbox מיושר וקבוע שלא נשבר
-      for (let i = 2; i < headers.length; i++) {
-        if (globalSlots[i]) continue; // מדלג על שעות שאוחדו למעלה
-
+      // 3. רינדור שורות המורים המקוריות שלך (מבנה רוחבי נקי)
+      rows.slice(1).forEach(row => {
+        let teacherInfo = row[1]; // למשל: "נטלי - חדר 1" או "אילנה - חדר 4"
         let slotCardsInRow = "";
-        rows.slice(1).forEach(row => {
-          if (row[i] && row[i].trim()) {
-            const parts = row[i].split('-'); 
-            let room = parts.length > 1 ? parts[0].trim() : "";
+
+        // סריקת השעות של אותו מורה
+        for (let j = 2; j < headers.length; j++) {
+          if (globalHours[j]) continue; // מדלג על שעות שאוחדו וכבר מוצגות למעלה לכולם
+
+          if (row[j] && row[j].trim()) {
+            const parts = row[j].split('-');
+            let subjectOrRoom = parts.length > 1 ? parts[0].trim() : "";
             let info = parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim();
 
             slotCardsInRow += `
               <div class="slot-card shadow-sm">
                 <div class="slot-header">
-                  <i class="fa-solid fa-chalkboard-user me-1"></i>${row[1]}
+                  <span><i class="fa-regular fa-clock me-1"></i>${headers[j]}</span>
                 </div>
-                ${room ? `<div class="slot-room"><i class="fa-solid fa-location-dot me-1"></i>${room}</div>` : ''}
+                ${subjectOrRoom ? `<div class="slot-room"><i class="fa-solid fa-tag me-1"></i>${subjectOrRoom}</div>` : ''}
                 <div class="slot-content">${info}</div>
               </div>`;
           }
-        });
+        }
 
+        // מציג את שורת המורה רק אם נשארו לו שעות פרטניות להציג
         if (slotCardsInRow) {
           contentHtml += `
-            <div class="time-row">
-              <div class="time-display">
-                <i class="fa-regular fa-clock text-secondary"></i>
-                <span>${headers[i]}</span>
+            <div class="teacher-row shadow-sm">
+              <div class="teacher-label-zone">
+                <i class="fa-solid fa-chalkboard-user"></i>
+                <span>${teacherInfo}</span>
               </div>
-              <div class="slots-container">${slotCardsInRow}</div>
+              <div class="slots-grid-container">${slotCardsInRow}</div>
             </div>`;
         }
-      }
+      });
 
     } else {
       contentHtml += `<p class="text-center text-muted py-5">אין נתונים להצגה ליום ${activeDay}</p>`;
