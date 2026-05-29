@@ -206,6 +206,39 @@
       min-width: 260px !important;
     }
 
+    /* --- צמצום ודחיסת לוח הזמנים היומי (במצב רגיל בלבד לחסכון בגלילה) --- */
+    body:not(.kiosk-mode) .teacher-row {
+      margin-bottom: 12px !important;
+      padding: 12px 16px !important;
+    }
+    body:not(.kiosk-mode) .teacher-label-zone {
+      font-size: 1rem !important;
+      margin-bottom: 8px !important;
+      padding-bottom: 4px !important;
+    }
+    body:not(.kiosk-mode) .slots-grid-container {
+      gap: 8px !important;
+    }
+    body:not(.kiosk-mode) .slot-card {
+      min-width: 170px !important;
+    }
+    body:not(.kiosk-mode) .slot-header {
+      padding: 4px 10px !important;
+      font-size: 0.78rem !important;
+    }
+    body:not(.kiosk-mode) .slot-room {
+      padding: 4px 10px 0 10px !important;
+      font-size: 0.78rem !important;
+    }
+    body:not(.kiosk-mode) .slot-content {
+      padding: 6px 10px 8px 10px !important;
+      font-size: 0.88rem !important;
+    }
+    body:not(.kiosk-mode) .slot-content.py-4 {
+      padding-top: 12px !important;
+      padding-bottom: 12px !important;
+    }
+
     @media (max-width: 768px) {
       .slot-card { min-width: 100%; width: 100%; }
     }
@@ -454,7 +487,6 @@
     
     if (isKiosk) {
       // --- מבנה מצב מסך מלא (קיוסק) ---
-      // הכותרת נקייה ללא "🖥️ תצוגת קיוסק:"
       tabsHtml += `
         <div class="d-flex justify-content-between align-items-center mt-3 px-2">
           
