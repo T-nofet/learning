@@ -109,7 +109,7 @@
     .slot-room { font-size: 0.85rem; color: var(--accent); padding: 10px 14px 0 14px; font-weight: 700; }
     .slot-content { font-size: 0.95rem; padding: 8px 14px 14px 14px; color: var(--text-main); font-weight: 600; flex-grow: 1; }
 
-    /* עיצוב שעון החול - מעודכן לימין לשמאל עבור עברית RTL */
+    /* עיצוב שעון החול - מיושר לימין לעברית */
     .slot-card.active-slot {
       border: 2px solid var(--accent) !important;
       background-color: #f0fdfa !important;
@@ -121,7 +121,7 @@
     .progress-bar-sand {
       position: absolute;
       bottom: 0;
-      right: 0;            /* מיושר לימין - יתמלא לכיוון שמאל */
+      right: 0;            
       height: 5px;
       background-color: var(--accent);
       width: 0%;
@@ -148,7 +148,6 @@
 
     .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); display: flex; justify-content: center; align-items: center; z-index: 9999; }
     
-    /* עיצוב ייחודי למצב מסך מלא (קיוסק) */
     body.kiosk-mode {
       background-color: #ffffff !important;
       padding: 0 !important;
@@ -199,7 +198,7 @@
     <h5 class="fw-bold mb-1">מערכת קשר ולוחות זמנים</h5>
     <p class="text-muted small mb-4">אנא הזן סיסמת גישה להמשך</p>
     <div class="mb-3 text-start">
-      <input type="password" id="accessPw" class="form-control rounded-3" placeholder="סיסמת כניסה">
+      <input type="password" id="accessPw" class="form-control rounded-3" placeholder="סיסמת כניסה" onkeydown="if(event.key === 'Enter') handleAuth()">
     </div>
     <button class="btn btn-primary w-100 rounded-3 py-2.5" onclick="handleAuth()">התחבר למערכת</button>
     <div id="authError" class="text-danger small mt-3 fw-semibold" style="display: none;">❌ סיסמה אינה נכונה</div>
@@ -305,6 +304,7 @@
     const inputPw = document.getElementById('accessPw').value.trim();
     if (inputPw === GLOBAL_DB.adminPw) {
       isStudentMode = false;
+      document.getElementById('authScreen').style.none = 'none';
       document.getElementById('authScreen').style.display = 'none';
       startApp();
     } else {
