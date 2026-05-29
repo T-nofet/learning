@@ -212,6 +212,16 @@
       padding: 16px 14px !important;
     }
 
+    /* --- הסתרות ייעודיות למצב מורה ישיר --- */
+    body.teacher-view-mode #topNav,
+    body.teacher-view-mode .site-header-area {
+      display: none !important;
+    }
+    body.teacher-view-mode .main-container {
+      margin-top: 20px !important;
+      padding-top: 20px !important;
+    }
+
     /* --- צמצום ודחיסת לוח הזמנים היומי לחסכון בגלילה --- */
     body:not(.kiosk-mode) .teacher-row {
       margin-bottom: 10px !important;
@@ -344,6 +354,7 @@
   let GLOBAL_DB = null;
   let lastSearchResults = [];
   let isStudentMode = false;
+  let isTeacherMode = false; // דגל חדש לזיהוי כניסת מורה
   let identifiedStudent = "";
   let currentActiveDayGlobal = "ראשון";
 
@@ -364,18 +375,17 @@
         currentActiveDayGlobal = urlDay;
       }
 
-      // שינוי חכם: אם מדובר בקישור מורה (מכיל יום בשבוע), נכנסים ישירות בלי דרישת סיסמה
+      // בדיקה ממוקדת: אם יש פרמטר של יום, מפעילים מצב מורה ייעודי
       if (urlDay && validDays.includes(urlDay)) {
-        isStudentMode = false;
+        isTeacherMode = true;
+        document.body.classList.add('teacher-view-mode'); // מחיל עיצוב מסתיר ומנקה
         startApp();
       } 
-      // כניסה מאובטחת מוגנת לתלמידים
       else if (urlPw === GLOBAL_DB.studentPw && urlId && GLOBAL_DB.studentsMapping[urlId]) {
         isStudentMode = true;
         identifiedStudent = GLOBAL_DB.studentsMapping[urlId];
         startApp();
       } 
-      // ברירת מחדל - כניסת מנהל מערכת עם סיסמה
       else {
         document.getElementById('authScreen').style.display = 'block';
       }
@@ -405,6 +415,8 @@
     const inputPw = document.getElementById('accessPw').value.trim();
     if (inputPw === GLOBAL_DB.adminPw) {
       isStudentMode = false;
+      isTeacherMode = false;
+      document.body.classList.remove('teacher-view-mode');
       document.getElementById('authScreen').style.display = 'none';
       startApp();
     } else {
@@ -427,8 +439,8 @@
       });
     }
     
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('day') && !isStudentMode) {
+    // ניתוב ממוקד ומיידי לטאב הלו"ז היומי
+    if (isTeacherMode) {
       const dailyTriggerBtn = document.querySelector('[data-bs-target="#tab-daily"]');
       if (dailyTriggerBtn) {
         dailyTriggerBtn.click(); 
@@ -694,6 +706,9 @@
   document.addEventListener('fullscreenchange', () => {
     if (!document.fullscreenElement) {
       document.body.classList.remove('kiosk-mode');
+      if (isTeacherMode) {
+        document.body.classList.add('teacher-view-mode');
+      }
       drawDaily(currentActiveDayGlobal);
     }
   });
