@@ -109,7 +109,7 @@
     .slot-room { font-size: 0.85rem; color: var(--accent); padding: 10px 14px 0 14px; font-weight: 700; }
     .slot-content { font-size: 0.95rem; padding: 8px 14px 14px 14px; color: var(--text-main); font-weight: 600; flex-grow: 1; }
 
-    /* עיצוב שעון החול (פס התקדמות) */
+    /* עיצוב שעון החול - מעודכן לימין לשמאל עבור עברית RTL */
     .slot-card.active-slot {
       border: 2px solid var(--accent) !important;
       background-color: #f0fdfa !important;
@@ -121,7 +121,7 @@
     .progress-bar-sand {
       position: absolute;
       bottom: 0;
-      left: 0;
+      right: 0;            /* מיושר לימין - יתמלא לכיוון שמאל */
       height: 5px;
       background-color: var(--accent);
       width: 0%;
@@ -382,7 +382,6 @@
     setTimeout(() => copyBtn.innerHTML = '<i class="fa-solid fa-link me-1"></i> העתק קישור מוגן לתלמיד', 2500);
   }
 
-  // פונקציית עזר להמרת מחרוזת שעה (למשל "16:30") למספר עשרוני
   function parseTimeToDecimal(timeStr) {
     const parts = timeStr.trim().split(':');
     if (parts.length < 2) return 0;
@@ -418,7 +417,6 @@
       const headers = rows[0]; 
       let globalHours = {};    
 
-      // חישוב זמן עשרוני נוכחי
       const now = new Date();
       const currentTimeDecimal = now.getHours() + (now.getMinutes() / 60);
 
@@ -450,7 +448,6 @@
           if (row[j] && row[j].trim()) {
             hasDataInRow = true;
 
-            // לוגיקת זיהוי שעה פעילה לטובת שעון חול
             let isActiveSlot = false;
             let progressPercentage = 0;
             const timeRangeString = headers[j];
@@ -532,7 +529,6 @@
     drawDaily(activeDay);
   }
 
-  // האזנה ליציאה ידנית ממסך מלא (למשל ע"י מקש Escape) כדי לעדכן את העיצוב
   document.addEventListener('fullscreenchange', () => {
     if (!document.fullscreenElement) {
       document.body.classList.remove('kiosk-mode');
@@ -540,7 +536,6 @@
     }
   });
 
-  // רענון אוטומטי שקט של פסי ההתקדמות ושעוני החול כל 30 שניות בלשונית הלוח היומי
   setInterval(() => {
     const dailyTab = document.getElementById('tab-daily');
     if (dailyTab && dailyTab.classList.contains('active') && dailyTab.style.display !== 'none') {
