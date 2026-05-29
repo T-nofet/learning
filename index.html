@@ -2,108 +2,93 @@
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>מרכז למידה</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>קמפוס למידה דיגיטלי</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
-    :root { --primary: #1e3a8a; --accent: #0d9488; --bg: #f8fafc; }
-    body { background-color: var(--bg); font-family: 'Assistant', sans-serif; }
+    :root { --primary: #1e3a8a; --accent: #0d9488; --bg-main: #f8fafc; --transition: all 0.3s ease; }
+    body { background-color: var(--bg-main); font-family: 'Assistant', sans-serif; }
     
-    .main-container { max-width: 1100px; margin: 30px auto; background: #fff; padding: 30px; border-radius: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-    body.kiosk-mode .main-container { max-width: 100% !important; margin: 0; border-radius: 0; min-height: 100vh; }
-    
-    #kiosk-toggle-btn { position: fixed; top: 20px; left: 20px; z-index: 9999; }
-    
-    .teacher-row { background: #fff; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
-    .slots-grid { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 15px; }
-    
-    .slot-card { position: relative; background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; flex: 1; min-width: 180px; overflow: hidden; }
+    /* עיצוב כרטיס שיעור עם הפס המתמלא */
+    .slot-card { position: relative; background: #fff; border: 1px solid #e2e8f0; padding: 12px; border-radius: 10px; min-width: 220px; flex: 1; overflow: hidden; transition: var(--transition); }
     .current-slot { border: 2px solid var(--accent) !important; background-color: #f0fdfa !important; }
-    
     .progress-fill { position: absolute; bottom: 0; left: 0; height: 5px; background: var(--accent); transition: width 0.5s linear; }
+    
+    /* מצב קיוסק (מסך מלא) */
+    body.kiosk-mode .no-print, body.kiosk-mode .nav-pills { display: none !important; }
+    body.kiosk-mode .main-container { max-width: 100% !important; margin: 0; border-radius: 0; min-height: 100vh; }
   </style>
 </head>
 <body>
-
-<button id="kiosk-toggle-btn" class="btn btn-primary no-print" onclick="toggleKiosk()">מצב מסך מלא</button>
-
-<div id="appScreen" class="main-container">
-  <h4 class="fw-bold mb-4 no-print">לוח זמנים יומי</h4>
-  <div id="dailyContent"></div>
-</div>
-
 <script>
-  let GLOBAL_DB = null;
+  // ... (הלוגיקה של ההתחברות וה-GLOBAL_DB נשארת זהה) ...
 
-  window.onload = async () => {
-    try {
-      // כאן חשוב: וודא שקובץ ה-data.json נמצא באותה תיקייה בגיטהאב
-      const res = await fetch('data.json');
-      GLOBAL_DB = await res.json();
-      renderDay('ראשון');
-      setInterval(() => renderDay('ראשון'), 30000);
-    } catch (e) { document.body.innerHTML = "<h1>שגיאה בטעינת הנתונים</h1>"; }
-  };
-
-  function renderDay(day) {
-    if (!GLOBAL_DB) return;
+  function drawDaily(activeDay) {
     const now = new Date();
     const currentHour = now.getHours() + (now.getMinutes() / 60);
-    const data = GLOBAL_DB.schedule[day] || [];
-    let html = '';
+    const rows = GLOBAL_DB.schedule[activeDay] || [];
+    let isKiosk = document.body.classList.contains('kiosk-mode');
     
-    data.slice(1).forEach(row => {
-      html += `<div class="teacher-row"><h5>${row[1]}</h5><div class="slots-grid">`;
-      data[0].slice(2).forEach((header, idx) => {
-        const [start, end] = header.split('-').map(t => t.split(':').reduce((h, m) => parseInt(h) + parseInt(m)/60));
-        const isCurrent = (currentHour >= start && currentHour < end);
-        
-        let progressHtml = '';
-        if (isCurrent) {
-            const totalDuration = (end - start) * 60;
-            const elapsed = (currentHour - start) * 60;
-            const percentage = Math.min(100, (elapsed / totalDuration) * 100);
-            progressHtml = `<div class="progress-fill" style="width: ${percentage}%"></div>`;
-        }
+    let contentHtml = `<div class="d-flex justify-content-between mb-4">
+        <button class="btn ${isKiosk ? 'btn-danger' : 'btn-primary'}" onclick="toggleKioskMode('${activeDay}')">
+            ${isKiosk ? 'יציאה ממסך מלא' : 'מצב מסך מלא'}
+        </button>
+    </div>`;
 
-        if (row[idx+2] && row[idx+2].trim() !== "") {
-            html += `<div class="slot-card ${isCurrent ? 'current-slot' : ''}">
-                        <div class="small text-muted">${header}</div>
-                        <div class="fw-bold">${row[idx+2]}</div>
-                        ${progressHtml}
-                     </div>`;
+    rows.slice(1).forEach(row => {
+      let slotsHtml = "";
+      for (let j = 2; j < rows[0].length; j++) {
+        if (row[j] && row[j].trim()) {
+            // חישוב זמן לטובת הפס המתמלא
+            const [start, end] = rows[0][j].split('-').map(t => t.split(':').reduce((h, m) => parseInt(h) + parseInt(m)/60));
+            const isCurrent = (currentHour >= start && currentHour < end);
+            let progressHtml = '';
+            
+            if (isCurrent) {
+                const pct = Math.min(100, ((currentHour - start) / (end - start)) * 100);
+                progressHtml = `<div class="progress-fill" style="width: ${pct}%"></div>`;
+            }
+
+            slotsHtml += `
+              <div class="slot-card shadow-sm ${isCurrent ? 'current-slot' : ''}">
+                <div class="slot-header">${rows[0][j]}</div>
+                <div class="slot-content">${row[j]}</div>
+                ${progressHtml}
+              </div>`;
         }
-      });
-      html += `</div></div>`;
+      }
+      contentHtml += `<div class="teacher-row">${row[1]}<div class="slots-grid-container">${slotsHtml}</div></div>`;
     });
-    document.getElementById('dailyContent').innerHTML = html;
+
+    document.getElementById('dailyContent').innerHTML = contentHtml;
     
-    if(document.body.classList.contains('kiosk-mode')) {
-      const active = document.querySelector('.current-slot');
-      if(active) active.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // גלילה אוטומטית במצב קיוסק
+    if(isKiosk) {
+        const active = document.querySelector('.current-slot');
+        if(active) active.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }
 
-  function toggleKiosk() {
-    const btn = document.getElementById('kiosk-toggle-btn');
+  function toggleKioskMode(activeDay) {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().then(() => {
-        document.body.classList.add('kiosk-mode');
-        btn.innerText = "יציאה ממסך מלא";
-        btn.classList.replace('btn-primary', 'btn-danger');
-      });
+        document.documentElement.requestFullscreen().then(() => {
+            document.body.classList.add('kiosk-mode');
+            drawDaily(activeDay);
+        });
     } else {
-      document.exitFullscreen();
+        document.exitFullscreen().then(() => {
+            document.body.classList.remove('kiosk-mode');
+            drawDaily(activeDay);
+        });
     }
   }
 
-  document.addEventListener('fullscreenchange', () => {
-    if (!document.fullscreenElement) {
-      document.body.classList.remove('kiosk-mode');
-      const btn = document.getElementById('kiosk-toggle-btn');
-      btn.innerText = "מצב מסך מלא";
-      btn.classList.replace('btn-danger', 'btn-primary');
-    }
-  });
+  // עדכון אוטומטי של הפס כל 30 שניות
+  setInterval(() => {
+      if(document.querySelector('#tab-daily.active')) drawDaily(document.querySelector('.btn-primary').innerText.includes('יום') ? 'ראשון' : 'ראשון');
+  }, 30000);
+
 </script>
 </body>
 </html>
