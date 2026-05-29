@@ -2,35 +2,31 @@
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>מערכת ניהול מרכז למידה</title>
+  <title>מרכז למידה</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
-    :root { --primary: #1e3a8a; --accent: #0d9488; --bg: #f8fafc; }
-    body { background-color: var(--bg); font-family: 'Assistant', sans-serif; }
+    :root { --primary: #1e3a8a; --accent: #0d9488; }
+    body { background-color: #f8fafc; font-family: 'Assistant', sans-serif; }
     
-    /* מכלים */
-    .main-container { max-width: 1100px; margin: 30px auto; background: #fff; padding: 30px; border-radius: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-    
-    /* עיצוב המערכת */
-    .teacher-row { background: #fff; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
-    .slots-grid { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 15px; }
-    .slot-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; flex: 1; min-width: 180px; }
-    .current-slot { border: 3px solid var(--accent) !important; background-color: #f0fdfa !important; transform: scale(1.02); }
-
-    /* מצב קיוסק (מסך מלא) */
-    body.kiosk-mode { padding: 0 !important; }
+    /* מכולות ותצוגה */
+    .main-container { max-width: 1100px; margin: 30px auto; background: #fff; padding: 30px; border-radius: 20px; }
     body.kiosk-mode .main-container { max-width: 100% !important; margin: 0; border-radius: 0; min-height: 100vh; }
     
     /* ניהול כפתורים */
     .kiosk-only { display: none; }
-    body.kiosk-mode .no-print { display: none !important; }
-    body.kiosk-mode .kiosk-only { display: block !important; position: fixed; top: 20px; left: 20px; z-index: 9999; }
-    
-    /* ציר זמן אנכי */
-    #timeline-container { display: none; position: fixed; right: 20px; top: 100px; height: 70vh; width: 4px; background: #e2e8f0; z-index: 1000; }
-    #time-pointer { position: absolute; right: -8px; width: 20px; height: 20px; background: var(--accent); border-radius: 50%; transition: top 0.5s linear; }
+    body.kiosk-mode .kiosk-only { display: block !important; position: fixed; top: 10px; right: 10px; z-index: 9999; }
+    body.kiosk-mode .no-kiosk { display: none; }
+
+    /* ציר זמן אנכי - עכשיו מוודאים שהוא גלוי */
+    #timeline-container { display: none; position: fixed; right: 10px; top: 80px; height: 80vh; width: 6px; background: #e2e8f0; z-index: 1000; border-radius: 3px; }
     body.kiosk-mode #timeline-container { display: block; }
+    
+    #time-pointer { position: absolute; right: -7px; width: 20px; height: 20px; background: var(--accent); border-radius: 50%; transition: top 0.5s linear; }
+
+    .teacher-row { background: #fff; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+    .slots-grid { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 15px; }
+    .slot-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; flex: 1; min-width: 180px; }
+    .current-slot { border: 3px solid var(--accent) !important; background-color: #f0fdfa !important; }
   </style>
 </head>
 <body>
@@ -40,11 +36,10 @@
 <div id="timeline-container"><div id="time-pointer"></div></div>
 
 <div id="appScreen" class="main-container">
-  <div class="d-flex justify-content-between align-items-center mb-4 no-print">
+  <div class="d-flex justify-content-between align-items-center mb-4 no-kiosk">
     <h4 class="fw-bold">ניהול מרכז למידה</h4>
     <button class="btn btn-primary" onclick="toggleKiosk()">מצב מסך מלא</button>
   </div>
-  
   <div id="dailyContent"></div>
 </div>
 
@@ -53,12 +48,10 @@
   const START_HOUR = 8, END_HOUR = 16;
 
   window.onload = async () => {
-    try {
-      const res = await fetch('data.json');
-      GLOBAL_DB = await res.json();
-      renderDay('ראשון');
-      setInterval(() => renderDay('ראשון'), 60000);
-    } catch (e) { console.error("Error loading data:", e); }
+    const res = await fetch('data.json');
+    GLOBAL_DB = await res.json();
+    renderDay('ראשון');
+    setInterval(() => renderDay('ראשון'), 60000);
   };
 
   function renderDay(day) {
@@ -100,10 +93,12 @@
   }
 
   function toggleKiosk() {
-    document.body.classList.toggle('kiosk-mode');
-    if (!document.fullscreenElement) {
+    const body = document.body;
+    body.classList.toggle('kiosk-mode');
+    
+    if (body.classList.contains('kiosk-mode')) {
         document.documentElement.requestFullscreen().catch(err => console.log(err));
-    } else {
+    } else if (document.fullscreenElement) {
         document.exitFullscreen();
     }
     updateStatus();
