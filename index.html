@@ -2,50 +2,429 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>מרכז למידה</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מרכז למידה דיגיטלי</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        body { background: #f8fafc; font-family: sans-serif; }
-        .lesson-card { background: white; padding: 15px; margin: 10px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        :root {
+            --primary-color: #1e3a8a;
+            --accent-color: #0d9488;
+            --bg-color: #f8fafc;
+            --card-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body { 
+            background-color: var(--bg-color); 
+            font-family: 'Assistant', sans-serif; 
+            color: #1e293b;
+        }
+
+        /* עיצוב דף הבית הראשי - 3 כפתורים גדולים */
+        .dashboard-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 20px;
+            text-align: center;
+            border: none;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            transition: var(--card-smooth);
+            cursor: pointer;
+            height: 100%;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .dashboard-icon {
+            font-size: 3.5rem;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+        }
+
+        /* עיצוב כרטיסיות הלוח היומי */
+        .time-block {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        .time-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            border-bottom: 2px solid #edf2f7;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .lessons-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .lesson-node {
+            position: relative;
+            background: #f1f5f9;
+            border-radius: 12px;
+            padding: 15px;
+            min-width: 250px;
+            flex: 1;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+        
+        /* סימון שיעור פעיל כרגע */
+        .active-lesson {
+            border: 2px solid var(--accent-color) !important;
+            background-color: #f0fdfa !important;
+        }
+        .progress-bar-sand {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 5px;
+            background-color: var(--accent-color);
+            width: 0%;
+            transition: width 1s linear;
+        }
+
+        /* מצב קיוסק - מסך מלא מוחלט */
+        body.kiosk-activated {
+            background-color: #ffffff;
+        }
+        body.kiosk-activated .no-kiosk {
+            display: none !important;
+        }
+        body.kiosk-activated .kiosk-container {
+            max-width: 100% !important;
+            width: 100% !important;
+            padding: 30px !important;
+            margin: 0 !important;
+        }
+        
+        #exit-kiosk-floating {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 99999;
+        }
+        body.kiosk-activated #exit-kiosk-floating {
+            display: block;
+        }
+
+        /* כפתור חזרה לדף הבית */
+        .btn-back {
+            background: #e2e8f0;
+            color: #475569;
+            border-radius: 10px;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
-    <div id="app" class="container mt-5">
-        <h2 class="text-center">לוח זמנים יומי</h2>
-        <div id="content">טוען נתונים...</div>
+
+<button id="exit-kiosk-floating" class="btn btn-danger shadow-lg" onclick="leaveKioskMode()">
+    <i class="fa-solid fa-screen-users me-2"></i>יציאה ממסך מלא
+</button>
+
+<div class="container py-5 kiosk-container">
+
+    <div id="view-home">
+        <h1 class="text-center fw-bold mb-5 mt-3">ברוכים הבאים למרכז הלמידה</h1>
+        
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-4">
+                <div class="dashboard-card" onclick="switchView('view-daily')">
+                    <i class="fa-solid fa-calendar-day dashboard-icon"></i>
+                    <h3 class="fw-bold text-dark">לוח זמנים יומי</h3>
+                    <p class="text-muted">צפייה בשיעורים ומיקומי חדרים בזמן אמת</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="dashboard-card" onclick="switchView('view-students')">
+                    <i class="fa-solid fa-user-graduate dashboard-icon"></i>
+                    <h3 class="fw-bold text-dark">ניהול תלמידים</h3>
+                    <p class="text-muted">חיפוש מערכת אישית לפי שם תלמיד</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="dashboard-card" onclick="switchView('view-archive')">
+                    <i class="fa-solid fa-box-archive dashboard-icon"></i>
+                    <h3 class="fw-bold text-dark">ארכיון היסטורי</h3>
+                    <p class="text-muted">צפייה בנתוני עבר ודוחות שנשמרו</p>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <script>
-        // טעינת הנתונים מה-JSON שנוצר מה-Google Sheets
-        async function loadData() {
-            try {
-                const response = await fetch('data.json');
-                const data = await response.json();
-                renderData(data);
-            } catch (e) {
-                document.getElementById('content').innerHTML = "שגיאה בטעינת נתונים. וודא ש-data.json קיים ב-GitHub.";
-            }
-        }
+    <div id="view-daily" style="display: none;">
+        <div class="d-flex justify-content-between align-items-center mb-4 no-kiosk">
+            <button class="btn btn-back px-3" onclick="switchView('view-home')">
+                <i class="fa-solid fa-arrow-right me-2"></i>חזרה לתפריט
+            </button>
+            <h2 class="fw-bold m-0 text-center flex-grow-1">ניהול מרכז למידה - לוח יומי</h2>
+            <button class="btn btn-primary px-3" onclick="enterKioskMode()">
+                <i class="fa-solid fa-expand me-2"></i>מצב מסך מלא
+            </button>
+        </div>
 
-        function renderData(data) {
-            // כאן אנחנו מניחים ש-data.schedule הוא אובייקט עם ימים
-            const day = "חמישי"; // ניתן להפוך לדינמי
-            const schedule = data.schedule[day];
-            let html = "";
+        <div class="d-flex justify-content-center gap-2 mb-4 no-kiosk">
+            <button class="btn btn-outline-primary day-filter-btn active" onclick="loadDailyDay('ראשון')">ראשון</button>
+            <button class="btn btn-outline-primary day-filter-btn" onclick="loadDailyDay('שני')">שני</button>
+            <button class="btn btn-outline-primary day-filter-btn" onclick="loadDailyDay('שלישי')">שלישי</button>
+            <button class="btn btn-outline-primary day-filter-btn" onclick="loadDailyDay('רביעי')">רביעי</button>
+            <button class="btn btn-outline-primary day-filter-btn" onclick="loadDailyDay('חמישי')">חמישי</button>
+        </div>
+
+        <div id="daily-schedule-feed">
+            <p class="text-center text-muted">טוען נתונים מהמערכת...</p>
+        </div>
+    </div>
+
+    <div id="view-students" style="display: none;">
+        <button class="btn btn-back mb-4" onclick="switchView('view-home')">
+            <i class="fa-solid fa-arrow-right me-2"></i>חזרה לתפריט
+        </button>
+        <h2 class="fw-bold mb-4">חיפוש מערכת שעות לפי תלמיד</h2>
+        <input type="text" id="student-search-input" class="form-control form-control-lg mb-4 shadow-sm" placeholder="הקלד שם תלמיד לחיפוש..." oninput="triggerStudentSearch()">
+        <div id="student-results-area" class="row row-cols-1 row-cols-md-3 g-3"></div>
+    </div>
+
+    <div id="view-archive" style="display: none;">
+        <button class="btn btn-back mb-4" onclick="switchView('view-home')">
+            <i class="fa-solid fa-arrow-right me-2"></i>חזרה לתפריט
+        </button>
+        <h2 class="fw-bold mb-4">ארכיון דיווחים היסטורי</h2>
+        <div class="alert alert-info">הארכיון מסונכרן אוטומטית מול מסמך ה-Google Sheets שלך.</div>
+        <div id="archive-area" class="table-responsive bg-white p-3 rounded shadow-sm">
+            <p class="text-muted text-center">אין מידע בארכיון הנוכחי.</p>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    let DATA_SOURCE = null;
+    let selectedDayGlobal = 'ראשון';
+
+    // 1. טעינת בסיס הנתונים מ-data.json במכה אחת
+    window.onload = async () => {
+        try {
+            const res = await fetch('data.json');
+            DATA_SOURCE = await res.json();
             
-            if (schedule) {
-                schedule.forEach((row, index) => {
-                    if (index > 0) { // לדלג על שורת הכותרת
-                        html += `<div class="lesson-card">
-                            <strong>${row[1]}</strong>: ${row[2] || ""} | ${row[3] || ""}
-                        </div>`;
-                    }
-                });
-            }
-            document.getElementById('content').innerHTML = html || "לא נמצאו נתונים ליום זה";
+            // קביעת היום הנוכחי במערכת לפי היום בשבוע של המחשב
+            const daysMap = ['ראשון', 'ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'ראשון'];
+            const todayIndex = new Date().getDay();
+            selectedDayGlobal = daysMap[todayIndex];
+            
+            // עדכון הכפתור הפעיל בטאב היומי
+            document.querySelectorAll('.day-filter-btn').forEach(btn => {
+                if(btn.textContent.trim() === selectedDayGlobal) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            buildDailyView(selectedDayGlobal);
+        } catch (e) {
+            document.getElementById('daily-schedule-feed').innerHTML = '<div class="alert alert-danger text-center">שגיאה בקריאת קובץ הנתונים data.json</div>';
+        }
+    };
+
+    // 2. מעבר חלוק בין דפים/מבטים במערכת
+    function switchView(viewId) {
+        ['view-home', 'view-daily', 'view-students', 'view-archive'].forEach(id => {
+            document.getElementById(id).style.display = (id === viewId) ? 'block' : 'none';
+        });
+        if (viewId === 'view-daily') {
+            buildDailyView(selectedDayGlobal);
+        }
+    }
+
+    // 3. החלפת ימים ידנית בלוח היומי
+    function loadDailyDay(dayName) {
+        selectedDayGlobal = dayName;
+        document.querySelectorAll('.day-filter-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.textContent.trim() === dayName);
+        });
+        buildDailyView(dayName);
+    }
+
+    // 4. בניית הארכיטקטורה החדשה של הלוח היומי (לפי שעות -> מורים)
+    function buildDailyView(day) {
+        if (!DATA_SOURCE || !DATA_SOURCE.schedule || !DATA_SOURCE.schedule[day]) {
+            document.getElementById('daily-schedule-feed').innerHTML = '<p class="text-center text-muted">אין נתונים זמינים ליום זה.</p>';
+            return;
         }
 
-        loadData();
-    </script>
+        const rows = DATA_SOURCE.schedule[day];
+        const headers = rows[0]; // שורת הכותרת עם השעות
+        let mainFeedHtml = '';
+
+        // קבלת זמן נוכחי בפורמט עשרוני לצורך השוואה
+        const now = new Date();
+        const currentTimeDecimal = now.getHours() + (now.getMinutes() / 60);
+
+        // רצים שעה-שעה (החל מעמודה 2 שבה מתחילות השעות)
+        for (let cellIndex = 2; cellIndex < headers.length; cellIndex++) {
+            const timeRangeString = headers[cellIndex];
+            if (!timeRangeString || !timeRangeString.includes('-')) continue;
+
+            // פירוק שעת התחלה וסיום
+            const [startStr, endStr] = timeRangeString.split('-');
+            const startDecimal = parseTimeToDecimal(startStr);
+            const endDecimal = parseTimeToDecimal(endStr);
+            
+            const isCurrentTimeSlot = (currentTimeDecimal >= startDecimal && currentTimeDecimal < endDecimal);
+            
+            let nodesHtmlForThisHour = '';
+
+            // בדיקה אילו מורים מלמדים בשעה הזו
+            rows.slice(1).forEach(row => {
+                const teacherName = row[1];
+                const lessonContent = row[cellIndex];
+
+                if (lessonContent && lessonContent.trim() !== '') {
+                    let sandProgressHtml = '';
+                    if (isCurrentTimeSlot) {
+                        const totalDuration = endDecimal - startDecimal;
+                        const elapsed = currentTimeDecimal - startDecimal;
+                        const percentage = Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
+                        sandProgressHtml = `<div class="progress-bar-sand" style="width: ${percentage}%"></div>`;
+                    }
+
+                    nodesHtmlForThisHour += `
+                        <div class="lesson-node shadow-sm ${isCurrentTimeSlot ? 'active-lesson' : ''}">
+                            <div class="fw-bold text-dark mb-1">${lessonContent}</div>
+                            <div class="text-muted small"><i class="fa-solid fa-user-tie me-1"></i>${teacherName}</div>
+                            ${sandProgressHtml}
+                        </div>
+                    `;
+                }
+            });
+
+            // אם נמצאו שיעורים בשעה הזו, נרנדר את הבלוק הראשי
+            if (nodesHtmlForThisHour !== '') {
+                mainFeedHtml += `
+                    <div class="time-block ${isCurrentTimeSlot ? 'current-time-block' : ''}">
+                        <div class="time-header"><i class="fa-regular fa-clock me-2"></i>${timeRangeString}</div>
+                        <div class="lessons-grid">${nodesHtmlForThisHour}</div>
+                    </div>
+                `;
+            }
+        }
+
+        document.getElementById('daily-schedule-feed').innerHTML = mainFeedHtml || '<p class="text-center text-muted">אין שיעורים קבועים ביום זה.</p>';
+        
+        // גלילה אוטומטית לשיעור הפעיל במצב מסך מלא
+        if (document.body.classList.contains('kiosk-activated')) {
+            setTimeout(() => {
+                const firstActive = document.querySelector('.active-lesson');
+                if (firstActive) {
+                    firstActive.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 300);
+        }
+    }
+
+    // פונקציית עזר להמרת שעה (10:30) לעשרוני
+    function parseTimeToDecimal(timeStr) {
+        const parts = timeStr.trim().split(':');
+        if(parts.length < 2) return 0;
+        return parseInt(parts[0], 10) + (parseInt(parts[1], 10) / 60);
+    }
+
+    // ================= מנוע חיפוש תלמידים =================
+    function triggerStudentSearch() {
+        const query = document.getElementById('student-search-input').value.trim().toLowerCase();
+        const resultsArea = document.getElementById('student-results-area');
+        
+        if (query.length < 2) {
+            resultsArea.innerHTML = '';
+            return;
+        }
+
+        let outputHtml = '';
+        const weekDays = ["ראשון", "שני", "שלישי", "רביעי", "חמישי"];
+
+        weekDays.forEach(day => {
+            if (!DATA_SOURCE.schedule[day]) return;
+            
+            let dayLessons = '';
+            const rows = DATA_SOURCE.schedule[day];
+            const headers = rows[0];
+
+            rows.slice(1).forEach(row => {
+                const teacher = row[1];
+                for (let i = 2; i < row.length; i++) {
+                    const content = row[i];
+                    if (content && content.toLowerCase().includes(query)) {
+                        dayLessons += `
+                            <div class="p-2 border-bottom bg-white rounded mb-2 small shadow-sm">
+                                <span class="badge bg-primary mb-1">${headers[i]}</span>
+                                <div><b>שיעור:</b> ${content}</div>
+                                <div class="text-muted text-end" style="font-size:0.75rem;">מורה: ${teacher}</div>
+                            </div>
+                        `;
+                    }
+                }
+            });
+
+            if (dayLessons !== '') {
+                outputHtml += `
+                    <div class="col">
+                        <div class="card p-3 h-100 border-0 shadow-sm" style="background:#f1f5f9;">
+                            <h5 class="fw-bold border-bottom pb-2 text-primary"><i class="fa-solid fa-calendar-day me-2"></i>יום ${day}</h5>
+                            ${dayLessons}
+                        </div>
+                    </div>
+                `;
+            }
+        });
+
+        resultsArea.innerHTML = outputHtml || '<div class="col-12 text-center text-muted py-4">לא נמצאו התאמות לתלמיד המבוקש</div>';
+    }
+
+    // ================= ניהול מצב מסך מלא (Kiosk) =================
+    function enterKioskMode() {
+        document.body.classList.add('kiosk-activated');
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+        }
+        buildDailyView(selectedDayGlobal);
+    }
+
+    function leaveKioskMode() {
+        document.body.classList.remove('kiosk-activated');
+        if (document.fullscreenElement && document.exitFullscreen) {
+            document.exitFullscreen();
+        }
+        buildDailyView(selectedDayGlobal);
+    }
+
+    // האזנה לשינויי מסך מלא ידניים של המשתמש (למשל לחיצה על Escape)
+    document.addEventListener('fullscreenchange', () => {
+        if (!document.fullscreenElement) {
+            document.body.classList.remove('kiosk-activated');
+            buildDailyView(selectedDayGlobal);
+        }
+    });
+
+    // רענון אוטומטי של פסי ההתקדמות והשעות כל 30 שניות
+    setInterval(() => {
+        if (document.getElementById('view-daily').style.display === 'block') {
+            buildDailyView(selectedDayGlobal);
+        }
+    }, 30000);
+</script>
+
 </body>
 </html>
