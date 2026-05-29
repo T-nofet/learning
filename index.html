@@ -287,7 +287,7 @@
 
   <ul class="nav nav-pills nav-justified mb-4 no-print" id="topNav">
     <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-personal">👤 מבט תלמיד אישי</button></li>
-    <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-daily" onclick="drawDaily('ראשון')">📅 לוח זמנים יומי</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-daily" onclick="drawDaily(currentActiveDayGlobal)">📅 לוח זמנים יומי</button></li>
     <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-archive" onclick="applyFilters()">📊 ארכיון דיווחים</button></li>
   </ul>
 
@@ -355,8 +355,15 @@
       const urlParams = new URLSearchParams(window.location.search);
       const urlPw = urlParams.get('pw') || "";
       const urlId = urlParams.get('id') || "";
+      const urlDay = urlParams.get('day') || ""; // תמיכה בקבלת יום מהכתובת
 
       document.getElementById('loader').style.display = 'none';
+
+      // בדיקה אם קיים יום מוגדר בכתובת והוא תקין
+      const validDays = ["ראשון", "שני", "שלישי", "רביעי", "חמישי"];
+      if (urlDay && validDays.includes(urlDay)) {
+        currentActiveDayGlobal = urlDay;
+      }
 
       if (urlPw === GLOBAL_DB.studentPw && urlId && GLOBAL_DB.studentsMapping[urlId]) {
         isStudentMode = true;
@@ -412,6 +419,17 @@
         GLOBAL_DB.availableTeachers.forEach(t => el.innerHTML += `<option value="${t}">${t}</option>`);
       });
     }
+    
+    // ניתוב אוטומטי אם הגיעו עם פרמטר של יום ב-URL (למשל מורים)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('day') && !isStudentMode) {
+      const dailyTriggerBtn = document.querySelector('[data-bs-target="#tab-daily"]');
+      if (dailyTriggerBtn) {
+        dailyTriggerBtn.click(); // מעביר לטאב היומי באופן אוטומטי
+        return;
+      }
+    }
+
     if (isStudentMode) {
       const pInput = document.getElementById('pSearch');
       pInput.value = identifiedStudent;
@@ -468,6 +486,18 @@
     setTimeout(() => copyBtn.innerHTML = '<i class="fa-solid fa-link me-1"></i> העתק קישור מוגן לתלמיד', 2500);
   }
 
+  // פונקציה מינימליסטית חדשה להעתקת קישור ישיר ליום ספציפי
+  function copyDayUrl(dayName) {
+    const btn = document.getElementById('copyDayBtn');
+    const baseUrl = window.location.href.split('?')[0];
+    const finalUrl = `${baseUrl}?day=${dayName}`;
+    navigator.clipboard.writeText(finalUrl);
+    if(btn) {
+      btn.innerHTML = "✅ הקישור הועתק!";
+      setTimeout(() => btn.innerHTML = `<i class="fa-solid fa-share-nodes me-1"></i>העתק קישור ליום ${dayName}`, 2000);
+    }
+  }
+
   function parseTimeToDecimal(timeStr) {
     const parts = timeStr.trim().split(':');
     if (parts.length < 2) return 0;
@@ -511,12 +541,17 @@
           <div style="flex: 1;"></div>
         </div>`;
     } else {
-      // --- מבנה מצב רגיל (מחוץ למסך מלא) ---
+      // --- מבנה מצב רגיל (מחוץ למסך מלא) + כפתור שיתוף מינימליסטי ---
       tabsHtml += `
-        <div class="d-flex justify-content-center align-items-center gap-3 mt-3 px-2">
+        <div class="d-flex justify-content-center align-items-center flex-wrap gap-3 mt-3 px-2">
           <h5 class="fw-bold m-0 text-dark">
             מערכת שעות - יום ${activeDay}
           </h5>
+          <button id="copyDayBtn" class="btn btn-sm btn-outline-success rounded-pill px-3 py-1.5 fw-bold" 
+                  style="font-size: 0.85rem;" 
+                  onclick="copyDayUrl('${activeDay}')">
+            <i class="fa-solid fa-share-nodes me-1"></i>העתק קישור ליום ${activeDay}
+          </button>
           <button class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1.5 fw-bold" 
                   style="font-size: 0.85rem;" 
                   onclick="toggleKioskMode('${activeDay}')">
@@ -598,7 +633,6 @@
               let subjectOrRoom = parts.length > 1 ? parts[0].trim() : "";
               let info = parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim();
 
-              // שינוי מבני: הזרקה של המקצוע והחדר בשורה אחת שטוחה וחסכונית במקום
               slotsHtml += `
                 <div class="slot-card shadow-sm ${activeClassHtml}">
                   <div class="slot-header">
