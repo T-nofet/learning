@@ -224,7 +224,7 @@
 <div id="authScreen" class="container" style="display: none;">
   <div class="auth-card text-center">
     <div class="bg-primary-light d-inline-flex p-3 rounded-circle mb-3"><i class="fa-solid fa-shield-halved text-primary fs-3"></i></div>
-    h5 class="fw-bold mb-1">מערכת קשר ולוחות זמנים</h5>
+    <h5 class="fw-bold mb-1">מערכת קשר ולוחות זמנים</h5>
     <p class="text-muted small mb-4">אנא הזן סיסמת גישה להמשך</p>
     <div class="mb-3 text-start">
       <input type="password" id="accessPw" class="form-control rounded-3" placeholder="סיסמת כניסה" onkeydown="if(event.key === 'Enter') handleAuth()">
@@ -454,11 +454,11 @@
     
     if (isKiosk) {
       // --- מבנה מצב מסך מלא (קיוסק) ---
-      // כפתור יציאה נדחף רחוק ימינה, השם והשעה נשארים צמודים במרכז
+      // כפתור יציאה בימין קיצוני, השם והשעה נשארים צמודים במרכז
       tabsHtml += `
         <div class="d-flex justify-content-between align-items-center mt-3 px-2">
           
-          <div style="flex: 1;" class="text-start">
+          <div style="flex: 1;" class="text-end">
             <button class="btn btn-sm btn-danger rounded-pill px-3 py-1.5 fw-bold" 
                     style="font-size: 0.85rem;" 
                     onclick="toggleKioskMode('${activeDay}')">
