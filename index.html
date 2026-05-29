@@ -212,7 +212,7 @@
       padding: 16px 14px !important;
     }
 
-    /* --- צמצום ודחיסת לוח הזמנים היומי (במצב רגיל בלבד לחסכון בגלילה) --- */
+    /* --- צמצום ודחיסת לוח הזמנים היומי לחסכון בגלילה --- */
     body:not(.kiosk-mode) .teacher-row {
       margin-bottom: 10px !important;
       padding: 10px 14px !important;
@@ -355,21 +355,28 @@
       const urlParams = new URLSearchParams(window.location.search);
       const urlPw = urlParams.get('pw') || "";
       const urlId = urlParams.get('id') || "";
-      const urlDay = urlParams.get('day') || ""; // תמיכה בקבלת יום מהכתובת
+      const urlDay = urlParams.get('day') || "";
 
       document.getElementById('loader').style.display = 'none';
 
-      // בדיקה אם קיים יום מוגדר בכתובת והוא תקין
       const validDays = ["ראשון", "שני", "שלישי", "רביעי", "חמישי"];
       if (urlDay && validDays.includes(urlDay)) {
         currentActiveDayGlobal = urlDay;
       }
 
-      if (urlPw === GLOBAL_DB.studentPw && urlId && GLOBAL_DB.studentsMapping[urlId]) {
+      // שינוי חכם: אם מדובר בקישור מורה (מכיל יום בשבוע), נכנסים ישירות בלי דרישת סיסמה
+      if (urlDay && validDays.includes(urlDay)) {
+        isStudentMode = false;
+        startApp();
+      } 
+      // כניסה מאובטחת מוגנת לתלמידים
+      else if (urlPw === GLOBAL_DB.studentPw && urlId && GLOBAL_DB.studentsMapping[urlId]) {
         isStudentMode = true;
         identifiedStudent = GLOBAL_DB.studentsMapping[urlId];
         startApp();
-      } else {
+      } 
+      // ברירת מחדל - כניסת מנהל מערכת עם סיסמה
+      else {
         document.getElementById('authScreen').style.display = 'block';
       }
 
@@ -420,12 +427,11 @@
       });
     }
     
-    // ניתוב אוטומטי אם הגיעו עם פרמטר של יום ב-URL (למשל מורים)
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('day') && !isStudentMode) {
       const dailyTriggerBtn = document.querySelector('[data-bs-target="#tab-daily"]');
       if (dailyTriggerBtn) {
-        dailyTriggerBtn.click(); // מעביר לטאב היומי באופן אוטומטי
+        dailyTriggerBtn.click(); 
         return;
       }
     }
@@ -486,7 +492,6 @@
     setTimeout(() => copyBtn.innerHTML = '<i class="fa-solid fa-link me-1"></i> העתק קישור מוגן לתלמיד', 2500);
   }
 
-  // פונקציה מינימליסטית חדשה להעתקת קישור ישיר ליום ספציפי
   function copyDayUrl(dayName) {
     const btn = document.getElementById('copyDayBtn');
     const baseUrl = window.location.href.split('?')[0];
@@ -519,7 +524,6 @@
     let isKiosk = document.body.classList.contains('kiosk-mode');
     
     if (isKiosk) {
-      // --- מבנה מצב מסך מלא (קיוסק) ---
       tabsHtml += `
         <div class="d-flex justify-content-between align-items-center mt-3 px-2">
           <div style="flex: 1;" class="text-end">
@@ -541,7 +545,6 @@
           <div style="flex: 1;"></div>
         </div>`;
     } else {
-      // --- מבנה מצב רגיל (מחוץ למסך מלא) + כפתור שיתוף מינימליסטי ---
       tabsHtml += `
         <div class="d-flex justify-content-center align-items-center flex-wrap gap-3 mt-3 px-2">
           <h5 class="fw-bold m-0 text-dark">
