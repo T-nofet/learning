@@ -176,6 +176,25 @@
       border: 1px solid rgba(30, 58, 138, 0.15);
     }
 
+    /* כפתור לינק נקי אייקוני לשיתוף יום */
+    .day-share-icon-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      padding: 4px 8px;
+      cursor: pointer;
+      border-radius: 50%;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .day-share-icon-btn:hover {
+      background-color: var(--primary-light);
+      color: var(--primary);
+    }
+
     body.kiosk-mode {
       background-color: #ffffff !important;
       padding: 0 !important;
@@ -212,7 +231,6 @@
       padding: 16px 14px !important;
     }
 
-    /* --- הסתרות ייעודיות למצב מורה ישיר --- */
     body.teacher-view-mode #topNav,
     body.teacher-view-mode .site-header-area {
       display: none !important;
@@ -222,7 +240,6 @@
       padding-top: 20px !important;
     }
 
-    /* --- צמצום ודחיסת לוח הזמנים היומי לחסכון בגלילה --- */
     body:not(.kiosk-mode) .teacher-row {
       margin-bottom: 10px !important;
       padding: 10px 14px !important;
@@ -354,7 +371,7 @@
   let GLOBAL_DB = null;
   let lastSearchResults = [];
   let isStudentMode = false;
-  let isTeacherMode = false; // דגל חדש לזיהוי כניסת מורה
+  let isTeacherMode = false;
   let identifiedStudent = "";
   let currentActiveDayGlobal = "ראשון";
 
@@ -375,10 +392,9 @@
         currentActiveDayGlobal = urlDay;
       }
 
-      // בדיקה ממוקדת: אם יש פרמטר של יום, מפעילים מצב מורה ייעודי
       if (urlDay && validDays.includes(urlDay)) {
         isTeacherMode = true;
-        document.body.classList.add('teacher-view-mode'); // מחיל עיצוב מסתיר ומנקה
+        document.body.classList.add('teacher-view-mode');
         startApp();
       } 
       else if (urlPw === GLOBAL_DB.studentPw && urlId && GLOBAL_DB.studentsMapping[urlId]) {
@@ -439,7 +455,6 @@
       });
     }
     
-    // ניתוב ממוקד ומיידי לטאב הלו"ז היומי
     if (isTeacherMode) {
       const dailyTriggerBtn = document.querySelector('[data-bs-target="#tab-daily"]');
       if (dailyTriggerBtn) {
@@ -504,14 +519,18 @@
     setTimeout(() => copyBtn.innerHTML = '<i class="fa-solid fa-link me-1"></i> העתק קישור מוגן לתלמיד', 2500);
   }
 
+  // פונקציית העתקה משודרגת עם שינוי זמני של האייקון למתן פידבק מהיר
   function copyDayUrl(dayName) {
-    const btn = document.getElementById('copyDayBtn');
+    const iconEl = document.getElementById('shareIconObj');
     const baseUrl = window.location.href.split('?')[0];
     const finalUrl = `${baseUrl}?day=${dayName}`;
     navigator.clipboard.writeText(finalUrl);
-    if(btn) {
-      btn.innerHTML = "✅ הקישור הועתק!";
-      setTimeout(() => btn.innerHTML = `<i class="fa-solid fa-share-nodes me-1"></i>העתק קישור ליום ${dayName}`, 2000);
+    
+    if (iconEl) {
+      iconEl.className = "fa-solid fa-check text-success";
+      setTimeout(() => {
+        iconEl.className = "fa-solid fa-link text-muted";
+      }, 2000);
     }
   }
 
@@ -557,17 +576,16 @@
           <div style="flex: 1;"></div>
         </div>`;
     } else {
+      // כאן הוחלף הכפתור הירוק הגדול באייקון שרשרת (Link) קטן ונקי צמוד לכותרת
       tabsHtml += `
         <div class="d-flex justify-content-center align-items-center flex-wrap gap-3 mt-3 px-2">
-          <h5 class="fw-bold m-0 text-dark">
+          <h5 class="fw-bold m-0 text-dark d-flex align-items-center gap-2">
             מערכת שעות - יום ${activeDay}
+            <button class="day-share-icon-btn no-print" title="העתק קישור ליום זה" onclick="copyDayUrl('${activeDay}')">
+              <i id="shareIconObj" class="fa-solid fa-link text-muted"></i>
+            </button>
           </h5>
-          <button id="copyDayBtn" class="btn btn-sm btn-outline-success rounded-pill px-3 py-1.5 fw-bold" 
-                  style="font-size: 0.85rem;" 
-                  onclick="copyDayUrl('${activeDay}')">
-            <i class="fa-solid fa-share-nodes me-1"></i>העתק קישור ליום ${activeDay}
-          </button>
-          <button class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1.5 fw-bold" 
+          <button class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1.5 fw-bold ms-auto ms-sm-0" 
                   style="font-size: 0.85rem;" 
                   onclick="toggleKioskMode('${activeDay}')">
             <i class="fa-solid fa-expand me-1"></i> מצב מסך מלא
