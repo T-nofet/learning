@@ -224,7 +224,7 @@
 <div id="authScreen" class="container" style="display: none;">
   <div class="auth-card text-center">
     <div class="bg-primary-light d-inline-flex p-3 rounded-circle mb-3"><i class="fa-solid fa-shield-halved text-primary fs-3"></i></div>
-    <h5 class="fw-bold mb-1">מערכת קשר ולוחות זמנים</h5>
+    h5 class="fw-bold mb-1">מערכת קשר ולוחות זמנים</h5>
     <p class="text-muted small mb-4">אנא הזן סיסמת גישה להמשך</p>
     <div class="mb-3 text-start">
       <input type="password" id="accessPw" class="form-control rounded-3" placeholder="סיסמת כניסה" onkeydown="if(event.key === 'Enter') handleAuth()">
@@ -452,39 +452,50 @@
 
     let isKiosk = document.body.classList.contains('kiosk-mode');
     
-    tabsHtml += `
-      <div class="d-flex justify-content-between align-items-center mt-3 px-2 position-relative" style="min-height: 40px;">
-        
-        <div class="flex-grow-1 text-start" style="min-width: 150px;">
-          ${isKiosk ? `
-          <button class="btn btn-sm btn-danger rounded-pill px-3 py-1.5 fw-bold" 
-                  style="font-size: 0.85rem;" 
-                  onclick="toggleKioskMode('${activeDay}')">
-            <i class="fa-solid fa-compress me-1"></i> יציאה ממסך מלא
-          </button>` : ''}
-        </div>
-        
-        <div class="d-flex align-items-center justify-content-center flex-grow-1">
-          <h5 class="fw-bold m-0 text-dark text-center">
-            ${isKiosk ? '🖥️ תצוגת קיוסק: ' : ''}מערכת שעות - יום ${activeDay}
+    if (isKiosk) {
+      // --- מבנה מצב מסך מלא (קיוסק) ---
+      // כפתור יציאה נדחף רחוק ימינה, השם והשעה נשארים צמודים במרכז
+      tabsHtml += `
+        <div class="d-flex justify-content-between align-items-center mt-3 px-2">
+          
+          <div style="flex: 1;" class="text-start">
+            <button class="btn btn-sm btn-danger rounded-pill px-3 py-1.5 fw-bold" 
+                    style="font-size: 0.85rem;" 
+                    onclick="toggleKioskMode('${activeDay}')">
+              <i class="fa-solid fa-compress me-1"></i> יציאה ממסך מלא
+            </button>
+          </div>
+          
+          <div class="d-flex align-items-center justify-content-center gap-3">
+            <h5 class="fw-bold m-0 text-dark">
+              🖥️ תצוגת קיוסק: לוח זמנים מפורט - יום ${activeDay}
+            </h5>
+            <div class="live-clock-badge">
+              <i class="fa-regular fa-clock"></i>
+              <span id="kioskLiveClock">--:--:--</span>
+            </div>
+          </div>
+          
+          <div style="flex: 1;"></div>
+          
+        </div>`;
+    } else {
+      // --- מבנה מצב רגיל (מחוץ למסך מלא) ---
+      // כותרת וכפתור 'מסך מלא' צמודים יחד במרכז
+      tabsHtml += `
+        <div class="d-flex justify-content-center align-items-center gap-3 mt-3 px-2">
+          <h5 class="fw-bold m-0 text-dark">
+            מערכת שעות - יום ${activeDay}
           </h5>
-        </div>
-        
-        <div class="flex-grow-1 text-end d-flex justify-content-end align-items-center" style="min-width: 150px;">
-          ${isKiosk ? `
-          <div class="live-clock-badge">
-            <i class="fa-regular fa-clock"></i>
-            <span id="kioskLiveClock">--:--:--</span>
-          </div>` : `
           <button class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1.5 fw-bold" 
                   style="font-size: 0.85rem;" 
                   onclick="toggleKioskMode('${activeDay}')">
-            <i class="fa-solid fa-expand me-1"></i> מסך מלא
-          </button>`}
-        </div>
-        
-      </div>
-    </div>`;
+            <i class="fa-solid fa-expand me-1"></i> מצב מסך מלא
+          </button>
+        </div>`;
+    }
+    
+    tabsHtml += `</div>`;
 
     let contentHtml = `<div class="daily-rows-scroll-area">`;
     const rows = GLOBAL_DB.schedule[activeDay] || [];
