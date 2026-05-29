@@ -148,6 +148,33 @@
 
     .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); display: flex; justify-content: center; align-items: center; z-index: 9999; }
     
+    /* עיצוב משופר להקפאת החלק העליון והשעון הדיגיטלי במצב קיוסק ומסך רגיל */
+    .sticky-header-container {
+      position: -webkit-sticky;
+      position: sticky;
+      top: 0;
+      background: var(--card-bg);
+      z-index: 1020;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #e2e8f0;
+      margin-bottom: 20px;
+    }
+
+    .live-clock-badge {
+      font-size: 1.1rem;
+      font-weight: 700;
+      background-color: #1e2937;
+      color: #34d399;
+      padding: 6px 16px;
+      border-radius: 30px;
+      letter-spacing: 0.5px;
+      font-family: monospace;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
     body.kiosk-mode {
       background-color: #ffffff !important;
       padding: 0 !important;
@@ -167,6 +194,10 @@
       padding: 30px !important;
       border-radius: 0 !important;
       box-shadow: none !important;
+    }
+    body.kiosk-mode .sticky-header-container {
+      background: #ffffff !important;
+      padding-top: 15px;
     }
     body.kiosk-mode .teacher-row {
       margin-bottom: 30px !important;
@@ -294,17 +325,31 @@
       } else {
         document.getElementById('authScreen').style.display = 'block';
       }
+
+      // הפעלת השעון הדיגיטלי החי שרץ ברקע בכל שנייה
+      setInterval(updateLiveClock, 1000);
     } catch (err) {
       console.error(err);
       alert("שגיאה בחיבור לבסיס הנתונים.");
     }
   };
 
+  // פונקציה שמציגה את השעה הנוכחית בפורמט HH:MM:SS
+  function updateLiveClock() {
+    const clockEl = document.getElementById('liveClockDisplay');
+    if (clockEl) {
+      const now = new Date();
+      const hrs = String(now.getHours()).padStart(2, '0');
+      const mins = String(now.getMinutes()).padStart(2, '0');
+      const secs = String(now.getSeconds()).padStart(2, '0');
+      clockEl.textContent = `${hrs}:${mins}:${secs}`;
+    }
+  }
+
   function handleAuth() {
     const inputPw = document.getElementById('accessPw').value.trim();
     if (inputPw === GLOBAL_DB.adminPw) {
       isStudentMode = false;
-      document.getElementById('authScreen').style.none = 'none';
       document.getElementById('authScreen').style.display = 'none';
       startApp();
     } else {
@@ -391,7 +436,10 @@
   function drawDaily(activeDay) {
     currentActiveDayGlobal = activeDay;
     const days = ["ראשון", "שני", "שלישי", "רביעי", "חמישי"];
-    let tabsHtml = `<div class="d-flex justify-content-center gap-2 mb-4 no-print">`;
+    
+    // יצירת אזור עליון קפוא הכולל את הימים, השעון והכפתור
+    let tabsHtml = `<div class="sticky-header-container">`;
+    tabsHtml += `<div class="d-flex justify-content-center gap-2 mb-3 no-print">`;
     days.forEach(day => {
       const activeClass = (day === activeDay) ? 'btn-primary' : 'btn-outline-primary';
       tabsHtml += `<button class="btn btn-sm ${activeClass} rounded-pill px-4 py-2 fw-bold" onclick="drawDaily('${day}')">יום ${day}</button>`;
@@ -399,18 +447,28 @@
     tabsHtml += `</div>`;
 
     let isKiosk = document.body.classList.contains('kiosk-mode');
-    let contentHtml = `
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="flex-grow-1"></div>
-        <h5 class="fw-bold m-0 text-dark text-center">${isKiosk ? '🖥️ תצוגת מסך מלא: ' : ''}לוח זמנים מפורט - יום ${activeDay}</h5>
-        <div class="flex-grow-1 text-start">
+    
+    // הזרקת כותרת קבועה, שעון חי מעודכן וכפתור מעבר למסך מלא
+    tabsHtml += `
+      <div class="d-flex justify-content-between align-items-center mt-2 px-2">
+        <div class="flex-grow-1 text-start" style="min-width: 150px;">
           <button class="btn btn-sm ${isKiosk ? 'btn-danger' : 'btn-outline-primary'} rounded-pill px-3 fw-bold" onclick="toggleKioskMode('${activeDay}')">
-            ${isKiosk ? '<i class="fa-solid fa-compress me-1"></i> חזור למערכת' : '<i class="fa-solid fa-expand me-1"></i> מצב מסך מלא'}
+            ${isKiosk ? '<i class="fa-solid fa-compress me-1"></i> יציאה ממסך מלא' : '<i class="fa-solid fa-expand me-1"></i> מצב מסך מלא'}
           </button>
         </div>
+        <h5 class="fw-bold m-0 text-dark text-center flex-grow-1">
+          ${isKiosk ? '🖥️ תצוגת קיוסק: ' : ''}לוח זמנים מפורט - יום ${activeDay}
+        </h5>
+        <div class="flex-grow-1 text-end" style="min-width: 150px;">
+          <div class="live-clock-badge">
+            <i class="fa-regular fa-clock"></i>
+            <span id="liveClockDisplay">--:--:--</span>
+          </div>
+        </div>
       </div>
-    `;
-    
+    </div>`; // סגירת ה-sticky-header-container
+
+    let contentHtml = `<div class="daily-rows-scroll-area">`;
     const rows = GLOBAL_DB.schedule[activeDay] || [];
     
     if (rows.length > 1) {
@@ -510,7 +568,10 @@
     } else {
       contentHtml += `<p class="text-center text-muted py-5">אין נתונים להצגה ליום ${activeDay}</p>`;
     }
+    contentHtml += `</div>`; // סגירת ה-scroll-area
+    
     document.getElementById('dailyContent').innerHTML = tabsHtml + contentHtml;
+    updateLiveClock(); // הפעלה מיידית של השעון עם טעינת העמוד
   }
 
   function toggleKioskMode(activeDay) {
