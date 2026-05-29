@@ -2,116 +2,47 @@
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>מרכז למידה - מערכת ניהול</title>
+  <title>מרכז למידה - ניהול ראשי</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
-    :root { --primary: #1e3a8a; --accent: #0d9488; --bg: #f8fafc; }
-    body { background-color: var(--bg); font-family: 'Assistant', sans-serif; }
-    
-    .main-container { max-width: 1100px; margin: 30px auto; background: #fff; padding: 30px; border-radius: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-    body.kiosk-mode .main-container { max-width: 100% !important; margin: 0; border-radius: 0; min-height: 100vh; }
-    
-    #kiosk-toggle-btn { position: fixed; top: 20px; left: 20px; z-index: 9999; }
-    
-    .teacher-row { background: #fff; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
-    .slots-grid { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 15px; }
-    
-    /* עיצוב כרטיס שיעור */
-    .slot-card { position: relative; background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; flex: 1; min-width: 180px; overflow: hidden; }
-    .current-slot { border: 2px solid var(--accent) !important; background-color: #f0fdfa !important; }
-    
-    /* הפס המתמלא בתוך השיעור הנוכחי */
-    .progress-fill { position: absolute; bottom: 0; left: 0; height: 5px; background: var(--accent); transition: width 0.5s linear; }
+    body { background: #f1f5f9; font-family: 'Assistant', sans-serif; }
+    .lobby-card { background: white; border-radius: 20px; padding: 30px; text-align: center; transition: 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-decoration: none; color: #1e293b; display: block; }
+    .lobby-card:hover { transform: translateY(-10px); box-shadow: 0 20px 25px rgba(0,0,0,0.1); }
+    .icon-box { font-size: 3rem; color: #0d9488; margin-bottom: 20px; }
   </style>
 </head>
 <body>
 
-<button id="kiosk-toggle-btn" class="btn btn-primary no-print" onclick="toggleKiosk()">מצב מסך מלא</button>
-
-<div id="appScreen" class="main-container">
-  <h4 class="fw-bold mb-4 no-print">ניהול מרכז למידה</h4>
-  <div id="dailyContent"></div>
+<div class="container mt-5">
+  <h1 class="text-center mb-5 fw-bold">ברוכים הבאים למרכז הלמידה</h1>
+  
+  <div class="row g-4">
+    <div class="col-md-4">
+      <a href="daily.html" class="lobby-card">
+        <div class="icon-box"><i class="fa-solid fa-calendar-days"></i></div>
+        <h3>לוח זמנים יומי</h3>
+        <p class="text-muted">צפייה בשיעורים בזמן אמת</p>
+      </a>
+    </div>
+    
+    <div class="col-md-4">
+      <a href="student.html" class="lobby-card">
+        <div class="icon-box"><i class="fa-solid fa-user-graduate"></i></div>
+        <h3>ניהול תלמידים</h3>
+        <p class="text-muted">פרטים אישיים וסטטוס לימודי</p>
+      </a>
+    </div>
+    
+    <div class="col-md-4">
+      <a href="archive.html" class="lobby-card">
+        <div class="icon-box"><i class="fa-solid fa-box-archive"></i></div>
+        <h3>ארכיון היסטורי</h3>
+        <p class="text-muted">צפייה בנתוני עבר ודוחות</p>
+      </a>
+    </div>
+  </div>
 </div>
 
-<script>
-  let GLOBAL_DB = null;
-
-  window.onload = async () => {
-    try {
-      const res = await fetch('data.json');
-      GLOBAL_DB = await res.json();
-      renderDay('ראשון');
-      setInterval(() => renderDay('ראשון'), 30000); // רענון כל 30 שניות לעדכון הפס
-    } catch (e) { console.error("Error loading data:", e); }
-  };
-
-  function renderDay(day) {
-    if (!GLOBAL_DB) return;
-    const now = new Date();
-    const currentHour = now.getHours() + (now.getMinutes() / 60);
-    const data = GLOBAL_DB.schedule[day] || [];
-    let html = '';
-    
-    data.slice(1).forEach(row => {
-      html += `<div class="teacher-row"><h5>${row[1]}</h5><div class="slots-grid">`;
-      data[0].slice(2).forEach((header, idx) => {
-        const [start, end] = header.split('-').map(t => t.split(':').reduce((h, m) => parseInt(h) + parseInt(m)/60));
-        const isCurrent = (currentHour >= start && currentHour < end);
-        
-        let progressHtml = '';
-        if (isCurrent) {
-            const totalDuration = (end - start) * 60;
-            const elapsed = (currentHour - start) * 60;
-            const percentage = Math.min(100, (elapsed / totalDuration) * 100);
-            progressHtml = `<div class="progress-fill" style="width: ${percentage}%"></div>`;
-        }
-
-        if (row[idx+2] && row[idx+2].trim() !== "") {
-            html += `<div class="slot-card ${isCurrent ? 'current-slot' : ''}">
-                        <div class="small text-muted">${header}</div>
-                        <div class="fw-bold">${row[idx+2]}</div>
-                        ${progressHtml}
-                     </div>`;
-        }
-      });
-      html += `</div></div>`;
-    });
-    document.getElementById('dailyContent').innerHTML = html;
-    
-    // גלילה אוטומטית לשיעור הנוכחי במצב קיוסק
-    if(document.body.classList.contains('kiosk-mode')) {
-      const active = document.querySelector('.current-slot');
-      if(active) active.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  }
-
-  function toggleKiosk() {
-    const btn = document.getElementById('kiosk-toggle-btn');
-    const body = document.body;
-
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().then(() => {
-        body.classList.add('kiosk-mode');
-        btn.innerText = "יציאה ממסך מלא";
-        btn.classList.replace('btn-primary', 'btn-danger');
-      });
-    } else {
-      document.exitFullscreen().then(() => {
-        body.classList.remove('kiosk-mode');
-        btn.innerText = "מצב מסך מלא";
-        btn.classList.replace('btn-danger', 'btn-primary');
-      });
-    }
-  }
-
-  document.addEventListener('fullscreenchange', () => {
-    if (!document.fullscreenElement) {
-      document.body.classList.remove('kiosk-mode');
-      const btn = document.getElementById('kiosk-toggle-btn');
-      btn.innerText = "מצב מסך מלא";
-      btn.classList.replace('btn-danger', 'btn-primary');
-    }
-  });
-</script>
 </body>
 </html>
