@@ -30,12 +30,12 @@
     }
 
     .main-container { 
-      max-width: 1200px; 
+      max-width: 1100px; 
       margin: 40px auto; 
       background: var(--card-bg); 
-      padding: 30px; 
+      padding: 40px; 
       border-radius: var(--radius-lg); 
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03); 
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 2px 10px -1px rgba(0, 0, 0, 0.02); 
     }
     
     .auth-card {
@@ -44,204 +44,131 @@
       background: var(--card-bg);
       padding: 40px;
       border-radius: var(--radius-lg);
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
     }
 
     .nav-pills { background: #f1f5f9; padding: 6px; border-radius: 30px; border: 1px solid #e2e8f0; }
     .nav-pills .nav-link { border-radius: 24px; color: var(--text-muted); font-weight: 600; transition: var(--transition); border: none; padding: 10px 20px; }
     .nav-pills .nav-link.active { background-color: var(--primary) !important; color: white; box-shadow: 0 4px 12px rgba(30, 58, 138, 0.15); }
 
-    /* === מבנה שורות שעות חדש (קוביות מסודרות) === */
-    .daily-hour-block {
-      background: var(--card-bg);
-      border: 1px solid #e2e8f0;
-      border-radius: var(--radius-md);
-      margin-bottom: 12px;
-      padding: 12px;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 15px;
-      transition: var(--transition);
-    }
+    .day-card { background: var(--card-bg); border: 1px solid #e2e8f0; border-radius: var(--radius-md); padding: 20px; height: 100%; transition: var(--transition); }
+    .day-card:hover { transform: translateY(-3px); box-shadow: 0 12px 20px -8px rgba(0,0,0,0.05); border-color: #cbd5e1; }
+    .lesson-box { background: var(--primary-light); padding: 14px; border-radius: 10px; margin-bottom: 12px; border-right: 4px solid var(--primary); font-size: 0.95rem; font-weight: 500; }
 
-    .daily-hour-title {
+    /* עיצובי שורות יומיות */
+    .teacher-row {
+      background: var(--card-bg);
+      border-radius: var(--radius-md);
+      border: 1px solid #e2e8f0;
+      margin-bottom: 25px;
+      padding: 20px;
+    }
+    
+    .teacher-label-zone {
       font-weight: 700;
       color: var(--primary);
-      min-width: 110px;
-      flex-shrink: 0;
-      background: var(--primary-light);
-      padding: 8px 12px;
-      border-radius: 8px;
+      font-size: 1.1rem;
+      border-bottom: 2px solid var(--primary-light);
+      padding-bottom: 8px;
+      margin-bottom: 15px;
       display: flex;
-      justify-content: center;
       align-items: center;
-      font-size: 0.95rem;
-      text-align: center;
+      gap: 8px;
     }
 
     .slots-grid-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-      gap: 8px;
-      flex: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
     }
 
     .slot-card {
-      background: #ffffff;
+      position: relative;
+      background: var(--bg-main);
       border: 1px solid #e2e8f0;
       border-radius: 10px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      position: relative;
-      min-height: 48px;
-      transition: var(--transition);
-    }
-    
-    .slot-card:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.04);
-      border-color: var(--primary);
-    }
-
-    .slot-card.active-hour-card {
-      border-color: var(--accent) !important;
-      box-shadow: 0 0 0 1px var(--accent) !important;
-    }
-
-    .slot-header {
-      width: 80px;
-      min-width: 80px;
-      padding: 6px 4px;
-      background: #f1f5f9;
-      border-left: 1px solid #e2e8f0;
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      height: 100%;
-    }
-
-    .slot-content {
-      padding: 4px 10px;
-      display: flex;
-      align-items: center;
+      min-width: 220px;
       flex: 1;
+      transition: var(--transition);
       overflow: hidden;
-    }
-
-    .slot-combined-line {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .slot-room-inline {
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: var(--accent);
-      background: #ccfbf1;
-      padding: 1px 5px;
-      border-radius: 4px;
-    }
-
-    .slot-info-inline {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-main);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .slot-countdown-bar {
-      height: 3px;
-      width: 0%;
-      background-color: var(--accent);
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      transition: width 1s linear;
-    }
-
-    /* ========================================================== */
-    /* התאמת מצב מסך מלא (קיוסק) - מותאם להכנסת 4 שורות ללא גלילה */
-    /* ========================================================== */
-    body.kiosk-mode { background-color: #ffffff !important; padding: 0 !important; }
-    body.kiosk-mode #topNav, body.kiosk-mode .no-print, body.kiosk-mode .site-header-area { display: none !important; }
-    
-    body.kiosk-mode .main-container { 
-      max-width: 100% !important; 
-      width: 100vw !important; 
-      height: 100vh !important; 
-      margin: 0 !important; 
-      padding: 10px 15px !important; 
-      border-radius: 0 !important; 
-      box-shadow: none !important;
       display: flex;
       flex-direction: column;
     }
+    .slot-card:hover { background: #ffffff; border-color: var(--primary); transform: translateY(-1px); }
+    
+    .slot-header { 
+      background: #e2e8f0; 
+      font-size: 0.85rem; 
+      padding: 8px 14px; 
+      font-weight: 700; 
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .slot-content { font-size: 0.95rem; padding: 12px 14px; color: var(--text-main); font-weight: 600; flex-grow: 1; }
+    .slot-combined-line { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .slot-room-inline { font-size: 0.85rem; color: var(--accent); font-weight: 700; }
+    .slot-info-inline { font-size: 0.9rem; color: var(--text-main); }
+    .slot-separator { color: #cbd5e1; margin: 0 2px; }
 
-    body.kiosk-mode .sticky-header-container { margin-bottom: 8px !important; padding-bottom: 5px !important; }
-
-    body.kiosk-mode .daily-hour-block {
-      margin-bottom: 8px !important;
-      padding: 6px 10px !important;
-      flex: 1; /* מחלק את שטח המסך שווה בשווה בין השורות */
-      min-height: 0; /* מונע פריצה מגבולות הגובה */
+    .slot-card.active-slot {
+      border: 2px solid var(--accent) !important;
+      background-color: #f0fdfa !important;
+    }
+    .slot-card.active-slot .slot-header {
+      background: #ccfbf1 !important;
+      color: #115e59 !important;
+    }
+    .progress-bar-sand {
+      position: absolute;
+      bottom: 0;
+      right: 0;            
+      height: 5px;
+      background-color: var(--accent);
+      width: 0%;
+      transition: width 1s linear;
     }
 
-    body.kiosk-mode .daily-hour-title {
-      min-width: 150px !important;
-      font-size: 1.5rem !important;
-      background: var(--primary) !important;
-      color: white !important;
-      height: 100% !important;
-      border-radius: 10px !important;
+    /* עיצובי קיוסק ייעודיים לריבוע שעה (Time-slot row) */
+    .kiosk-time-row {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      margin-bottom: 20px;
+      padding: 20px;
+    }
+    .kiosk-time-label-zone {
+      font-weight: 800;
+      color: var(--primary);
+      font-size: 1.2rem;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 6px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .kiosk-time-row.active-time-row {
+      border: 2px solid var(--accent);
+      background: #f0fdfa;
+    }
+    .kiosk-time-row.active-time-row .kiosk-time-label-zone {
+      color: #115e59;
+      border-bottom-color: #ccfbf1;
     }
 
-    body.kiosk-mode .slots-grid-container {
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)) !important;
-      gap: 10px !important;
-      align-content: center;
-    }
-
-    body.kiosk-mode .slot-card {
-      min-height: 70px !important;
-      border-radius: 12px !important;
-      border-width: 2px !important;
-    }
-
-    body.kiosk-mode .slot-header {
-      width: 95px !important;
-      min-width: 95px !important;
-      font-size: 1.05rem !important;
-      background: #cbd5e1 !important;
-      color: #1e293b !important;
-    }
-
-    body.kiosk-mode .slot-info-inline { font-size: 1.15rem !important; font-weight: 700 !important; }
-    body.kiosk-mode .slot-room-inline { font-size: 0.9rem !important; padding: 2px 6px !important; }
-
-    /* שאר העיצובים המקוריים של המערכת */
-    .lesson-box { background: var(--primary-light); padding: 14px; border-radius: 10px; margin-bottom: 12px; border-right: 4px solid var(--primary); font-size: 0.95rem; font-weight: 500; }
-    .day-card { background: var(--card-bg); border: 1px solid #e2e8f0; border-radius: var(--radius-md); padding: 20px; height: 100%; }
-
-    .form-control, .form-select { border: 1px solid #e2e8f0; background-color: #ffffff; padding: 12px 20px; transition: var(--transition); }
+    .form-control { border: 1px solid #e2e8f0; background-color: #ffffff; padding: 12px 20px; transition: var(--transition); }
+    .form-select { border: 1px solid #e2e8f0; background-color: #ffffff; padding: 12px 20px; text-indent: 6px; transition: var(--transition); }
     .form-control:focus, .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.08); }
     
     .btn-primary { background-color: var(--primary); border: none; padding: 10px 24px; font-weight: 600; border-radius: 30px; transition: var(--transition); }
-    .btn-primary:hover { background-color: #1e40af; }
+    .btn-primary:hover { background-color: #1e40af; transform: translateY(-1px); }
 
     .badge { font-size: 0.85rem; padding: 8px 14px; border-radius: 20px; cursor: pointer; transition: var(--transition); font-weight: 500; }
     .bg-custom-teacher { background-color: #f1f5f9 !important; color: var(--text-muted) !important; border: 1px solid #e2e8f0; }
+    .bg-custom-teacher:hover { background-color: var(--primary-light) !important; color: var(--primary) !important; }
 
     .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); display: flex; justify-content: center; align-items: center; z-index: 9999; }
     
@@ -263,30 +190,99 @@
       color: var(--primary);
       padding: 6px 16px;
       border-radius: 30px;
+      letter-spacing: 0.5px;
+      font-family: monospace;
       display: inline-flex;
       align-items: center;
       gap: 6px;
       border: 1px solid rgba(30, 58, 138, 0.15);
     }
 
-    .day-share-icon-btn { background: none; border: none; color: var(--text-muted); font-size: 1.1rem; padding: 4px 8px; cursor: pointer; border-radius: 50%; }
+    .day-share-icon-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      padding: 4px 8px;
+      cursor: pointer;
+      border-radius: 50%;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
     .day-share-icon-btn:hover { background-color: var(--primary-light); color: var(--primary); }
 
-    body.teacher-view-mode #topNav, body.teacher-view-mode .site-header-area { display: none !important; }
+    /* מצבי מסך/תצוגה מיוחדים */
+    body.kiosk-mode {
+      background-color: #ffffff !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    body.kiosk-mode #topNav, 
+    body.kiosk-mode .no-print, 
+    body.kiosk-mode .nav-pills,
+    body.kiosk-mode .site-header-area {
+      display: none !important;
+    }
+    body.kiosk-mode .main-container {
+      max-width: 100% !important;
+      width: 100vw !important;
+      min-height: 100vh !important;
+      margin: 0 !important;
+      padding: 30px !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+    }
+    body.kiosk-mode .sticky-header-container {
+      background: #ffffff !important;
+      padding-top: 15px;
+    }
+
+    body.teacher-view-mode #topNav,
+    body.teacher-view-mode .site-header-area {
+      display: none !important;
+    }
+    body.teacher-view-mode .main-container {
+      margin-top: 20px !important;
+      padding-top: 20px !important;
+    }
+
+    /* התאמות עיצוב למצב רגיל (מבוסס מורים קומפקטי) */
+    body:not(.kiosk-mode) .teacher-row {
+      margin-bottom: 12px !important;
+      padding: 12px 16px !important;
+    }
+    body:not(.kiosk-mode) .teacher-label-zone {
+      font-size: 1rem !important;
+      margin-bottom: 8px !important;
+      padding-bottom: 4px !important;
+    }
+    body:not(.kiosk-mode) .slots-grid-container {
+      gap: 8px !important;
+    }
+    body:not(.kiosk-mode) .slot-card {
+      min-width: 170px !important;
+    }
+    body:not(.kiosk-mode) .slot-header {
+      padding: 4px 10px !important;
+      font-size: 0.78rem !important;
+    }
+    body:not(.kiosk-mode) .slot-content {
+      padding: 8px 10px !important;
+    }
 
     @media (max-width: 768px) {
-      .main-container { padding: 15px; margin: 10px auto; }
-      .nav-pills .nav-link { padding: 8px 10px; font-size: 0.9rem; }
-      .daily-hour-block { flex-direction: column; align-items: stretch; gap: 8px; }
-      .daily-hour-title { min-width: 100%; }
+      .slot-card { min-width: 100%; width: 100%; }
     }
+    @media print { .no-print { display: none !important; } .main-container { box-shadow: none; margin: 0; width: 100%; padding: 0; } }
   </style>
 </head>
 <body>
 
 <div id="loader" class="loading-overlay">
   <div class="text-center">
-    <div class="spinner-border text-primary" style="width: 2.5rem; height: 2.5rem;"></div>
+    <div class="spinner-border text-primary" style="width: 2.5rem; height: 2.5rem; stroke-width: 3px;"></div>
     <p class="mt-3 fw-medium text-secondary">טוען נתונים מאובטחים...</p>
   </div>
 </div>
@@ -397,6 +393,9 @@
       const validDays = ["ראשון", "שני", "שלישי", "רביעי", "חמישי"];
       if (urlDay && validDays.includes(urlDay)) {
         currentActiveDayGlobal = urlDay;
+      }
+
+      if (urlDay && validDays.includes(urlDay)) {
         isTeacherMode = true;
         document.body.classList.add('teacher-view-mode');
         startApp();
@@ -413,7 +412,7 @@
       setInterval(updateLiveClock, 1000);
     } catch (err) {
       console.error(err);
-      alert("שגיאה בטעינת בסיס הנתונים.");
+      alert("שגיאה בחיבור לבסיס הנתונים.");
     }
   };
 
@@ -449,25 +448,22 @@
     if (GLOBAL_DB.availableMonths) {
       ['fMonth', 'pMonth'].forEach(id => {
         const el = document.getElementById(id);
-        if(el) {
-          el.innerHTML = '<option value="ALL">כל החודשים</option>';
-          GLOBAL_DB.availableMonths.forEach(m => el.innerHTML += `<option value="${m}">${m}</option>`);
-        }
+        GLOBAL_DB.availableMonths.forEach(m => el.innerHTML += `<option value="${m}">${m}</option>`);
       });
     }
     if (GLOBAL_DB.availableTeachers) {
       ['fTeacher', 'pTeacher'].forEach(id => {
         const el = document.getElementById(id);
-        if(el) {
-          el.innerHTML = '<option value="ALL">כל המורים</option>';
-          GLOBAL_DB.availableTeachers.forEach(t => el.innerHTML += `<option value="${t}">${t}</option>`);
-        }
+        GLOBAL_DB.availableTeachers.forEach(t => el.innerHTML += `<option value="${t}">${t}</option>`);
       });
     }
     
     if (isTeacherMode) {
       const dailyTriggerBtn = document.querySelector('[data-bs-target="#tab-daily"]');
-      if (dailyTriggerBtn) { dailyTriggerBtn.click(); return; }
+      if (dailyTriggerBtn) {
+        dailyTriggerBtn.click(); 
+        return;
+      }
     }
 
     if (isStudentMode) {
@@ -531,9 +527,12 @@
     const baseUrl = window.location.href.split('?')[0];
     const finalUrl = `${baseUrl}?day=${dayName}`;
     navigator.clipboard.writeText(finalUrl);
+    
     if (iconEl) {
       iconEl.className = "fa-solid fa-check text-success";
-      setTimeout(() => { iconEl.className = "fa-solid fa-link text-muted"; }, 2000);
+      setTimeout(() => {
+        iconEl.className = "fa-solid fa-link text-muted";
+      }, 2000);
     }
   }
 
@@ -543,36 +542,40 @@
     return parseInt(parts[0], 10) + (parseInt(parts[1], 10) / 60);
   }
 
+  /* פונקציית העל המרכזית לניהול התצוגה היומית */
   function drawDaily(activeDay) {
     currentActiveDayGlobal = activeDay;
     const days = ["ראשון", "שני", "שלישי", "רביעי", "חמישי"];
-    
-    let tabsHtml = `<div class="sticky-header-container">`;
-    tabsHtml += `<div class="d-flex justify-content-center gap-2 mb-3 no-print">`;
-    days.forEach(day => {
-      const activeClass = (day === activeDay) ? 'btn-primary' : 'btn-outline-primary';
-      tabsHtml += `<button class="btn btn-sm ${activeClass} rounded-pill px-4 py-2 fw-bold" onclick="drawDaily('${day}')">יום ${day}</button>`;
-    });
-    tabsHtml += `</div>`;
-
     let isKiosk = document.body.classList.contains('kiosk-mode');
     
+    // 1. בניית אזור הניווט העליון והכותרות המותאמות
+    let headerHtml = `<div class="sticky-header-container">`;
+    headerHtml += `<div class="d-flex justify-content-center gap-2 mb-3 no-print">`;
+    days.forEach(day => {
+      const activeClass = (day === activeDay) ? 'btn-primary' : 'btn-outline-primary';
+      headerHtml += `<button class="btn btn-sm ${activeClass} rounded-pill px-4 py-2 fw-bold" onclick="drawDaily('${day}')">יום ${day}</button>`;
+    });
+    headerHtml += `</div>`;
+
     if (isKiosk) {
-      tabsHtml += `
+      headerHtml += `
         <div class="d-flex justify-content-between align-items-center mt-3 px-2">
           <div style="flex: 1;" class="text-end">
-            <button class="btn btn-sm btn-danger rounded-pill px-3 py-1.5 fw-bold" onclick="toggleKioskMode('${activeDay}')">
+            <button class="btn btn-sm btn-danger rounded-pill px-3 py-1.5 fw-bold" style="font-size: 0.85rem;" onclick="toggleKioskMode('${activeDay}')">
               <i class="fa-solid fa-compress me-1"></i> יציאה ממסך מלא
             </button>
           </div>
           <div class="d-flex align-items-center justify-content-center gap-3">
             <h5 class="fw-bold m-0 text-dark">לוח זמנים מפורט - יום ${activeDay}</h5>
-            <div class="live-clock-badge"><i class="fa-regular fa-clock"></i><span id="kioskLiveClock">--:--:--</span></div>
+            <div class="live-clock-badge">
+              <i class="fa-regular fa-clock"></i>
+              <span id="kioskLiveClock">--:--:--</span>
+            </div>
           </div>
           <div style="flex: 1;"></div>
         </div>`;
     } else {
-      tabsHtml += `
+      headerHtml += `
         <div class="d-flex justify-content-center align-items-center flex-wrap gap-3 mt-3 px-2">
           <h5 class="fw-bold m-0 text-dark d-flex align-items-center gap-2">
             מערכת שעות - יום ${activeDay}
@@ -580,136 +583,210 @@
               <i id="shareIconObj" class="fa-solid fa-link text-muted"></i>
             </button>
           </h5>
-          <button class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1.5 fw-bold ms-auto ms-sm-0" onclick="toggleKioskMode('${activeDay}')">
+          <button class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1.5 fw-bold ms-auto ms-sm-0" style="font-size: 0.85rem;" onclick="toggleKioskMode('${activeDay}')">
             <i class="fa-solid fa-expand me-1"></i> מצב מסך מלא
           </button>
         </div>`;
     }
-    tabsHtml += `</div>`;
+    headerHtml += `</div>`;
 
+    // 2. ניתוב תצוגה מוחלט לפי מצב קיוסק או מצב רגיל
+    let bodyHtml = "";
+    if (isKiosk) {
+      bodyHtml = generateKioskTimeLayout(activeDay);
+    } else {
+      bodyHtml = generateRegularTeacherLayout(activeDay);
+    }
+    
+    document.getElementById('dailyContent').innerHTML = headerHtml + bodyHtml;
+    updateLiveClock(); 
+  }
+
+  /* תצוגה רגילה ומדויקת: מבוססת על שורות מורים (לפי התמונות המקוריות) */
+  function generateRegularTeacherLayout(activeDay) {
     const rows = GLOBAL_DB.schedule[activeDay] || [];
-    let contentHtml = "";
+    if (rows.length <= 1) return `<p class="text-center text-muted py-5">אין נתונים להצגה ליום ${activeDay}</p>`;
+    
+    const headers = rows[0]; 
+    const now = new Date();
+    const currentTimeDecimal = now.getHours() + (now.getMinutes() / 60);
+    
+    let html = `<div class="daily-rows-scroll-area">`;
 
-    if (rows.length > 1) {
-      const headers = rows[0]; 
-      const teachersRows = rows.slice(1); 
-      
-      const globalHours = {};
+    rows.slice(1).forEach(row => {
+      let teacherInfo = row[1]; 
+      let hasDataInRow = false;
+      let slotsHtml = "";
+
       for (let j = 2; j < headers.length; j++) {
-        let firstVal = null;
-        let isGlobal = true;
-        let hasAnyData = false;
-        
-        for (let i = 0; i < teachersRows.length; i++) {
-          let cell = (teachersRows[i][j] || "").trim();
-          if (cell) {
-            hasAnyData = true;
-            if (firstVal === null) {
-              firstVal = cell;
-            } else if (firstVal !== cell) {
-              isGlobal = false;
-              break;
+        let cellText = (row[j] || "").trim();
+        if (cellText) {
+          hasDataInRow = true;
+          let isActiveSlot = false;
+          let progressPercentage = 0;
+          const timeRangeString = headers[j];
+
+          if (timeRangeString && timeRangeString.includes('-')) {
+            const [startStr, endStr] = timeRangeString.split('-');
+            const startDecimal = parseTimeToDecimal(startStr);
+            const endDecimal = parseTimeToDecimal(endStr);
+            if (currentTimeDecimal >= startDecimal && currentTimeDecimal < endDecimal) {
+              isActiveSlot = true;
+              progressPercentage = Math.min(100, Math.max(0, ((currentTimeDecimal - startDecimal) / (endDecimal - startDecimal)) * 100));
             }
           }
-        }
-        if (hasAnyData && isGlobal && firstVal && (firstVal.includes("ארוחת") || firstVal.includes("בתאבון") || firstVal.includes("הפסקה"))) {
-          globalHours[j] = firstVal;
-        }
-      }
 
-      const now = new Date();
-      const currentTimeDecimal = now.getHours() + (now.getMinutes() / 60);
+          const activeClassHtml = isActiveSlot ? 'active-slot' : '';
+          const sandBarHtml = isActiveSlot ? `<div class="progress-bar-sand" style="width: ${progressPercentage}%"></div>` : '';
+          
+          const parts = cellText.split('-');
+          let subjectOrRoom = parts.length > 1 ? parts[0].trim() : "";
+          let info = parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim();
 
-      // רצים לפי שעות (עמודות) כדי ליצור מבנה אחיד של שעות מימין וקוביות משמאל
-      for (let j = 2; j < headers.length; j++) {
-        const timeRangeString = headers[j];
-        if (!timeRangeString) continue;
+          // אם הטקסט זהה לכל האורך (כמו אירוע מערכתי) - יצבע בירוק
+          const isSystemEvent = (info.includes("בתיאבון") || info.includes("ארוחת") || info.includes("הפסקה"));
+          const textStyle = isSystemEvent ? 'color: #15803d !important; font-weight:700;' : '';
 
-        let isHourActive = false;
-        let activeClassHtml = "";
-        let sandBarHtml = "";
-
-        if (timeRangeString.includes('-')) {
-          const [startStr, endStr] = timeRangeString.split('-');
-          const startTimeDec = parseTimeToDecimal(startStr);
-          const endTimeDec = parseTimeToDecimal(endStr);
-
-          if (currentTimeDecimal >= startTimeDec && currentTimeDecimal < endTimeDec) {
-            isHourActive = true;
-            activeClassHtml = "active-hour-card";
-            const totalDuration = endTimeDec - startTimeDec;
-            const elapsed = currentTimeDecimal - startTimeDec;
-            const percentage = Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
-            sandBarHtml = `<div class="slot-countdown-bar" style="width: ${percentage}%"></div>`;
-          }
-        }
-
-        let hourSlotsHtml = "";
-
-        if (globalHours[j]) {
-          // שעה כללית (הפסקה / ארוחה) תופסת את כל הרוחב
-          hourSlotsHtml += `
-            <div class="slot-card shadow-sm ${activeClassHtml}" style="grid-column: 1 / -1;">
-              <div class="slot-header"><span>${timeRangeString}</span></div>
-              <div class="slot-content">
-                <div class="slot-combined-line text-success fw-bold">
-                  <i class="fa-solid fa-utensils me-1"></i> ${globalHours[j]}
+          slotsHtml += `
+            <div class="slot-card shadow-sm ${activeClassHtml}">
+              <div class="slot-header">
+                <span><i class="fa-regular fa-clock me-1"></i>${headers[j]}</span>
+              </div>
+              <div class="slot-content" style="${textStyle}">
+                <div class="slot-combined-line">
+                  ${subjectOrRoom && !isSystemEvent ? `<span class="slot-room-inline"><i class="fa-solid fa-tag me-1"></i>${subjectOrRoom}</span><span class="slot-separator">|</span>` : ''}
+                  <span class="slot-info-inline">${info}</span>
                 </div>
               </div>
               ${sandBarHtml}
             </div>`;
-        } else {
-          // שעה רגילה - אוספים את כל השיעורים של המורים בשעה זו לקוביות
-          teachersRows.forEach(row => {
-            const teacherName = row[1];
-            const cellValue = (row[j] || "").trim();
-            if (!cellValue) return;
+        }
+      }
 
-            const parts = cellValue.split('-');
+      if (hasDataInRow) {
+        html += `
+          <div class="teacher-row shadow-sm">
+            <div class="teacher-label-zone">
+              <i class="fa-solid fa-id-card text-primary"></i> ${teacherInfo}
+            </div>
+            <div class="slots-grid-container">${slotsHtml}</div>
+          </div>`;
+      }
+    });
+
+    html += `</div>`;
+    return html;
+  }
+
+  /* תצוגת מסך מלא / קיוסק: מבוססת על ציר הזמן (Time-slot rows) עם חלוקה לחדרים ומורים */
+  function generateKioskTimeLayout(activeDay) {
+    const rows = GLOBAL_DB.schedule[activeDay] || [];
+    if (rows.length <= 1) return `<p class="text-center text-muted py-5">אין נתונים להצגה ליום ${activeDay}</p>`;
+    
+    const headers = rows[0];
+    const now = new Date();
+    const currentTimeDecimal = now.getHours() + (now.getMinutes() / 60);
+
+    let html = `<div class="kiosk-timeline-area">`;
+
+    // רצים על כל עמודת שעה בנפרד (יוצרים שורה לכל שעה)
+    for (let j = 2; j < headers.length; j++) {
+      const timeRangeString = headers[j];
+      let isCurrentTimeRow = false;
+      let progressPercentage = 0;
+
+      if (timeRangeString && timeRangeString.includes('-')) {
+        const [startStr, endStr] = timeRangeString.split('-');
+        const startDecimal = parseTimeToDecimal(startStr);
+        const endDecimal = parseTimeToDecimal(endStr);
+        if (currentTimeDecimal >= startDecimal && currentTimeDecimal < endDecimal) {
+          isCurrentTimeRow = true;
+          progressPercentage = Math.min(100, Math.max(0, ((currentTimeDecimal - startDecimal) / (endDecimal - startDecimal)) * 100));
+        }
+      }
+
+      // בדיקה אם יש אירוע רוחבי מערכתי אחיד בשעה הזו אצל כל המורים שעובדים
+      let uniqueContents = new Set();
+      let activeRowsCount = 0;
+      rows.slice(1).forEach(row => {
+        let cell = (row[j] || "").trim();
+        if (cell) {
+          activeRowsCount++;
+          const parts = cell.split('-');
+          let cleanText = parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim();
+          if (cleanText) uniqueContents.add(cleanText);
+        }
+      });
+
+      let isGlobalSystemEvent = (uniqueContents.size === 1 && activeRowsCount >= 2);
+      let timeRowClass = isCurrentTimeRow ? 'kiosk-time-row active-time-row shadow' : 'kiosk-time-row shadow-sm';
+
+      html += `<div class="${timeRowClass}">
+                <div class="kiosk-time-label-zone position-relative">
+                  <span><i class="fa-regular fa-clock me-1"></i> שעה: ${timeRangeString}</span>
+                  ${isCurrentTimeRow ? `<span class="badge bg-teal text-white ms-auto small" style="background-color: var(--accent);">מתקיים עכשיו</span>` : ''}
+                </div>
+                <div class="slots-grid-container">`;
+
+      if (isGlobalSystemEvent) {
+        // אירוע מערכתי יחיד ורחב לרוחב כל המסך בשעה הזו
+        const systemText = Array.from(uniqueContents)[0];
+        html += `
+          <div class="slot-card text-center py-4 w-100" style="border: 2px dashed #15803d; background: #f0fdf4;">
+            <div class="fs-4 fw-bold" style="color: #15803d;"><i class="fa-solid fa-utensils me-2"></i> ${systemText}</div>
+          </div>`;
+      } else {
+        // פירוט רגיל של מורים ושיעורים באותה השעה
+        let totalCardsInRow = 0;
+        rows.slice(1).forEach(row => {
+          let cellText = (row[j] || "").trim();
+          if (cellText) {
+            totalCardsInRow++;
+            let teacherName = row[1];
+            const parts = cellText.split('-');
             let subjectOrRoom = parts.length > 1 ? parts[0].trim() : "";
             let info = parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim();
 
-            hourSlotsHtml += `
-              <div class="slot-card shadow-sm ${activeClassHtml}">
-                <div class="slot-header"><span>${teacherName}</span></div>
+            html += `
+              <div class="slot-card">
+                <div class="slot-header" style="background: #e2e8f0; color: var(--text-main);">
+                  <span><i class="fa-solid fa-user-tie me-1"></i> ${teacherName}</span>
+                </div>
                 <div class="slot-content">
                   <div class="slot-combined-line">
-                    ${subjectOrRoom ? `<span class="slot-room-inline">${subjectOrRoom}</span>` : ''}
-                    <span class="slot-info-inline" title="${info}">${info}</span>
+                    ${subjectOrRoom ? `<span class="slot-room-inline"><i class="fa-solid fa-location-dot me-1"></i>${subjectOrRoom}</span><span class="slot-separator">|</span>` : ''}
+                    <span class="slot-info-inline">${info}</span>
                   </div>
                 </div>
-                ${sandBarHtml}
               </div>`;
-          });
-        }
-
-        if (hourSlotsHtml) {
-          contentHtml += `
-            <div class="daily-hour-block shadow-sm">
-              <div class="daily-hour-title">שעה<br>${timeRangeString}</div>
-              <div class="slots-grid-container">
-                ${hourSlotsHtml}
-              </div>
-            </div>`;
+          }
+        });
+        if (totalCardsInRow === 0) {
+          html += `<div class="text-center text-muted py-2 w-100">אין פעילות רשומה בשעה זו</div>`;
         }
       }
+
+      html += `</div>
+              ${isCurrentTimeRow ? `<div class="progress-bar-sand" style="width: ${progressPercentage}%; height:6px;"></div>` : ''}
+             </div>`;
     }
 
-    if (!contentHtml) {
-      contentHtml = `<p class="text-center text-muted py-5">אין נתונים להצגה ליום ${activeDay}</p>`;
-    }
-    
-    document.getElementById('dailyContent').innerHTML = tabsHtml + contentHtml;
-    updateLiveClock(); 
+    html += `</div>`;
+    return html;
   }
 
   function toggleKioskMode(activeDay) {
     const isActivating = !document.body.classList.contains('kiosk-mode');
     document.body.classList.toggle('kiosk-mode');
-    if (isActivating && document.documentElement.requestFullscreen) {
-      document.documentElement.requestFullscreen().catch(err => console.log(err));
-    } else if (!isActivating && document.fullscreenElement && document.exitFullscreen) {
-      document.exitFullscreen().catch(err => console.log(err));
+    
+    if (isActivating) {
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(err => console.log("Fullscreen error:", err));
+      }
+    } else {
+      if (document.fullscreenElement && document.exitFullscreen) {
+        document.exitFullscreen().catch(err => console.log("Fullscreen exit error:", err));
+      }
     }
     drawDaily(activeDay);
   }
@@ -717,7 +794,9 @@
   document.addEventListener('fullscreenchange', () => {
     if (!document.fullscreenElement) {
       document.body.classList.remove('kiosk-mode');
-      if (isTeacherMode) document.body.classList.add('teacher-view-mode');
+      if (isTeacherMode) {
+        document.body.classList.add('teacher-view-mode');
+      }
       drawDaily(currentActiveDayGlobal);
     }
   });
