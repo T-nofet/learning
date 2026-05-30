@@ -54,7 +54,7 @@
     .lesson-box { background: var(--primary-light); padding: 12px; border-radius: 10px; margin-bottom: 8px; border-right: 4px solid var(--primary); font-size: 0.95rem; }
 
     /* ==========================================================================
-       מבנה השורות החדש: שעה בצד, כרטיסים משמאל
+       מבנה השורות המעודכן: שעה קבועה מימין, כרטיסי מורים אופקיים משמאל
        ========================================================================== */
     .time-row-container {
       display: flex;
@@ -62,19 +62,20 @@
       background: var(--card-bg);
       border: 1px solid #e2e8f0;
       border-radius: var(--radius-md);
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       overflow: hidden;
       box-shadow: 0 2px 6px rgba(0,0,0,0.01);
     }
 
-    /* עמודת השעה הקבועה מימין (נרשמת פעם אחת בלבד!) */
+    /* עמודת השעה הקבועה מימין */
     .time-sidebar {
       background: #e2e8f0;
       color: var(--text-main);
       font-weight: 700;
-      font-size: 0.95rem;
+      font-size: 1rem;
       padding: 15px;
-      min-width: 120px;
+      min-width: 130px;
+      max-width: 130px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -84,13 +85,13 @@
       position: relative;
     }
 
-    /* אזור הכרטיסים של השיעורים */
+    /* אזור כרטיסי המורים - סידור אופקי גמיש (Flex Grid) */
     .cards-content-zone {
       flex-grow: 1;
       padding: 12px;
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 12px;
       align-items: center;
     }
 
@@ -99,21 +100,22 @@
       background: var(--bg-main);
       border: 1px solid #e2e8f0;
       border-radius: 8px;
-      padding: 8px 14px;
-      min-width: 180px;
+      padding: 10px 14px;
       flex: 1;
-      max-width: 280px;
+      min-width: 200px;
+      max-width: 320px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
     }
 
     .lesson-teacher-name {
       font-weight: 700;
       color: var(--primary);
-      font-size: 0.9rem;
-      margin-bottom: 3px;
+      font-size: 0.95rem;
+      margin-bottom: 4px;
     }
 
     .lesson-details {
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       color: var(--text-main);
     }
     
@@ -146,7 +148,7 @@
       width: 100%;
       color: #15803d;
       font-weight: 700;
-      font-size: 0.95rem;
+      font-size: 1rem;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -172,25 +174,23 @@
 
     .day-share-icon-btn { background: none; border: none; color: var(--text-muted); font-size: 1.1rem; padding: 4px 8px; cursor: pointer; }
 
-    /* ==========================================================================
-       התאמות אולטרה קומפקטיות למצב מסך מלא (Kiosk Mode)
-       ========================================================================== */
+    /* התאמות למצב מסך מלא (Kiosk Mode) */
     body.kiosk-mode { background-color: #ffffff !important; padding: 0 !important; margin: 0 !important; }
     body.kiosk-mode #topNav, body.kiosk-mode .no-print, body.kiosk-mode .site-header-area { display: none !important; }
     body.kiosk-mode .main-container { max-width: 100% !important; width: 100vw !important; min-height: 100vh !important; margin: 0 !important; padding: 10px 15px !important; border-radius: 0 !important; box-shadow: none !important; }
-    body.kiosk-mode .time-row-container { margin-bottom: 6px !important; }
-    body.kiosk-mode .time-sidebar { padding: 8px 12px !important; min-width: 100px !important; font-size: 0.85rem !important; }
-    body.kiosk-mode .cards-content-zone { padding: 6px 10px !important; gap: 6px !important; }
-    body.kiosk-mode .lesson-inline-card { padding: 6px 10px !important; min-width: 150px !important; }
-    body.kiosk-mode .lesson-teacher-name { font-size: 0.85rem !important; }
-    body.kiosk-mode .lesson-details { font-size: 0.8rem !important; }
+    body.kiosk-mode .time-row-container { margin-bottom: 8px !important; }
+    body.kiosk-mode .time-sidebar { padding: 10px 12px !important; min-width: 110px !important; max-width: 110px !important; font-size: 0.9rem !important; }
+    body.kiosk-mode .cards-content-zone { padding: 6px 10px !important; gap: 8px !important; }
+    body.kiosk-mode .lesson-inline-card { padding: 8px 12px !important; min-width: 160px !important; }
+    body.kiosk-mode .lesson-teacher-name { font-size: 0.9rem !important; }
+    body.kiosk-mode .lesson-details { font-size: 0.85rem !important; }
 
     body.teacher-view-mode #topNav, body.teacher-view-mode .site-header-area { display: none !important; }
     body.teacher-view-mode .main-container { margin-top: 20px !important; padding-top: 20px !important; }
 
     @media (max-width: 768px) {
       .time-row-container { flex-direction: column; }
-      .time-sidebar { min-width: 100%; border-left: none; border-bottom: 1px solid #cbd5e1; padding: 8px; }
+      .time-sidebar { min-width: 100%; max-width: 100%; border-left: none; border-bottom: 1px solid #cbd5e1; padding: 10px; }
       .lesson-inline-card { min-width: 100%; max-width: 100%; }
     }
   </style>
@@ -454,7 +454,8 @@
   }
 
   /* ==========================================================================
-     לוגיקת הציור המעודכנת: שורה לכל שעה קבועה, השעה רשומה פעם אחת בלבד מימין!
+     לוגיקת הציור המתוקנת: שורה לכל שעה מהטבלה המקורית באקסל.
+     השעה רשומה פעם אחת בלבד בצד ימין, והכרטיסים של המורים רצים משמאל!
      ========================================================================== */
   function drawDaily(activeDay) {
     currentActiveDayGlobal = activeDay;
@@ -503,12 +504,13 @@
     let contentHtml = `<div class="daily-rows-scroll-area">`;
     const rows = GLOBAL_DB.schedule[activeDay] || [];
      
-    if (rows.length > 1) {
-      const headers = rows[0]; // עמודות השעות מהאקסל
+    if (rows.length > 0) {
+      // חילוץ כותרות השעות משורה 0 של ה-JSON המקורי שלך
+      const headers = rows[0]; 
       const now = new Date();
       const currentTimeDecimal = now.getHours() + (now.getMinutes() / 60);
 
-      // 1. איתור חלונות זמן של אירועים גלובליים (כמו ארוחות/הפסקות)
+      // בדיקה מראש אילו עמודות הן "אירוע מערכתי" כללי (כמו ארוחות שבהן התוכן זהה אצל כולם)
       let globalHours = {};    
       for (let j = 2; j < headers.length; j++) {
         let uniqueContents = new Set();
@@ -527,12 +529,12 @@
         }
       }
 
-      // 2. רצים עמודה-עמודה (כלומר לפי חלונות זמן/שעות)
+      // רצים עמודה-עמודה לפי השעות המקוריות (האינדקסים 2 ומעלה מייצגים את עמודות השעה ב-JSON)
       for (let j = 2; j < headers.length; j++) {
         const timeRangeString = headers[j];
         if (!timeRangeString) continue;
 
-        // חישוב האם השעה הזו פעילה כרגע בשביל פס התקדמות
+        // חישוב פס התקדמות וסימון שורה פעילה
         let isActiveSlot = false;
         let progressPercentage = 0;
         if (timeRangeString.includes('-')) {
@@ -550,7 +552,7 @@
         const activeRowClass = isActiveSlot ? 'active-row' : '';
         const sandBarHtml = isActiveSlot ? `<div class="progress-bar-sand" style="width: ${progressPercentage}%"></div>` : '';
 
-        // א) טיפול במצב של ארוחה/הפסקה כללית (תופס שורה קומפקטית שלמה)
+        // א) מצב ארוחה/הפסקה כללית (השעה מופיעה מימין, והתוכן המערכתי משמאל ברוחב מלא)
         if (globalHours[j]) {
           contentHtml += `
             <div class="time-row-container break-row shadow-sm ${activeRowClass}">
@@ -567,12 +569,12 @@
               </div>
             </div>`;
         } 
-        // ב) טיפול בשעת שיעורים רגילה - השעה רשומה פעם אחת, והכרטיסים של המורים רצים לידה
+        // ב) שעת לימודים רגילה: השעה מופיעה פעם אחת מימין, וכל המורים שמלמדים בה רצים משמאל
         else {
           let innerCardsHtml = "";
           
           rows.slice(1).forEach(row => {
-            let teacherInfo = row[1];
+            let teacherInfo = row[1]; // שם המורה מגיע מעמודה 1 (האינדקס השני בשורה)
             let cellContent = (row[j] || "").trim();
 
             if (cellContent) {
@@ -591,6 +593,7 @@
             }
           });
 
+          // מציג את השורה רק אם יש מורים משובצים בשעה הזו
           if (innerCardsHtml) {
             contentHtml += `
               <div class="time-row-container shadow-sm ${activeRowClass}">
