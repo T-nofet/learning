@@ -9,60 +9,44 @@
   <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   
   <style>
+    /* ... כאן נמצאים כל ה-Styles המקוריים שלך ... */
     :root { --primary: #1e3a8a; --primary-light: #eff6ff; --accent: #0d9488; --bg-main: #f8fafc; --card-bg: #ffffff; }
     body { background-color: var(--bg-main); font-family: 'Assistant', sans-serif; }
-    .main-container { max-width: 1100px; margin: 40px auto; background: var(--card-bg); padding: 40px; border-radius: 20px; box-shadow: 0 4px 20px -2px rgba(0,0,0,0.03); }
     
-    /* עיצוב כרטיסים אחיד */
-    .teacher-row { background: var(--card-bg); border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 25px; padding: 20px; }
-    .teacher-label-zone { font-weight: 700; color: var(--primary); font-size: 1.1rem; border-bottom: 2px solid var(--primary-light); margin-bottom: 15px; }
-    .slots-grid-container { display: flex; flex-wrap: wrap; gap: 15px; }
-    .slot-card { background: var(--bg-main); border: 1px solid #e2e8f0; border-radius: 10px; min-width: 220px; flex: 1; padding: 12px; }
-    
-    /* עיצוב מצב קיוסק (ללא שינוי לוגיקה) */
-    body.kiosk-mode #topNav, body.kiosk-mode .no-print { display: none !important; }
-    body.kiosk-mode .main-container { max-width: 100% !important; margin: 0 !important; padding: 40px !important; border-radius: 0 !important; }
+    /* --- השינוי המוזרק: ניהול עיצוב מסך מלא ב-CSS בלבד --- */
+    body.kiosk-mode { background-color: #ffffff !important; }
+    body.kiosk-mode #topNav, body.kiosk-mode .no-print, body.kiosk-mode .site-header-area { display: none !important; }
+    body.kiosk-mode .main-container { max-width: 100% !important; width: 100vw !important; margin: 0 !important; padding: 40px !important; border-radius: 0 !important; box-shadow: none !important; }
     body.kiosk-mode .slot-card { min-width: 280px !important; font-size: 1.2rem !important; }
   </style>
 </head>
 <body>
 
 <div id="appScreen" class="main-container container">
-  <ul class="nav nav-pills mb-4 no-print" id="topNav">
-    <li class="nav-item"><button class="nav-link active" onclick="showTab('daily')">לוח יומי</button></li>
-    <li class="nav-item"><button class="nav-link" onclick="toggleKioskMode()">מצב מסך מלא</button></li>
-  </ul>
-
-  <div id="dailyContent"></div>
-</div>
+  </div>
 
 <script>
-  let GLOBAL_DB = null;
-  let currentActiveDay = "ראשון";
-
-  // טעינת הנתונים (הפונקציה המקורית שלך)
-  async function init() {
-    const res = await fetch('data.json');
-    GLOBAL_DB = await res.json();
-    drawDaily(currentActiveDay);
-  }
-
-  // הפונקציה המאוחדת שמתאימה את עצמה לכל מצב
+  /* ... כל ה-JS המקורי שלך (GLOBAL_DB, הפילטרים וכו') ... */
+  
+  // זה התיקון לפונקציה drawDaily שלך:
   function drawDaily(activeDay) {
-    currentActiveDay = activeDay;
+    currentActiveDayGlobal = activeDay;
     const rows = GLOBAL_DB.schedule[activeDay] || [];
-    let html = ``;
+    
+    let html = ``; // בנה את ה-HTML המקורי כפי שהיה
     
     rows.slice(1).forEach(row => {
       let slotsHtml = "";
       for (let j = 2; j < row.length; j++) {
         if (!row[j]) continue;
-        // המבנה זהה, ה-CSS ב-kiosk-mode יגדיל אותו אוטומטית
+        
+        // כאן הקסם: אנחנו בונים את ה-HTML תמיד אותו דבר
         slotsHtml += `<div class="slot-card">
-                        <div class="fw-bold text-muted">${GLOBAL_DB.schedule[0][j]}</div>
-                        <div>${row[j]}</div>
+                        <div class="slot-header">${GLOBAL_DB.schedule[0][j]}</div>
+                        <div class="slot-content">${row[j]}</div>
                       </div>`;
       }
+      
       html += `<div class="teacher-row">
                  <div class="teacher-label-zone">${row[1]}</div>
                  <div class="slots-grid-container">${slotsHtml}</div>
@@ -71,12 +55,11 @@
     document.getElementById('dailyContent').innerHTML = html;
   }
 
+  // הפונקציה הזו מנהלת את מצב הקיוסק בלי לשנות את מבנה הנתונים
   function toggleKioskMode() {
     document.body.classList.toggle('kiosk-mode');
-    drawDaily(currentActiveDay);
+    drawDaily(currentActiveDayGlobal); 
   }
-
-  init();
 </script>
 </body>
 </html>
