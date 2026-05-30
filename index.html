@@ -55,6 +55,30 @@
     .day-card:hover { transform: translateY(-3px); box-shadow: 0 12px 20px -8px rgba(0,0,0,0.05); border-color: #cbd5e1; }
     .lesson-box { background: var(--primary-light); padding: 14px; border-radius: 10px; margin-bottom: 12px; border-right: 4px solid var(--primary); font-size: 0.95rem; font-weight: 500; }
 
+    /* אלמנט השורה החדש שמחבר את השעה ואת השיעורים במצב רגיל */
+    .time-row-block {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 15px;
+    }
+
+    .time-sidebar-indicator {
+      background: var(--primary);
+      color: white;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      align-self: flex-start;
+      box-shadow: 0 2px 4px rgba(30, 58, 138, 0.1);
+    }
+
     .teacher-row {
       background: var(--card-bg);
       border-radius: var(--radius-md);
@@ -194,6 +218,7 @@
       color: var(--primary);
     }
 
+    /* התאמות מצב מסך מלא (קיוסק) */
     body.kiosk-mode {
       background-color: #ffffff !important;
       padding: 0 !important;
@@ -239,8 +264,29 @@
       padding-top: 20px !important;
     }
 
+    /* עיצוב ייעודי למצב תצוגה רגיל - שעה מימין, שיעורים משמאל */
+    body:not(.kiosk-mode) .time-row-block {
+      flex-direction: row !important;
+      align-items: stretch !important;
+      gap: 15px !important;
+    }
+    body:not(.kiosk-mode) .time-sidebar-indicator {
+      align-self: stretch !important;
+      min-width: 110px;
+      justify-content: center;
+      text-align: center;
+      font-size: 0.95rem;
+      padding: 10px;
+      border-radius: var(--radius-md);
+    }
+    body:not(.kiosk-mode) .teacher-rows-container-for-hour {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
     body:not(.kiosk-mode) .teacher-row {
-      margin-bottom: 10px !important;
+      margin-bottom: 0 !important;
       padding: 10px 14px !important;
     }
     body:not(.kiosk-mode) .teacher-label-zone {
@@ -269,6 +315,7 @@
     }
 
     @media (max-width: 768px) {
+      body:not(.kiosk-mode) .time-row-block { flex-direction: column !important; }
       .slot-card { min-width: 100%; width: 100%; }
     }
     @media print { .no-print { display: none !important; } .main-container { box-shadow: none; margin: 0; width: 100%; padding: 0; } }
@@ -538,7 +585,7 @@
     return parseInt(parts[0], 10) + (parseInt(parts[1], 10) / 60);
   }
 
-  // הפונקציה המתוקנת עם המבנה המקורי של שורות מורים וזיהוי אירועים מערכתיים
+  // הפונקציה המעודכנת - ארגון לוח הזמנים לפי שעות (שעה מימין וכרטיסי שיעורים משמאל)
   function drawDaily(activeDay) {
     currentActiveDayGlobal = activeDay;
     const days = ["ראשון", "שני", "שלישי", "רביעי", "חמישי"];
@@ -603,7 +650,7 @@
       const now = new Date();
       const currentTimeDecimal = now.getHours() + (now.getMinutes() / 60);
 
-      // שלב 1: זיהוי הפסקות / אירועים מערכתיים משותפים לכל המורים
+      // זיהוי הפסקות / אירועים מערכתיים
       for (let j = 2; j < headers.length; j++) {
         let uniqueContents = new Set();
         let countRowsWithData = 0;
@@ -623,55 +670,77 @@
         }
       }
 
-      // שלב 2: בניית שורות המורים
-      rows.slice(1).forEach(row => {
-        let teacherInfo = row[1]; 
-        let hasDataInRow = false;
-        let slotsHtml = "";
+      // שינוי מבני: רצים לפי עמודות הזמן (Headers) במקום לפי שורות מורים
+      for (let j = 2; j < headers.length; j++) {
+        const timeRangeString = headers[j];
+        let hasDataInHour = false;
+        let hourSlotsHtml = "";
 
-        for (let j = 2; j < headers.length; j++) {
-          if (row[j] && row[j].trim()) {
-            hasDataInRow = true;
+        // בדיקה האם השעה הזו היא השעה הפעילה כעת
+        let isHourActive = false;
+        if (timeRangeString && timeRangeString.includes('-')) {
+          const [startStr, endStr] = timeRangeString.split('-');
+          const startDecimal = parseTimeToDecimal(startStr);
+          const endDecimal = parseTimeToDecimal(endStr);
+          if (currentTimeDecimal >= startDecimal && currentTimeDecimal < endDecimal) {
+            isHourActive = true;
+          }
+        }
 
-            let isActiveSlot = false;
-            let progressPercentage = 0;
-            const timeRangeString = headers[j];
+        // במידה ומדובר באירוע מערכתי (כמו ארוחת בוקר)
+        if (globalHours[j]) {
+          hasDataInHour = true;
+          let progressPercentage = 0;
+          if (isHourActive) {
+            const [startStr, endStr] = timeRangeString.split('-');
+            const startDecimal = parseTimeToDecimal(startStr);
+            const endDecimal = parseTimeToDecimal(endStr);
+            const totalDuration = endDecimal - startDecimal;
+            const elapsed = currentTimeDecimal - startDecimal;
+            progressPercentage = Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
+          }
 
-            if (timeRangeString && timeRangeString.includes('-')) {
-              const [startStr, endStr] = timeRangeString.split('-');
-              const startDecimal = parseTimeToDecimal(startStr);
-              const endDecimal = parseTimeToDecimal(endStr);
-              if (currentTimeDecimal >= startDecimal && currentTimeDecimal < endDecimal) {
+          const activeClassHtml = isHourActive ? 'active-slot' : '';
+          const sandBarHtml = isHourActive ? `<div class="progress-bar-sand" style="width: ${progressPercentage}%"></div>` : '';
+
+          hourSlotsHtml += `
+            <div class="slot-card shadow-sm ${activeClassHtml}" style="min-width:100%;">
+              <div class="slot-content text-center fw-bold py-3" style="color: #15803d !important; font-size:1.1rem;">
+                <i class="fa-solid fa-utensils me-2"></i> ${globalHours[j]}
+              </div>
+              ${sandBarHtml}
+            </div>`;
+        } else {
+          // במידה ואלו שיעורים רגילים של מורים, נאסוף את כל המורים שיש להם שיעור בשעה הזו
+          rows.slice(1).forEach(row => {
+            let teacherInfo = row[1];
+            if (row[j] && row[j].trim()) {
+              hasDataInHour = true;
+
+              let isActiveSlot = false;
+              let progressPercentage = 0;
+
+              if (isHourActive) {
                 isActiveSlot = true;
+                const [startStr, endStr] = timeRangeString.split('-');
+                const startDecimal = parseTimeToDecimal(startStr);
+                const endDecimal = parseTimeToDecimal(endStr);
                 const totalDuration = endDecimal - startDecimal;
                 const elapsed = currentTimeDecimal - startDecimal;
                 progressPercentage = Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
               }
-            }
 
-            const activeClassHtml = isActiveSlot ? 'active-slot' : '';
-            const sandBarHtml = isActiveSlot ? `<div class="progress-bar-sand" style="width: ${progressPercentage}%"></div>` : '';
-            
-            if (globalHours[j]) {
-              slotsHtml += `
-                <div class="slot-card shadow-sm ${activeClassHtml}">
-                  <div class="slot-header">
-                    <span><i class="fa-regular fa-clock me-1"></i>${headers[j]}</span>
-                  </div>
-                  <div class="slot-content text-center fw-bold" style="color: #15803d !important;">
-                    <i class="fa-solid fa-utensils me-1"></i> ${globalHours[j]}
-                  </div>
-                  ${sandBarHtml}
-                </div>`;
-            } else {
+              const activeClassHtml = isActiveSlot ? 'active-slot' : '';
+              const sandBarHtml = isActiveSlot ? `<div class="progress-bar-sand" style="width: ${progressPercentage}%"></div>` : '';
+
               const parts = row[j].split('-');
               let subjectOrRoom = parts.length > 1 ? parts[0].trim() : "";
               let info = parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim();
 
-              slotsHtml += `
+              hourSlotsHtml += `
                 <div class="slot-card shadow-sm ${activeClassHtml}">
                   <div class="slot-header">
-                    <span><i class="fa-regular fa-clock me-1"></i>${headers[j]}</span>
+                    <span><i class="fa-solid fa-id-card me-1"></i>${teacherInfo}</span>
                   </div>
                   <div class="slot-content">
                     <div class="slot-combined-line">
@@ -682,21 +751,23 @@
                   ${sandBarHtml}
                 </div>`;
             }
-          }
+          });
         }
 
-        if (hasDataInRow) {
+        // הזרקת מבנה השורה החדש: הבלוק מכיל את השעה בצד ימין ואת גריד השיעורים משמאל
+        if (hasDataInHour) {
           contentHtml += `
-            <div class="teacher-row shadow-sm">
-              <div class="teacher-label-zone">
-                <i class="fa-solid fa-id-card text-primary"></i> ${teacherInfo}
+            <div class="time-row-block">
+              <div class="time-sidebar-indicator">
+                <i class="fa-regular fa-clock"></i>
+                <span>${timeRangeString}</span>
               </div>
-              <div class="slots-grid-container">
-                ${slotsHtml}
+              <div class="teacher-rows-container-for-hour slots-grid-container">
+                ${hourSlotsHtml}
               </div>
             </div>`;
         }
-      });
+      }
 
     } else {
       contentHtml += `<p class="text-center text-muted py-5">אין נתונים להצגה ליום ${activeDay}</p>`;
