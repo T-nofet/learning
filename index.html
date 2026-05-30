@@ -19,23 +19,22 @@
       --card-bg: #ffffff;
       --radius-lg: 20px;
       --radius-md: 12px;
-      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition: all 0.2s ease-in-out;
     }
 
     body { 
       background-color: var(--bg-main); 
       font-family: 'Assistant', sans-serif; 
       color: var(--text-main);
-      -webkit-font-smoothing: antialiased;
     }
 
     .main-container { 
       max-width: 1100px; 
-      margin: 40px auto; 
+      margin: 30px auto; 
       background: var(--card-bg); 
-      padding: 40px; 
+      padding: 30px; 
       border-radius: var(--radius-lg); 
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 2px 10px -1px rgba(0, 0, 0, 0.02); 
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02); 
     }
     
     .auth-card {
@@ -44,88 +43,95 @@
       background: var(--card-bg);
       padding: 40px;
       border-radius: var(--radius-lg);
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
     }
 
-    .nav-pills { background: #f1f5f9; padding: 6px; border-radius: 30px; border: 1px solid #e2e8f0; }
-    .nav-pills .nav-link { border-radius: 24px; color: var(--text-muted); font-weight: 600; transition: var(--transition); border: none; padding: 10px 20px; }
-    .nav-pills .nav-link.active { background-color: var(--primary) !important; color: white; box-shadow: 0 4px 12px rgba(30, 58, 138, 0.15); }
+    .nav-pills { background: #f1f5f9; padding: 6px; border-radius: 30px; }
+    .nav-pills .nav-link { border-radius: 24px; color: var(--text-muted); font-weight: 600; padding: 10px 20px; border: none; }
+    .nav-pills .nav-link.active { background-color: var(--primary) !important; color: white; }
 
-    .day-card { background: var(--card-bg); border: 1px solid #e2e8f0; border-radius: var(--radius-md); padding: 20px; height: 100%; transition: var(--transition); }
-    .day-card:hover { transform: translateY(-3px); box-shadow: 0 12px 20px -8px rgba(0,0,0,0.05); border-color: #cbd5e1; }
-    .lesson-box { background: var(--primary-light); padding: 14px; border-radius: 10px; margin-bottom: 12px; border-right: 4px solid var(--primary); font-size: 0.95rem; font-weight: 500; }
+    .day-card { background: var(--card-bg); border: 1px solid #e2e8f0; border-radius: var(--radius-md); padding: 20px; height: 100%; }
+    .lesson-box { background: var(--primary-light); padding: 12px; border-radius: 10px; margin-bottom: 8px; border-right: 4px solid var(--primary); font-size: 0.95rem; }
 
-    /* פריסת שורות המורים */
-    .teacher-row {
+    /* ==========================================================================
+       מבנה השורות החדש: שעה בצד, כרטיסים משמאל
+       ========================================================================== */
+    .time-row-container {
+      display: flex;
+      align-items: stretch;
       background: var(--card-bg);
+      border: 1px solid #e2e8f0;
       border-radius: var(--radius-md);
-      border: 1px solid #e2e8f0;
-      margin-bottom: 25px;
-      padding: 20px;
-    }
-    
-    .teacher-label-zone {
-      font-weight: 700;
-      color: var(--primary);
-      font-size: 1.1rem;
-      border-bottom: 2px solid var(--primary-light);
-      padding-bottom: 8px;
-      margin-bottom: 15px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .slots-grid-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-    }
-
-    /* כרטיס שעה/שיעור במבנה המאוחד החדש */
-    .slot-card {
-      position: relative;
-      background: var(--bg-main);
-      border: 1px solid #e2e8f0;
-      border-radius: 10px;
-      min-width: 220px;
-      flex: 1;
-      transition: var(--transition);
+      margin-bottom: 10px;
       overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.01);
+    }
+
+    /* עמודת השעה הקבועה מימין (נרשמת פעם אחת בלבד!) */
+    .time-sidebar {
+      background: #e2e8f0;
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 15px;
+      min-width: 120px;
       display: flex;
       flex-direction: column;
-    }
-    .slot-card:hover { background: #ffffff; border-color: var(--primary); transform: translateY(-1px); }
-    
-    /* שורת כותרת מאוחדת בתוך הכרטיס (שעה + חדר/מורה) */
-    .slot-header { 
-      background: #e2e8f0; 
-      font-size: 0.85rem; 
-      padding: 6px 12px; 
-      font-weight: 700; 
-      color: var(--text-muted);
-      display: flex;
       align-items: center;
-      justify-content: flex-start;
-      gap: 6px;
+      justify-content: center;
+      text-align: center;
+      border-left: 1px solid #cbd5e1;
+      position: relative;
+    }
+
+    /* אזור הכרטיסים של השיעורים */
+    .cards-content-zone {
+      flex-grow: 1;
+      padding: 12px;
+      display: flex;
       flex-wrap: wrap;
-      border-bottom: 1px solid #cbd5e1;
+      gap: 10px;
+      align-items: center;
+    }
+
+    /* כרטיס מורה בודד בתוך השורה */
+    .lesson-inline-card {
+      background: var(--bg-main);
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 8px 14px;
+      min-width: 180px;
+      flex: 1;
+      max-width: 280px;
+    }
+
+    .lesson-teacher-name {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 0.9rem;
+      margin-bottom: 3px;
+    }
+
+    .lesson-details {
+      font-size: 0.85rem;
+      color: var(--text-main);
     }
     
-    .slot-content { font-size: 0.95rem; padding: 10px 12px; color: var(--text-main); font-weight: 600; flex-grow: 1; }
-    .slot-combined-line { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-    .slot-room-inline { font-size: 0.85rem; color: var(--accent); font-weight: 700; }
-    .slot-info-inline { font-size: 0.9rem; color: var(--text-main); }
-    .slot-separator { color: #cbd5e1; margin: 0 2px; }
-
-    .slot-card.active-slot {
-      border: 2px solid var(--accent) !important;
-      background-color: #f0fdfa !important;
+    .lesson-room-tag {
+      color: var(--accent);
+      font-weight: 700;
+      margin-left: 6px;
     }
-    .slot-card.active-slot .slot-header {
+
+    /* שורת שעה פעילה כעת */
+    .time-row-container.active-row {
+      border: 2px solid var(--accent) !important;
+    }
+    .time-row-container.active-row .time-sidebar {
       background: #ccfbf1 !important;
       color: #115e59 !important;
     }
+
     .progress-bar-sand {
       position: absolute;
       bottom: 0;
@@ -133,187 +139,67 @@
       height: 4px;
       background-color: var(--accent);
       width: 0%;
-      transition: width 1s linear;
     }
 
-    .form-control { border: 1px solid #e2e8f0; background-color: #ffffff; padding: 12px 20px; transition: var(--transition); }
-    
-    .form-select { 
-      border: 1px solid #e2e8f0; 
-      background-color: #ffffff; 
-      padding: 12px 20px;
-      text-indent: 6px; 
-      transition: var(--transition); 
+    /* סגנון מיוחד ומצומצם לארוחות/הפסקות משותפות */
+    .global-break-card {
+      width: 100%;
+      color: #15803d;
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-    .form-control:focus, .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.08); }
-    
-    .btn-primary { background-color: var(--primary); border: none; padding: 10px 24px; font-weight: 600; border-radius: 30px; transition: var(--transition); }
-    .btn-primary:hover { background-color: #1e40af; transform: translateY(-1px); }
+    .time-row-container.break-row {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+    }
+    .time-row-container.break-row .time-sidebar {
+      background: #dcfce7;
+      color: #166534;
+      border-left-color: #bbf7d0;
+    }
 
-    .badge { font-size: 0.85rem; padding: 8px 14px; border-radius: 20px; cursor: pointer; transition: var(--transition); font-weight: 500; }
+    .form-control, .form-select { border: 1px solid #e2e8f0; padding: 12px 20px; }
+    .btn-primary { background-color: var(--primary); border: none; padding: 10px 24px; font-weight: 600; border-radius: 30px; }
+    .badge { font-size: 0.85rem; padding: 8px 14px; border-radius: 20px; }
     .bg-custom-teacher { background-color: #f1f5f9 !important; color: var(--text-muted) !important; border: 1px solid #e2e8f0; }
-    .bg-custom-teacher:hover { background-color: var(--primary-light) !important; color: var(--primary) !important; }
 
     .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); display: flex; justify-content: center; align-items: center; z-index: 9999; }
-    
-    .sticky-header-container {
-      position: -webkit-sticky;
-      position: sticky;
-      top: 0;
-      background: var(--card-bg);
-      z-index: 1020;
-      padding-bottom: 12px;
-      border-bottom: 1px solid #e2e8f0;
-      margin-bottom: 15px;
-    }
+    .sticky-header-container { position: -webkit-sticky; position: sticky; top: 0; background: var(--card-bg); z-index: 1020; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0; margin-bottom: 15px; }
+    .live-clock-badge { font-size: 1.1rem; font-weight: 700; background-color: var(--primary-light); color: var(--primary); padding: 6px 16px; border-radius: 30px; display: inline-flex; align-items: center; gap: 6px; }
 
-    .live-clock-badge {
-      font-size: 1.1rem;
-      font-weight: 700;
-      background-color: var(--primary-light);
-      color: var(--primary);
-      padding: 6px 16px;
-      border-radius: 30px;
-      letter-spacing: 0.5px;
-      font-family: monospace;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      border: 1px solid rgba(30, 58, 138, 0.15);
-    }
-
-    .day-share-icon-btn {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      font-size: 1.1rem;
-      padding: 4px 8px;
-      cursor: pointer;
-      border-radius: 50%;
-      transition: var(--transition);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .day-share-icon-btn:hover {
-      background-color: var(--primary-light);
-      color: var(--primary);
-    }
+    .day-share-icon-btn { background: none; border: none; color: var(--text-muted); font-size: 1.1rem; padding: 4px 8px; cursor: pointer; }
 
     /* ==========================================================================
-       מצב מסך מלא (Kiosk Mode) - הידוק וצמצום משמעותי להצגת 4+ שורות לפחות
+       התאמות אולטרה קומפקטיות למצב מסך מלא (Kiosk Mode)
        ========================================================================== */
-    body.kiosk-mode {
-      background-color: #ffffff !important;
-      padding: 0 !important;
-      margin: 0 !important;
-    }
-    body.kiosk-mode #topNav, 
-    body.kiosk-mode .no-print, 
-    body.kiosk-mode .nav-pills,
-    body.kiosk-mode .site-header-area {
-      display: none !important;
-    }
-    body.kiosk-mode .main-container {
-      max-width: 100% !important;
-      width: 100vw !important;
-      min-height: 100vh !important;
-      margin: 0 !important;
-      padding: 15px 20px !important; /* ריפוד קטן יותר מסביב */
-      border-radius: 0 !important;
-      box-shadow: none !important;
-    }
-    body.kiosk-mode .sticky-header-container {
-      background: #ffffff !important;
-      padding-top: 5px;
-      padding-bottom: 10px;
-      margin-bottom: 12px;
-    }
-    body.kiosk-mode .teacher-row {
-      margin-bottom: 8px !important; /* רווח קטן בין המורים כדי להרוויח גובה */
-      padding: 8px 14px !important;
-      background: #f8fafc;
-    }
-    body.kiosk-mode .teacher-label-zone {
-      font-size: 1rem !important;
-      margin-bottom: 6px !important;
-      padding-bottom: 3px !important;
-    }
-    body.kiosk-mode .slots-grid-container {
-      gap: 8px !important;
-    }
-    body.kiosk-mode .slot-card {
-      min-width: 180px !important; /* הידוק קל של כרטיסי מסך מלא */
-    }
-    body.kiosk-mode .slot-header {
-      padding: 4px 10px !important;
-      font-size: 0.8rem !important;
-    }
-    body.kiosk-mode .slot-content {
-      padding: 8px 10px !important;
-      font-size: 0.9rem !important;
-    }
+    body.kiosk-mode { background-color: #ffffff !important; padding: 0 !important; margin: 0 !important; }
+    body.kiosk-mode #topNav, body.kiosk-mode .no-print, body.kiosk-mode .site-header-area { display: none !important; }
+    body.kiosk-mode .main-container { max-width: 100% !important; width: 100vw !important; min-height: 100vh !important; margin: 0 !important; padding: 10px 15px !important; border-radius: 0 !important; box-shadow: none !important; }
+    body.kiosk-mode .time-row-container { margin-bottom: 6px !important; }
+    body.kiosk-mode .time-sidebar { padding: 8px 12px !important; min-width: 100px !important; font-size: 0.85rem !important; }
+    body.kiosk-mode .cards-content-zone { padding: 6px 10px !important; gap: 6px !important; }
+    body.kiosk-mode .lesson-inline-card { padding: 6px 10px !important; min-width: 150px !important; }
+    body.kiosk-mode .lesson-teacher-name { font-size: 0.85rem !important; }
+    body.kiosk-mode .lesson-details { font-size: 0.8rem !important; }
 
-    body.teacher-view-mode #topNav,
-    body.teacher-view-mode .site-header-area {
-      display: none !important;
-    }
-    body.teacher-view-mode .main-container {
-      margin-top: 20px !important;
-      padding-top: 20px !important;
-    }
-
-    /* ==========================================================================
-       מצב צפייה רגיל (Not Kiosk) - הידוק אולטרה קומפקטי למניעת גלילה לגמרי
-       ========================================================================== */
-    body:not(.kiosk-mode) .teacher-row {
-      margin-bottom: 6px !important;
-      padding: 6px 12px !important;
-    }
-    body:not(.kiosk-mode) .teacher-label-zone {
-      font-size: 0.9rem !important;
-      margin-bottom: 4px !important;
-      padding-bottom: 2px !important;
-      font-weight: 800 !important;
-    }
-    body:not(.kiosk-mode) .slots-grid-container {
-      gap: 4px !important;
-    }
-    body:not(.kiosk-mode) .slot-card {
-      min-width: 140px !important; /* מאפשר להרבה יותר כרטיסיות להיכנס באותה שורה */
-    }
-    body:not(.kiosk-mode) .slot-header {
-      padding: 2px 6px !important;
-      font-size: 0.72rem !important;
-    }
-    body:not(.kiosk-mode) .slot-content {
-      padding: 4px 6px !important;
-      font-size: 0.85rem !important;
-    }
-    body:not(.kiosk-mode) .slot-combined-line {
-      gap: 3px !important;
-    }
-    body:not(.kiosk-mode) .slot-room-inline {
-      font-size: 0.72rem !important;
-    }
-    body:not(.kiosk-mode) .slot-info-inline {
-      font-size: 0.76rem !important;
-    }
-    body:not(.kiosk-mode) .slot-separator {
-      margin: 0 1px !important;
-    }
+    body.teacher-view-mode #topNav, body.teacher-view-mode .site-header-area { display: none !important; }
+    body.teacher-view-mode .main-container { margin-top: 20px !important; padding-top: 20px !important; }
 
     @media (max-width: 768px) {
-      .slot-card { min-width: 100%; width: 100%; }
+      .time-row-container { flex-direction: column; }
+      .time-sidebar { min-width: 100%; border-left: none; border-bottom: 1px solid #cbd5e1; padding: 8px; }
+      .lesson-inline-card { min-width: 100%; max-width: 100%; }
     }
-    @media print { .no-print { display: none !important; } .main-container { box-shadow: none; margin: 0; width: 100%; padding: 0; } }
   </style>
 </head>
 <body>
 
 <div id="loader" class="loading-overlay">
   <div class="text-center">
-    <div class="spinner-border text-primary" style="width: 2.5rem; height: 2.5rem; stroke-width: 3px;"></div>
+    <div class="spinner-border text-primary" style="width: 2.5rem; height: 2.5rem;"></div>
     <p class="mt-3 fw-medium text-secondary">טוען נתונים מאובטחים...</p>
   </div>
 </div>
@@ -327,7 +213,7 @@
       <input type="password" id="accessPw" class="form-control rounded-3" placeholder="סיסמת כניסה" onkeydown="if(event.key === 'Enter') handleAuth()">
     </div>
     <button class="btn btn-primary w-100 rounded-3 py-2.5" onclick="handleAuth()">התחבר למערכת</button>
-    <div id="authError" class="text-danger small mt-3 fw-semibold" style="display: none;">❌ סיסמה אינה נכונה</div>
+    <div id="authError" class="text-danger small mt-3 " style="display: none;">❌ סיסמה אינה נכונה</div>
   </div>
 </div>
 
@@ -422,9 +308,7 @@
       document.getElementById('loader').style.display = 'none';
 
       const validDays = ["ראשון", "שני", "שלישי", "רביעי", "חמישי"];
-      if (urlDay && validDays.includes(urlDay)) {
-        currentActiveDayGlobal = urlDay;
-      }
+      if (urlDay && validDays.includes(urlDay)) currentActiveDayGlobal = urlDay;
 
       if (urlDay && validDays.includes(urlDay)) {
         isTeacherMode = true;
@@ -440,6 +324,7 @@
         document.getElementById('authScreen').style.display = 'block';
       }
 
+      updateLiveClock();
       setInterval(updateLiveClock, 1000);
     } catch (err) {
       console.error(err);
@@ -491,10 +376,7 @@
      
     if (isTeacherMode) {
       const dailyTriggerBtn = document.querySelector('[data-bs-target="#tab-daily"]');
-      if (dailyTriggerBtn) {
-        dailyTriggerBtn.click(); 
-        return;
-      }
+      if (dailyTriggerBtn) { dailyTriggerBtn.click(); return; }
     }
 
     if (isStudentMode) {
@@ -561,9 +443,7 @@
      
     if (iconEl) {
       iconEl.className = "fa-solid fa-check text-success";
-      setTimeout(() => {
-        iconEl.className = "fa-solid fa-link text-muted";
-      }, 2000);
+      setTimeout(() => { iconEl.className = "fa-solid fa-link text-muted"; }, 2000);
     }
   }
 
@@ -574,7 +454,7 @@
   }
 
   /* ==========================================================================
-     מנגנון ציור הלוח היומי - שונה כדי להכניס שעות לתוך שורת הכותרת של הכרטיס
+     לוגיקת הציור המעודכנת: שורה לכל שעה קבועה, השעה רשומה פעם אחת בלבד מימין!
      ========================================================================== */
   function drawDaily(activeDay) {
     currentActiveDayGlobal = activeDay;
@@ -594,20 +474,13 @@
       tabsHtml += `
         <div class="d-flex justify-content-between align-items-center mt-3 px-2">
           <div style="flex: 1;" class="text-end">
-            <button class="btn btn-sm btn-danger rounded-pill px-3 py-1.5 fw-bold" 
-                    style="font-size: 0.85rem;" 
-                    onclick="toggleKioskMode('${activeDay}')">
+            <button class="btn btn-sm btn-danger rounded-pill px-3 py-1.5 fw-bold" style="font-size: 0.85rem;" onclick="toggleKioskMode('${activeDay}')">
               <i class="fa-solid fa-compress me-1"></i> יציאה ממסך מלא
             </button>
           </div>
           <div class="d-flex align-items-center justify-content-center gap-3">
-            <h5 class="fw-bold m-0 text-dark">
-              לוח זמנים מפורט - יום ${activeDay}
-            </h5>
-            <div class="live-clock-badge">
-              <i class="fa-regular fa-clock"></i>
-              <span id="kioskLiveClock">--:--:--</span>
-            </div>
+            <h5 class="fw-bold m-0 text-dark">לוח זמנים מפורט - יום ${activeDay}</h5>
+            <div class="live-clock-badge"><i class="fa-regular fa-clock"></i><span id="kioskLiveClock">--:--:--</span></div>
           </div>
           <div style="flex: 1;"></div>
         </div>`;
@@ -620,30 +493,26 @@
               <i id="shareIconObj" class="fa-solid fa-link text-muted"></i>
             </button>
           </h5>
-          <button class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1.5 fw-bold ms-auto ms-sm-0" 
-                  style="font-size: 0.85rem;" 
-                  onclick="toggleKioskMode('${activeDay}')">
+          <button class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1.5 fw-bold ms-auto ms-sm-0" style="font-size: 0.85rem;" onclick="toggleKioskMode('${activeDay}')">
             <i class="fa-solid fa-expand me-1"></i> מצב מסך מלא
           </button>
         </div>`;
     }
-     
     tabsHtml += `</div>`;
 
     let contentHtml = `<div class="daily-rows-scroll-area">`;
     const rows = GLOBAL_DB.schedule[activeDay] || [];
      
     if (rows.length > 1) {
-      const headers = rows[0]; 
-      let globalHours = {};    
-
+      const headers = rows[0]; // עמודות השעות מהאקסל
       const now = new Date();
       const currentTimeDecimal = now.getHours() + (now.getMinutes() / 60);
 
+      // 1. איתור חלונות זמן של אירועים גלובליים (כמו ארוחות/הפסקות)
+      let globalHours = {};    
       for (let j = 2; j < headers.length; j++) {
         let uniqueContents = new Set();
         let countRowsWithData = 0;
-
         rows.slice(1).forEach(row => {
           let cell = (row[j] || "").trim();
           if (cell) {
@@ -653,85 +522,90 @@
             if (cleanText) uniqueContents.add(cleanText);
           }
         });
-
         if (uniqueContents.size === 1 && countRowsWithData >= 2) {
           globalHours[j] = Array.from(uniqueContents)[0]; 
         }
       }
 
-      rows.slice(1).forEach(row => {
-        let teacherInfo = row[1]; 
-        let hasDataInRow = false;
-        let slotsHtml = "";
+      // 2. רצים עמודה-עמודה (כלומר לפי חלונות זמן/שעות)
+      for (let j = 2; j < headers.length; j++) {
+        const timeRangeString = headers[j];
+        if (!timeRangeString) continue;
 
-        for (let j = 2; j < headers.length; j++) {
-          if (row[j] && row[j].trim()) {
-            hasDataInRow = true;
-
-            let isActiveSlot = false;
-            let progressPercentage = 0;
-            const timeRangeString = headers[j];
-
-            if (timeRangeString && timeRangeString.includes('-')) {
-              const [startStr, endStr] = timeRangeString.split('-');
-              const startDecimal = parseTimeToDecimal(startStr);
-              const endDecimal = parseTimeToDecimal(endStr);
-              if (currentTimeDecimal >= startDecimal && currentTimeDecimal < endDecimal) {
-                isActiveSlot = true;
-                const totalDuration = endDecimal - startDecimal;
-                const elapsed = currentTimeDecimal - startDecimal;
-                progressPercentage = Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
-              }
-            }
-
-            const activeClassHtml = isActiveSlot ? 'active-slot' : '';
-            const sandBarHtml = isActiveSlot ? `<div class="progress-bar-sand" style="width: ${progressPercentage}%"></div>` : '';
-             
-            // הצגת אירוע גלובלי (כמו הפסקה/ארוחה) - השעה משולבת כעת בכותרת הכרטיס
-            if (globalHours[j]) {
-              slotsHtml += `
-                <div class="slot-card shadow-sm ${activeClassHtml}">
-                  <div class="slot-header">
-                    <span><i class="fa-regular fa-clock me-1"></i><b>${headers[j]}</b></span>
-                  </div>
-                  <div class="slot-content text-center text-success fw-bold py-2">${globalHours[j]}</div>
-                  ${sandBarHtml}
-                </div>`;
-            } else {
-              // שיעור רגיל - שעת השיעור אוחדה לשורה אחת בכותרת יחד עם החדר/הנושא
-              const parts = row[j].split('-');
-              let subjectOrRoom = parts.length > 1 ? parts[0].trim() : "";
-              let info = parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim();
-
-              slotsHtml += `
-                <div class="slot-card shadow-sm ${activeClassHtml}">
-                  <div class="slot-header">
-                    <span><i class="fa-regular fa-clock me-1"></i><b>${headers[j]}</b></span>
-                    ${subjectOrRoom ? `<span class="slot-separator">|</span><span class="slot-room-inline"><i class="fa-solid fa-tag me-1"></i>${subjectOrRoom}</span>` : ''}
-                  </div>
-                  <div class="slot-content">
-                    <div class="slot-combined-line">
-                      <span class="slot-info-inline">${info}</span>
-                    </div>
-                  </div>
-                  ${sandBarHtml}
-                </div>`;
-            }
+        // חישוב האם השעה הזו פעילה כרגע בשביל פס התקדמות
+        let isActiveSlot = false;
+        let progressPercentage = 0;
+        if (timeRangeString.includes('-')) {
+          const [startStr, endStr] = timeRangeString.split('-');
+          const startDecimal = parseTimeToDecimal(startStr);
+          const endDecimal = parseTimeToDecimal(endStr);
+          if (currentTimeDecimal >= startDecimal && currentTimeDecimal < endDecimal) {
+            isActiveSlot = true;
+            const totalDuration = endDecimal - startDecimal;
+            const elapsed = currentTimeDecimal - startDecimal;
+            progressPercentage = Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
           }
         }
 
-        if (hasDataInRow) {
+        const activeRowClass = isActiveSlot ? 'active-row' : '';
+        const sandBarHtml = isActiveSlot ? `<div class="progress-bar-sand" style="width: ${progressPercentage}%"></div>` : '';
+
+        // א) טיפול במצב של ארוחה/הפסקה כללית (תופס שורה קומפקטית שלמה)
+        if (globalHours[j]) {
           contentHtml += `
-            <div class="teacher-row shadow-sm">
-              <div class="teacher-label-zone">
-                <i class="fa-solid fa-id-card text-primary"></i> ${teacherInfo}
+            <div class="time-row-container break-row shadow-sm ${activeRowClass}">
+              <div class="time-sidebar">
+                <i class="fa-regular fa-clock mb-1"></i>
+                <span>${timeRangeString}</span>
+                ${sandBarHtml}
               </div>
-              <div class="slots-grid-container">
-                ${slotsHtml}
+              <div class="cards-content-zone">
+                <div class="global-break-card">
+                  <i class="fa-solid fa-utensils"></i>
+                  <span>${globalHours[j]}</span>
+                </div>
               </div>
             </div>`;
+        } 
+        // ב) טיפול בשעת שיעורים רגילה - השעה רשומה פעם אחת, והכרטיסים של המורים רצים לידה
+        else {
+          let innerCardsHtml = "";
+          
+          rows.slice(1).forEach(row => {
+            let teacherInfo = row[1];
+            let cellContent = (row[j] || "").trim();
+
+            if (cellContent) {
+              const parts = cellContent.split('-');
+              let subjectOrRoom = parts.length > 1 ? parts[0].trim() : "";
+              let info = parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim();
+
+              innerCardsHtml += `
+                <div class="lesson-inline-card shadow-sm">
+                  <div class="lesson-teacher-name"><i class="fa-solid fa-user-tie me-1"></i>${teacherInfo}</div>
+                  <div class="lesson-details">
+                    ${subjectOrRoom ? `<span class="lesson-room-tag">[${subjectOrRoom}]</span>` : ''}
+                    <span>${info}</span>
+                  </div>
+                </div>`;
+            }
+          });
+
+          if (innerCardsHtml) {
+            contentHtml += `
+              <div class="time-row-container shadow-sm ${activeRowClass}">
+                <div class="time-sidebar">
+                  <i class="fa-regular fa-clock mb-1"></i>
+                  <span>${timeRangeString}</span>
+                  ${sandBarHtml}
+                </div>
+                <div class="cards-content-zone">
+                  ${innerCardsHtml}
+                </div>
+              </div>`;
+          }
         }
-      });
+      }
 
     } else {
       contentHtml += `<p class="text-center text-muted py-5">אין נתונים להצגה ליום ${activeDay}</p>`;
@@ -748,11 +622,11 @@
      
     if (isActivating) {
       if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen().catch(err => console.log("Fullscreen error:", err));
+        document.documentElement.requestFullscreen().catch(err => console.log(err));
       }
     } else {
       if (document.fullscreenElement && document.exitFullscreen) {
-        document.exitFullscreen().catch(err => console.log("Fullscreen exit error:", err));
+        document.exitFullscreen().catch(err => console.log(err));
       }
     }
     drawDaily(activeDay);
@@ -761,9 +635,7 @@
   document.addEventListener('fullscreenchange', () => {
     if (!document.fullscreenElement) {
       document.body.classList.remove('kiosk-mode');
-      if (isTeacherMode) {
-        document.body.classList.add('teacher-view-mode');
-      }
+      if (isTeacherMode) document.body.classList.add('teacher-view-mode');
       drawDaily(currentActiveDayGlobal);
     }
   });
