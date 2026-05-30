@@ -55,6 +55,7 @@
     .day-card:hover { transform: translateY(-3px); box-shadow: 0 12px 20px -8px rgba(0,0,0,0.05); border-color: #cbd5e1; }
     .lesson-box { background: var(--primary-light); padding: 14px; border-radius: 10px; margin-bottom: 12px; border-right: 4px solid var(--primary); font-size: 0.95rem; font-weight: 500; }
 
+    /* פריסת שורות המורים */
     .teacher-row {
       background: var(--card-bg);
       border-radius: var(--radius-md);
@@ -81,6 +82,7 @@
       gap: 15px;
     }
 
+    /* כרטיס שעה/שיעור במבנה המאוחד החדש */
     .slot-card {
       position: relative;
       background: var(--bg-main);
@@ -95,18 +97,22 @@
     }
     .slot-card:hover { background: #ffffff; border-color: var(--primary); transform: translateY(-1px); }
     
+    /* שורת כותרת מאוחדת בתוך הכרטיס (שעה + חדר/מורה) */
     .slot-header { 
       background: #e2e8f0; 
       font-size: 0.85rem; 
-      padding: 8px 14px; 
+      padding: 6px 12px; 
       font-weight: 700; 
       color: var(--text-muted);
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: flex-start;
+      gap: 6px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid #cbd5e1;
     }
     
-    .slot-content { font-size: 0.95rem; padding: 12px 14px; color: var(--text-main); font-weight: 600; flex-grow: 1; }
+    .slot-content { font-size: 0.95rem; padding: 10px 12px; color: var(--text-main); font-weight: 600; flex-grow: 1; }
     .slot-combined-line { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
     .slot-room-inline { font-size: 0.85rem; color: var(--accent); font-weight: 700; }
     .slot-info-inline { font-size: 0.9rem; color: var(--text-main); }
@@ -124,7 +130,7 @@
       position: absolute;
       bottom: 0;
       right: 0;            
-      height: 5px;
+      height: 4px;
       background-color: var(--accent);
       width: 0%;
       transition: width 1s linear;
@@ -156,9 +162,9 @@
       top: 0;
       background: var(--card-bg);
       z-index: 1020;
-      padding-bottom: 15px;
+      padding-bottom: 12px;
       border-bottom: 1px solid #e2e8f0;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
     }
 
     .live-clock-badge {
@@ -194,6 +200,9 @@
       color: var(--primary);
     }
 
+    /* ==========================================================================
+       מצב מסך מלא (Kiosk Mode) - הידוק וצמצום משמעותי להצגת 4+ שורות לפחות
+       ========================================================================== */
     body.kiosk-mode {
       background-color: #ffffff !important;
       padding: 0 !important;
@@ -210,24 +219,39 @@
       width: 100vw !important;
       min-height: 100vh !important;
       margin: 0 !important;
-      padding: 30px !important;
+      padding: 15px 20px !important; /* ריפוד קטן יותר מסביב */
       border-radius: 0 !important;
       box-shadow: none !important;
     }
     body.kiosk-mode .sticky-header-container {
       background: #ffffff !important;
-      padding-top: 15px;
+      padding-top: 5px;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
     }
     body.kiosk-mode .teacher-row {
-      margin-bottom: 30px !important;
-      padding: 25px !important;
+      margin-bottom: 8px !important; /* רווח קטן בין המורים כדי להרוויח גובה */
+      padding: 8px 14px !important;
       background: #f8fafc;
     }
+    body.kiosk-mode .teacher-label-zone {
+      font-size: 1rem !important;
+      margin-bottom: 6px !important;
+      padding-bottom: 3px !important;
+    }
+    body.kiosk-mode .slots-grid-container {
+      gap: 8px !important;
+    }
     body.kiosk-mode .slot-card {
-      min-width: 260px !important;
+      min-width: 180px !important; /* הידוק קל של כרטיסי מסך מלא */
+    }
+    body.kiosk-mode .slot-header {
+      padding: 4px 10px !important;
+      font-size: 0.8rem !important;
     }
     body.kiosk-mode .slot-content {
-      padding: 16px 14px !important;
+      padding: 8px 10px !important;
+      font-size: 0.9rem !important;
     }
 
     body.teacher-view-mode #topNav,
@@ -239,22 +263,24 @@
       padding-top: 20px !important;
     }
 
-    /* --- הזרקה ועדכון: הידוק מסיבי למניעת גלילה במצב רגיל --- */
+    /* ==========================================================================
+       מצב צפייה רגיל (Not Kiosk) - הידוק אולטרה קומפקטי למניעת גלילה לגמרי
+       ========================================================================== */
     body:not(.kiosk-mode) .teacher-row {
-      margin-bottom: 8px !important;
-      padding: 8px 12px !important;
+      margin-bottom: 6px !important;
+      padding: 6px 12px !important;
     }
     body:not(.kiosk-mode) .teacher-label-zone {
-      font-size: 0.92rem !important;
-      margin-bottom: 5px !important;
+      font-size: 0.9rem !important;
+      margin-bottom: 4px !important;
       padding-bottom: 2px !important;
       font-weight: 800 !important;
     }
     body:not(.kiosk-mode) .slots-grid-container {
-      gap: 5px !important;
+      gap: 4px !important;
     }
     body:not(.kiosk-mode) .slot-card {
-      min-width: 135px !important; /* צמצום הרוחב כדי לאפשר ליותר כרטיסיות להיכנס באותה שורה */
+      min-width: 140px !important; /* מאפשר להרבה יותר כרטיסיות להיכנס באותה שורה */
     }
     body:not(.kiosk-mode) .slot-header {
       padding: 2px 6px !important;
@@ -262,15 +288,16 @@
     }
     body:not(.kiosk-mode) .slot-content {
       padding: 4px 6px !important;
+      font-size: 0.85rem !important;
     }
     body:not(.kiosk-mode) .slot-combined-line {
       gap: 3px !important;
     }
     body:not(.kiosk-mode) .slot-room-inline {
-      font-size: 0.75rem !important;
+      font-size: 0.72rem !important;
     }
     body:not(.kiosk-mode) .slot-info-inline {
-      font-size: 0.78rem !important;
+      font-size: 0.76rem !important;
     }
     body:not(.kiosk-mode) .slot-separator {
       margin: 0 1px !important;
@@ -546,6 +573,9 @@
     return parseInt(parts[0], 10) + (parseInt(parts[1], 10) / 60);
   }
 
+  /* ==========================================================================
+     מנגנון ציור הלוח היומי - שונה כדי להכניס שעות לתוך שורת הכותרת של הכרטיס
+     ========================================================================== */
   function drawDaily(activeDay) {
     currentActiveDayGlobal = activeDay;
     const days = ["ראשון", "שני", "שלישי", "רביעי", "חמישי"];
@@ -657,16 +687,18 @@
             const activeClassHtml = isActiveSlot ? 'active-slot' : '';
             const sandBarHtml = isActiveSlot ? `<div class="progress-bar-sand" style="width: ${progressPercentage}%"></div>` : '';
              
+            // הצגת אירוע גלובלי (כמו הפסקה/ארוחה) - השעה משולבת כעת בכותרת הכרטיס
             if (globalHours[j]) {
               slotsHtml += `
                 <div class="slot-card shadow-sm ${activeClassHtml}">
                   <div class="slot-header">
-                    <span><i class="fa-regular fa-clock me-1"></i>${headers[j]}</span>
+                    <span><i class="fa-regular fa-clock me-1"></i><b>${headers[j]}</b></span>
                   </div>
-                  <div class="slot-content text-center text-success fw-bold">${globalHours[j]}</div>
+                  <div class="slot-content text-center text-success fw-bold py-2">${globalHours[j]}</div>
                   ${sandBarHtml}
                 </div>`;
             } else {
+              // שיעור רגיל - שעת השיעור אוחדה לשורה אחת בכותרת יחד עם החדר/הנושא
               const parts = row[j].split('-');
               let subjectOrRoom = parts.length > 1 ? parts[0].trim() : "";
               let info = parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim();
@@ -674,11 +706,11 @@
               slotsHtml += `
                 <div class="slot-card shadow-sm ${activeClassHtml}">
                   <div class="slot-header">
-                    <span><i class="fa-regular fa-clock me-1"></i>${headers[j]}</span>
+                    <span><i class="fa-regular fa-clock me-1"></i><b>${headers[j]}</b></span>
+                    ${subjectOrRoom ? `<span class="slot-separator">|</span><span class="slot-room-inline"><i class="fa-solid fa-tag me-1"></i>${subjectOrRoom}</span>` : ''}
                   </div>
                   <div class="slot-content">
                     <div class="slot-combined-line">
-                      ${subjectOrRoom ? `<span class="slot-room-inline"><i class="fa-solid fa-tag me-1"></i>${subjectOrRoom}</span><span class="slot-separator">|</span>` : ''}
                       <span class="slot-info-inline">${info}</span>
                     </div>
                   </div>
