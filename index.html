@@ -30,7 +30,7 @@
     }
 
     .main-container { 
-      max-width: 1200px; 
+      max-width: 1300px; 
       margin: 20px auto; 
       background: var(--card-bg); 
       padding: 25px; 
@@ -55,90 +55,104 @@
     .day-card:hover { transform: translateY(-3px); box-shadow: 0 12px 20px -8px rgba(0,0,0,0.05); border-color: #cbd5e1; }
     .lesson-box { background: var(--primary-light); padding: 14px; border-radius: 10px; margin-bottom: 12px; border-right: 4px solid var(--primary); font-size: 0.95rem; font-weight: 500; }
 
-    /* שורת מורה */
+    /* שורת מורה רוחבית - כעת מסדרת את שם המורה והשיעורים זה לצד זה */
     .teacher-row {
       background: var(--card-bg);
       border-radius: var(--radius-md);
       border: 1px solid #e2e8f0;
       display: flex;
-      flex-direction: column;
-      gap: 10px;
-      padding: 15px;
-      margin-bottom: 15px;
+      align-items: center;
+      gap: 15px;
+      padding: 10px 15px;
+      margin-bottom: 12px;
       transition: var(--transition);
     }
     
+    /* קוביות המורה מצד ימין */
     .teacher-row-header {
-      font-size: 1.15rem;
+      font-size: 1.05rem;
       font-weight: 700;
       color: var(--primary);
-      border-bottom: 2px solid var(--primary-light);
-      padding-bottom: 6px;
-      margin-bottom: 4px;
+      min-width: 140px;
+      max-width: 140px;
+      border-left: 2px solid var(--primary-light);
+      padding-left: 10px;
+      flex-shrink: 0;
     }
 
-    /* קונטיינר של משבצת שיעור - מסדר את השעה מימין ואת הכרטיס המלא משמאל */
+    /* קונטיינר השיעורים שמתפרס לרוחב השורה */
+    .teacher-lessons-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      flex-grow: 1;
+    }
+
+    /* ריבוע שיעור נפרד ומינימליסטי - שעה מימין, תוכן משמאל */
     .lesson-slot-container {
       display: flex;
       align-items: stretch;
-      gap: 12px;
-      margin-bottom: 8px;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      overflow: hidden;
+      background: var(--bg-main);
+      transition: var(--transition);
+      min-width: 240px;
+      max-height: 52px;
     }
+    .lesson-slot-container:hover { border-color: var(--primary); background: #ffffff; }
 
-    /* כרטיס השעה קבוע ומיושר מימין */
+    /* הריבוע של השעה בצד ימין בתוך השיעור */
     .time-label-card {
       background: var(--primary);
       color: white;
-      border-radius: 8px;
-      padding: 10px 15px;
+      padding: 6px 10px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      min-width: 110px;
+      min-width: 85px;
       text-align: center;
       font-weight: 700;
-      font-size: 0.9rem;
-      box-shadow: 0 2px 4px rgba(30, 58, 138, 0.1);
+      font-size: 0.8rem;
       flex-shrink: 0;
     }
-    .time-label-card i { font-size: 1rem; margin-bottom: 2px; opacity: 0.9; }
 
-    /* כרטיס תוכן השיעור המקורי במבנה הדו-שורתי המלא שלו */
+    /* כרטיס המידע המצומצם משמאל */
     .slot-card {
-      background: var(--bg-main);
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      padding: 10px 15px;
+      padding: 6px 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
       flex-grow: 1;
-      transition: var(--transition);
     }
-    .slot-card:hover { background: #ffffff; border-color: var(--primary); }
     
-    /* שורה ראשונה בתוך הכרטיס: שם מורה וחדר */
     .slot-header-line {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 4px;
+      margin-bottom: 1px;
     }
-    .slot-teacher-name { color: var(--text-muted); font-size: 0.85rem; font-weight: 600; }
-    .slot-room-inline { color: var(--accent); font-weight: 700; font-size: 0.85rem; }
+    .slot-room-inline { color: var(--accent); font-weight: 700; font-size: 0.75rem; }
 
-    /* שורה שנייה בתוך הכרטיס: המקצוע והתלמיד/תוכן */
     .slot-info-line {
       color: var(--text-main);
-      font-size: 0.95rem;
-      font-weight: 500;
+      font-size: 0.85rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 160px;
     }
 
-    /* הדגשת שיעור פעיל כרגע */
+    /* הדגשת שיעור פעיל */
+    .lesson-slot-container.active-slot {
+      border-color: var(--accent);
+      background: #f0fdfa;
+      box-shadow: 0 0 8px rgba(13, 148, 136, 0.15);
+    }
     .lesson-slot-container.active-slot .time-label-card {
       background: var(--accent) !important;
-    }
-    .lesson-slot-container.active-slot .slot-card {
-      background: #f0fdfa;
-      border-color: #0d9488;
     }
 
     .form-control { border: 1px solid #e2e8f0; background-color: #ffffff; padding: 12px 20px; transition: var(--transition); }
@@ -195,7 +209,6 @@
     }
     .day-share-icon-btn:hover { background-color: var(--primary-light); color: var(--primary); }
 
-    /* התאמות למצב מסך מלא */
     body.kiosk-mode { background-color: #ffffff !important; padding: 0 !important; margin: 0 !important; }
     body.kiosk-mode #topNav, body.kiosk-mode .no-print, body.kiosk-mode .nav-pills, body.kiosk-mode .site-header-area { display: none !important; }
     body.kiosk-mode .main-container { max-width: 100% !important; width: 100vw !important; min-height: 100vh !important; margin: 0 !important; padding: 20px !important; border-radius: 0 !important; box-shadow: none !important; }
@@ -203,9 +216,9 @@
     body.teacher-view-mode #topNav, body.teacher-view-mode .site-header-area { display: none !important; }
     body.teacher-view-mode .main-container { margin-top: 20px !important; padding-top: 20px !important; }
 
-    @media (max-width: 768px) {
-      .lesson-slot-container { flex-direction: column; align-items: stretch; gap: 6px; }
-      .time-label-card { min-width: 100%; }
+    @media (max-width: 992px) {
+      .teacher-row { flex-direction: column; align-items: flex-start; gap: 10px; }
+      .teacher-row-header { border-left: none; border-bottom: 2px solid var(--primary-light); min-width: 100%; max-width: 100%; padding-bottom: 4px; }
     }
     @media print { .no-print { display: none !important; } .main-container { box-shadow: none; margin: 0; width: 100%; padding: 0; } }
   </style>
@@ -472,7 +485,7 @@
     return parseInt(parts[0], 10) + (parseInt(parts[1], 10) / 60);
   }
 
-  // פונקציית הציור המשופרת - שומרת על המבנה המקורי המלא, הזזת השעה בלבד הצידה!
+  // הפונקציה המעודכנת שמסדרת את כרטיסי השיעורים באופן רוחבי מינימליסטי
   function drawDaily(activeDay) {
     currentActiveDayGlobal = activeDay;
     const days = ["ראשון", "שני", "שלישי", "רביעי", "חמישי"];
@@ -525,7 +538,6 @@
       const now = new Date();
       const currentTimeDecimal = now.getHours() + (now.getMinutes() / 60);
 
-      // רצים שורה שורה לפי מורים - בדיוק כמו בקוד המקורי המצוין שלך
       rows.slice(1).forEach(row => {
         let teacherName = row[1];
         let hasAnyLesson = false;
@@ -537,7 +549,6 @@
             hasAnyLesson = true;
             const timeRangeString = headers[j] || "--:--";
 
-            // חישוב שעה פעילה
             let isSlotActive = false;
             if (timeRangeString.includes('-')) {
               const [startStr, endStr] = timeRangeString.split('-');
@@ -552,21 +563,18 @@
             let roomInfo = parts.length > 1 ? parts[0].trim() : "";
             let contentInfo = parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim();
 
-            // המבנה המקורי המבוקש: שעה מימין, ומשמאל כרטיס שמכיל למעלה מורה+חדר, ולמטה מקצוע+תלמיד
+            // המבנה המצומצם והטבלאי: שעה מובנית מימין, תוכן דחוס משמאל
             teacherLessonsHtml += `
               <div class="lesson-slot-container ${isSlotActive ? 'active-slot' : ''}">
                 <div class="time-label-card">
-                  <i class="fa-regular fa-clock"></i>
                   <span>${timeRangeString}</span>
                 </div>
-                <div class="slot-card shadow-sm">
+                <div class="slot-card">
                   <div class="slot-header-line">
-                    <span class="slot-teacher-name"><i class="fa-solid fa-user-tie me-1"></i>${teacherName}</span>
-                    ${roomInfo ? `<span class="slot-room-inline"><i class="fa-solid fa-door-open me-1"></i>${roomInfo}</span>` : ''}
+                    ${roomInfo ? `<span class="slot-room-inline"><i class="fa-solid fa-door-open me-1"></i>${roomInfo}</span>` : '<span></span>'}
                   </div>
-                  <div class="slot-info-line">
-                    <i class="fa-solid fa-book-open text-primary me-1" style="font-size:0.85rem; opacity:0.8;"></i>
-                    <b>${contentInfo}</b>
+                  <div class="slot-info-line" title="${contentInfo}">
+                    ${contentInfo}
                   </div>
                 </div>
               </div>`;
@@ -577,9 +585,11 @@
           contentHtml += `
             <div class="teacher-row shadow-sm">
               <div class="teacher-row-header">
-                <i class="fa-solid fa-id-card text-secondary me-2"></i>${teacherName}
+                <i class="fa-solid fa-user-tie me-1 text-secondary"></i> ${teacherName}
               </div>
-              ${teacherLessonsHtml}
+              <div class="teacher-lessons-container">
+                ${teacherLessonsHtml}
+              </div>
             </div>`;
         }
       });
