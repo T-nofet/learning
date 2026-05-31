@@ -55,7 +55,7 @@
     .day-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -5px rgba(0,0,0,0.05); border-color: #cbd5e1; }
     .lesson-box { background: #f0fdf4; padding: 10px; border-radius: 8px; margin-bottom: 10px; border-right: 4px solid var(--primary); font-size: 0.9rem; font-weight: 500; }
 
-    /* שורת זמן ראשית - צמצום רווחים למניעת גלילה במסך רגיל */
+    /* שורת זמן ראשית - מסך רגיל */
     .time-block-row {
       background: var(--card-bg);
       border-radius: var(--radius-md);
@@ -68,7 +68,6 @@
       transition: var(--transition);
     }
     
-    /* קוביית השעה בצד ימין - קומפקטית יותר בגובה */
     .time-row-header {
       font-size: 1.15rem;
       font-weight: 800;
@@ -86,7 +85,6 @@
       border: 1px solid #e2e8f0;
     }
 
-    /* קונטיינר למשבצות השיעורים */
     .time-lessons-container {
       display: flex;
       flex-wrap: wrap;
@@ -95,7 +93,6 @@
       align-items: center;
     }
 
-    /* משבצת שיעור בגודל אופטימלי למסך רגיל */
     .lesson-slot-card {
       background: #fafafa;
       border: 1px solid #e2e8f0;
@@ -130,7 +127,6 @@
       text-overflow: ellipsis;
     }
 
-    /* הדגשת שעה פעילה */
     .time-block-row.active-time-row {
       border-color: var(--accent);
       background: #f0fdfa;
@@ -184,21 +180,72 @@
     .day-share-icon-btn { background: none; border: none; color: var(--text-muted); font-size: 1rem; padding: 4px; cursor: pointer; border-radius: 50%; }
 
     /* ==========================================
-       התאמות למצב מסך מלא (Kiosk Mode) - פריסה מקסימלית של לפחות 4 שיעורים
+       התאמות דינמיות למצב מסך מלא (Kiosk Mode) - חישוב גובה אוטומטי ללא גלילה
        ========================================== */
     body.kiosk-mode { background-color: #ffffff !important; padding: 0 !important; margin: 0 !important; overflow: hidden; }
     body.kiosk-mode #topNav, body.kiosk-mode .no-print, body.kiosk-mode .nav-pills, body.kiosk-mode .site-header-area { display: none !important; }
-    body.kiosk-mode .main-container { max-width: 100% !important; width: 100vw !important; height: 100vh !important; margin: 0 !important; padding: 20px !important; border-radius: 0 !important; box-shadow: none !important; display: flex; flex-direction: column; }
-    body.kiosk-mode .daily-rows-scroll-area { flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; }
     
-    body.kiosk-mode .time-block-row { padding: 12px 20px; margin-bottom: 8px; flex-grow: 1; align-items: center; }
-    body.kiosk-mode .time-row-header { font-size: 1.6rem; min-width: 160px; max-width: 160px; padding: 12px; height: 100%; }
+    body.kiosk-mode .main-container { 
+      max-width: 100% !important; 
+      width: 100vw !important; 
+      height: 100vh !important; 
+      margin: 0 !important; 
+      padding: 15px !important; 
+      border-radius: 0 !important; 
+      box-shadow: none !important; 
+      display: flex; 
+      flex-direction: column; 
+    }
     
-    /* חלוקה אופטימלית לרוחב כדי להבטיח שלפחות 4 נכנסים בשורה בלי צפיפות */
-    body.kiosk-mode .time-lessons-container { gap: 12px; display: flex; flex-wrap: nowrap; overflow: hidden; }
-    body.kiosk-mode .lesson-slot-card { min-width: 22%; max-width: 25%; flex-shrink: 1; flex-grow: 1; padding: 12px 18px; }
-    body.kiosk-mode .slot-main-info { font-size: 1.35rem; }
-    body.kiosk-mode .slot-top-line { font-size: 1rem; margin-bottom: 4px; }
+    /* קונטיינר השורות - מתפרס אופטימלית על כל יתרת הגובה הפנוי במסך */
+    body.kiosk-mode .daily-rows-scroll-area { 
+      flex-grow: 1; 
+      display: flex; 
+      flex-direction: column; 
+      justify-content: space-between; 
+      overflow: hidden; 
+      gap: 8px;
+    }
+    
+    /* כל שורה מקבלת גובה יחסי שווה (flex-grow: 1) בהתאם לכמות השורות הקיימות */
+    body.kiosk-mode .time-block-row { 
+      padding: 6px 15px; 
+      margin-bottom: 0px; 
+      flex-grow: 1; 
+      flex-shrink: 1;
+      display: flex;
+      align-items: center; 
+      min-height: 0; /* מונע מהדפדפן לחרוג מגבולות המסך */
+    }
+    
+    body.kiosk-mode .time-row-header { 
+      font-size: 1.4rem; 
+      min-width: 150px; 
+      max-width: 150px; 
+      padding: 8px; 
+      height: 90%; 
+    }
+    
+    body.kiosk-mode .time-lessons-container { 
+      gap: 10px; 
+      display: flex; 
+      flex-wrap: nowrap; 
+      overflow: hidden;
+      height: 90%;
+      align-items: stretch;
+    }
+    
+    /* התאמת כרטיסיית השיעור למצב מסך מלא גמיש */
+    body.kiosk-mode .lesson-slot-card { 
+      min-width: 22%; 
+      max-width: 25%; 
+      flex-shrink: 1; 
+      flex-grow: 1; 
+      padding: 8px 14px;
+      height: 100%;
+    }
+    body.kiosk-mode .slot-main-info { font-size: 1.25rem; }
+    body.kiosk-mode .slot-top-line { font-size: 0.95rem; margin-bottom: 2px; }
 
     body.teacher-view-mode #topNav, body.teacher-view-mode .site-header-area { display: none !important; }
     body.teacher-view-mode .main-container { margin-top: 15px !important; padding-top: 15px !important; }
