@@ -68,9 +68,9 @@
       transition: var(--transition);
     }
     
-    /* קוביית השעה בצד ימין - נקייה ועדינה ללא כחול מסיבי */
+    /* קוביית השעה בצד ימין - נקייה ועדינה */
     .time-row-header {
-      font-size: 1.3rem;
+      font-size: 1.35rem;
       font-weight: 800;
       color: var(--primary);
       min-width: 140px;
@@ -118,13 +118,13 @@
       margin-bottom: 4px;
       font-size: 0.9rem;
     }
-    .slot-teacher-text { color: var(--text-main); font-weight: 700; }
+    .slot-teacher-text { color: var(--text-muted); font-weight: 600; }
     .slot-room-text { color: var(--accent); font-weight: 700; }
 
     /* חלק מרכזי של המשבצת: תוכן השיעור / תלמיד */
     .slot-main-info {
       color: var(--text-main);
-      font-size: 1.15rem;
+      font-size: 1.2rem;
       font-weight: 700;
       white-space: nowrap;
       overflow: hidden;
@@ -201,14 +201,14 @@
     }
     .day-share-icon-btn:hover { background-color: #eff6ff; color: var(--primary); }
 
-    /* התאמות מיוחדות להגדלת תצוגה במסך מלא (Kiosk Mode) - ניצול שטח מקסימלי */
+    /* התאמות מיוחדות להגדלת תצוגה במסך מלא (Kiosk Mode) */
     body.kiosk-mode { background-color: #ffffff !important; padding: 0 !important; margin: 0 !important; }
     body.kiosk-mode #topNav, body.kiosk-mode .no-print, body.kiosk-mode .nav-pills, body.kiosk-mode .site-header-area { display: none !important; }
     body.kiosk-mode .main-container { max-width: 100% !important; width: 100vw !important; min-height: 100vh !important; margin: 0 !important; padding: 30px !important; border-radius: 0 !important; box-shadow: none !important; }
     body.kiosk-mode .time-block-row { padding: 20px 25px; margin-bottom: 22px; }
-    body.kiosk-mode .time-row-header { font-size: 1.65rem; min-width: 170px; max-width: 170px; padding: 15px; }
+    body.kiosk-mode .time-row-header { font-size: 1.7rem; min-width: 170px; max-width: 170px; padding: 15px; }
     body.kiosk-mode .lesson-slot-card { min-width: 320px; padding: 16px 22px; }
-    body.kiosk-mode .slot-main-info { font-size: 1.4rem; }
+    body.kiosk-mode .slot-main-info { font-size: 1.45rem; }
     body.kiosk-mode .slot-top-line { font-size: 1.05rem; margin-bottom: 6px; }
 
     body.teacher-view-mode #topNav, body.teacher-view-mode .site-header-area { display: none !important; }
@@ -485,7 +485,7 @@
     return parseInt(parts[0], 10) + (parseInt(parts[1], 10) / 60);
   }
 
-  // תיקון יסודי ואמיתי: הלולאה הראשית רצה אך ורק לפי שעות (Time-First)
+  // התיקון האמיתי - התאמה למבנה שבו כל שורה במערך היא כבר שעה עצמאית!
   function drawDaily(activeDay) {
     currentActiveDayGlobal = activeDay;
     const days = ["ראשון", "שני", "שלישי", "רביעי", "חמישי"];
@@ -533,17 +533,19 @@
     let contentHtml = `<div class="daily-rows-scroll-area">`;
     const rows = GLOBAL_DB.schedule[activeDay] || [];
     
+    // מציגים רק אם יש שורות (שורת כותרת + שורות מידע)
     if (rows.length > 1) {
-      const headers = rows[0]; // שורת הכותרת שמכילה את השעות
+      const teachersHeaderRow = rows[0]; // שורת הכותרת העליונה - שמות המורים
       const now = new Date();
       const currentTimeDecimal = now.getHours() + (now.getMinutes() / 60);
 
-      // לולאה ראשית: רצים עמודה-עמודה לפי זמני השיעורים (אינדקס 2 ומעלה)
-      for (let j = 2; j < headers.length; j++) {
-        const timeRangeString = (headers[j] || "").trim();
+      // לולאה ראשית: רצים שורה-שורה (החל מאינדקס 1) - כל שורה מייצגת שעה!
+      for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        const timeRangeString = (row[1] || "").trim(); // העמודה השניה (אינדקס 1) היא השעה
         if (!timeRangeString) continue;
 
-        // בדיקה האם השעה הזו פעילה כרגע ביום
+        // חישוב האם השעה של השורה הנוכחית פעילה עכשיו
         let isTimeRowActive = false;
         if (timeRangeString.includes('-')) {
           const [startStr, endStr] = timeRangeString.split('-');
@@ -557,11 +559,10 @@
         let hourlyLessonsHtml = "";
         let hasAnyLessonInHour = false;
 
-        // לולאה פנימית: אוספים את כל השיעורים שקורים בשעה j אצל כל המורים
-        for (let i = 1; i < rows.length; i++) {
-          const row = rows[i];
-          let teacherName = row[1];
+        // לולאה פנימית: רצים על פני כל העמודות של השורה הזו (מורים/חדרים, החל מאינדקס 2)
+        for (let j = 2; j < row.length; j++) {
           let cellData = (row[j] || "").trim();
+          let teacherName = teachersHeaderRow[j] || "מורה"; // לוקחים את שם המורה מהכותרת בעמודה j
 
           if (cellData) {
             hasAnyLessonInHour = true;
@@ -569,7 +570,7 @@
             let roomInfo = parts.length > 1 ? parts[0].trim() : "";
             let contentInfo = parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim();
 
-            // יצירת קוביית שיעור מעודנת: שם המורה בולט, צבעים רכים
+            // יצירת קוביית השיעור בעיצוב המעודן, הנקי והמוגדל שביקשת
             hourlyLessonsHtml += `
               <div class="lesson-slot-card">
                 <div class="slot-top-line">
@@ -583,7 +584,7 @@
           }
         }
 
-        // מציגים שורת זמן רק אם אכן יש בה לפחות שיעור אחד
+        // מציגים את שורת השעה רק אם שובץ בה לפחות שיעור אחד
         if (hasAnyLessonInHour) {
           contentHtml += `
             <div class="time-block-row shadow-sm ${isTimeRowActive ? 'active-time-row' : ''}">
