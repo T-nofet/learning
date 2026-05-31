@@ -55,7 +55,7 @@
     .day-card:hover { transform: translateY(-3px); box-shadow: 0 12px 20px -8px rgba(0,0,0,0.05); border-color: #cbd5e1; }
     .lesson-box { background: var(--primary-light); padding: 14px; border-radius: 10px; margin-bottom: 12px; border-right: 4px solid var(--primary); font-size: 0.95rem; font-weight: 500; }
 
-    /* עיצוב המבנה המצומצם - שורה לכל שעת שיעור */
+    /* עיצוב המבנה המצומצם - שורה לכל שעת שיעור מערכתית */
     .teacher-row {
       background: var(--card-bg);
       border-radius: var(--radius-md);
@@ -68,7 +68,7 @@
       transition: var(--transition);
     }
     
-    /* כרטיס השעה הקבוע מימין */
+    /* כרטיס השעה הקבוע והיחיד מימין */
     .time-label-card {
       background: var(--primary);
       color: white;
@@ -86,7 +86,7 @@
     }
     .time-label-card i { font-size: 1.1rem; margin-bottom: 4px; opacity: 0.9; }
 
-    /* קונטיינר כרטיסי המורים הזורמים משמאל לשעה */
+    /* קונטיינר כרטיסי המורים באותה השורה משמאל לשעה */
     .slots-grid-container {
       display: flex;
       flex-wrap: wrap;
@@ -95,7 +95,7 @@
       align-items: center;
     }
 
-    /* כרטיס מורה בודד בתוך השורה */
+    /* כרטיס מורה בודד */
     .slot-card {
       background: var(--bg-main);
       border: 1px solid #e2e8f0;
@@ -115,7 +115,7 @@
     .slot-room-inline { color: var(--accent); font-weight: 700; font-size: 0.85rem; }
     .slot-info-inline { color: var(--text-main); font-size: 0.9rem; }
 
-    /* הדגשת שעה פעילה כרגע */
+    /* הדגשת שורה של שעה פעילה כרגע */
     .teacher-row.active-row {
       border: 2px solid #0d9488 !important;
       background-color: #f0fdfa !important;
@@ -465,7 +465,7 @@
     return parseInt(parts[0], 10) + (parseInt(parts[1], 10) / 60);
   }
 
-  // הפונקציה המנצחת - מבנה רוחבי לפי שעות עם השעה מימין
+  // פונקציית הציור החדשה והמתוקנת - שעה מימין בלבד!
   function drawDaily(activeDay) {
     currentActiveDayGlobal = activeDay;
     const days = ["ראשון", "שני", "שלישי", "רביעי", "חמישי"];
@@ -514,13 +514,13 @@
     const rows = GLOBAL_DB.schedule[activeDay] || [];
     
     if (rows.length > 1) {
-      const headers = rows[0]; 
+      const headers = rows[0]; // שורת השעות מתוך ה-DB
       let globalHours = {};    
 
       const now = new Date();
       const currentTimeDecimal = now.getHours() + (now.getMinutes() / 60);
 
-      // זיהוי אירועים מערכתיים/הפסקות שמשותפים לכולם
+      // 1. בדיקה האם יש שעה שמשותפת לכל המורים (כמו הפסקה/ארוחת צהריים)
       for (let j = 2; j < headers.length; j++) {
         let uniqueContents = new Set();
         let countRowsWithData = 0;
@@ -540,7 +540,7 @@
         }
       }
 
-      // ריצה על העמודות (שעות) ליצירת שורה לכל שעת מערכת
+      // 2. לולאה שרצה על העמודות (השעות)! זה השינוי המרכזי שמייצר שורה לכל שעה
       for (let j = 2; j < headers.length; j++) {
         const timeRangeString = headers[j];
         if (!timeRangeString) continue;
@@ -558,6 +558,7 @@
         let hasDataInHour = false;
         let slotsHtml = "";
 
+        // אם זו הפסקה כללית מערכתית
         if (globalHours[j]) {
           hasDataInHour = true;
           slotsHtml += `
@@ -567,13 +568,14 @@
               </div>
             </div>`;
         } else {
+          // אחרת, אוספים את כל המורים שיש להם שיעור בשעה הזו (j)
           rows.slice(1).forEach(row => {
             if (row[j] && row[j].trim()) {
               hasDataInHour = true;
-              let teacherInfo = row[1]; 
+              let teacherInfo = row[1]; // שם המורה
               const parts = row[j].split('-');
               let subjectOrRoom = parts.length > 1 ? parts[0].trim() : "";
-              let info = parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim();
+              let info = parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim(); // שם התלמיד/תוכן
 
               slotsHtml += `
                 <div class="slot-card shadow-sm">
@@ -589,6 +591,7 @@
           });
         }
 
+        // אם נמצאו נתונים כלשהם בשעה הזו, מייצרים שורה ייעודית שבה השעה מקובעת מימין
         if (hasDataInHour) {
           const activeRowClass = isRowActive ? 'active-row' : '';
           contentHtml += `
