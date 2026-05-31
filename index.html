@@ -55,78 +55,82 @@
     .day-card:hover { transform: translateY(-3px); box-shadow: 0 12px 20px -8px rgba(0,0,0,0.05); border-color: #cbd5e1; }
     .lesson-box { background: var(--primary-light); padding: 14px; border-radius: 10px; margin-bottom: 12px; border-right: 4px solid var(--primary); font-size: 0.95rem; font-weight: 500; }
 
-    /* עיצוב המבנה המצומצם - שורה לכל שעת שיעור מערכתית */
+    /* שורת מורה מקורית - משמשת כקונטיינר גמיש */
     .teacher-row {
       background: var(--card-bg);
       border-radius: var(--radius-md);
       border: 1px solid #e2e8f0;
       display: flex;
-      align-items: stretch;
-      gap: 12px;
-      padding: 10px;
-      margin-bottom: 10px;
+      flex-direction: column;
+      gap: 10px;
+      padding: 12px;
+      margin-bottom: 15px;
       transition: var(--transition);
     }
     
-    /* כרטיס השעה הקבוע והיחיד מימין */
+    /* כותרת המורה מעל השיעורים שלו */
+    .teacher-row-header {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary);
+      border-bottom: 2px solid var(--primary-light);
+      padding-bottom: 4px;
+      margin-bottom: 2px;
+    }
+
+    /* קונטיינר של שיעור בודד - מסדר את השעה מימין ואת התוכן משמאל */
+    .lesson-slot-container {
+      display: flex;
+      align-items: stretch;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+
+    /* כרטיס השעה החדש בצד ימין - קומפקטי ומיושר */
     .time-label-card {
       background: var(--primary);
       color: white;
-      border-radius: 8px;
-      padding: 10px 15px;
+      border-radius: 6px;
+      padding: 6px 12px;
       display: flex;
-      flex-direction: column;
-      justify-content: center;
       align-items: center;
-      min-width: 120px;
+      justify-content: center;
+      gap: 6px;
+      min-width: 110px;
+      max-height: 38px;
       text-align: center;
       font-weight: 700;
+      font-size: 0.85rem;
       box-shadow: 0 2px 4px rgba(30, 58, 138, 0.1);
       flex-shrink: 0;
     }
-    .time-label-card i { font-size: 1.1rem; margin-bottom: 4px; opacity: 0.9; }
+    .time-label-card i { font-size: 0.9rem; opacity: 0.9; }
 
-    /* קונטיינר כרטיסי המורים באותה השורה משמאל לשעה */
-    .slots-grid-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      flex-grow: 1;
-      align-items: center;
-    }
-
-    /* כרטיס מורה בודד */
+    /* כרטיס תוכן השיעור שהוקטן מעט (במקום הבלוק הגדול שהיה קודם) */
     .slot-card {
       background: var(--bg-main);
       border: 1px solid #e2e8f0;
-      border-radius: 8px;
+      border-radius: 6px;
       transition: var(--transition);
       display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 8px 12px;
-      min-width: 170px;
-      flex: 1 1 calc(25% - 8px);
+      align-items: center;
+      padding: 6px 12px;
+      flex-grow: 1;
     }
     .slot-card:hover { background: #ffffff; border-color: var(--primary); }
     
-    .slot-content { color: var(--text-main); font-weight: 600; }
-    .slot-combined-line { display: flex; flex-direction: column; gap: 2px; }
-    .slot-room-inline { color: var(--accent); font-weight: 700; font-size: 0.85rem; }
-    .slot-info-inline { color: var(--text-main); font-size: 0.9rem; }
+    .slot-content { width: 100%; }
+    .slot-combined-line { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+    .slot-room-inline { color: var(--accent); font-weight: 700; font-size: 0.9rem; }
+    .slot-info-inline { color: var(--text-main); font-weight: 600; font-size: 0.9rem; }
 
-    /* הדגשת שורה של שעה פעילה כרגע */
-    .teacher-row.active-row {
-      border: 2px solid #0d9488 !important;
-      background-color: #f0fdfa !important;
-      box-shadow: 0 4px 12px rgba(13, 148, 136, 0.08);
-    }
-    .teacher-row.active-row .time-label-card {
+    /* הדגשת שעה פעילה כרגע */
+    .lesson-slot-container.active-slot .time-label-card {
       background: var(--accent) !important;
     }
-    .teacher-row.active-row .slot-card {
-      background: #ffffff;
-      border-color: #ccfbf1;
+    .lesson-slot-container.active-slot .slot-card {
+      background: #f0fdfa;
+      border-color: #0d9488;
     }
 
     .form-control { border: 1px solid #e2e8f0; background-color: #ffffff; padding: 12px 20px; transition: var(--transition); }
@@ -187,18 +191,13 @@
     body.kiosk-mode { background-color: #ffffff !important; padding: 0 !important; margin: 0 !important; }
     body.kiosk-mode #topNav, body.kiosk-mode .no-print, body.kiosk-mode .nav-pills, body.kiosk-mode .site-header-area { display: none !important; }
     body.kiosk-mode .main-container { max-width: 100% !important; width: 100vw !important; min-height: 100vh !important; margin: 0 !important; padding: 20px !important; border-radius: 0 !important; box-shadow: none !important; }
-    body.kiosk-mode .teacher-row { padding: 14px !important; margin-bottom: 12px !important; }
-    body.kiosk-mode .time-label-card { min-width: 150px !important; font-size: 1.15rem !important; }
-    body.kiosk-mode .slot-card { padding: 12px 16px !important; }
-    body.kiosk-mode .slot-info-inline { font-size: 1.05rem !important; }
-
+    
     body.teacher-view-mode #topNav, body.teacher-view-mode .site-header-area { display: none !important; }
     body.teacher-view-mode .main-container { margin-top: 20px !important; padding-top: 20px !important; }
 
     @media (max-width: 768px) {
-      .teacher-row { flex-direction: column; align-items: stretch; }
-      .time-label-card { min-width: 100%; }
-      .slot-card { min-width: 100% !important; }
+      .lesson-slot-container { flex-direction: column; align-items: stretch; gap: 5px; }
+      .time-label-card { min-width: 100%; max-height: none; py: 4px; }
     }
     @media print { .no-print { display: none !important; } .main-container { box-shadow: none; margin: 0; width: 100%; padding: 0; } }
   </style>
@@ -465,7 +464,7 @@
     return parseInt(parts[0], 10) + (parseInt(parts[1], 10) / 60);
   }
 
-  // פונקציית הציור החדשה והמתוקנת - שעה מימין בלבד!
+  // הלוגיקה המקורית והנכונה - ריצה לפי שורות של מורים!
   function drawDaily(activeDay) {
     currentActiveDayGlobal = activeDay;
     const days = ["ראשון", "שני", "שלישי", "רביעי", "חמישי"];
@@ -514,98 +513,68 @@
     const rows = GLOBAL_DB.schedule[activeDay] || [];
     
     if (rows.length > 1) {
-      const headers = rows[0]; // שורת השעות מתוך ה-DB
-      let globalHours = {};    
-
+      const headers = rows[0]; // שורת כותרות השעות מהאקסל
       const now = new Date();
       const currentTimeDecimal = now.getHours() + (now.getMinutes() / 60);
 
-      // 1. בדיקה האם יש שעה שמשותפת לכל המורים (כמו הפסקה/ארוחת צהריים)
-      for (let j = 2; j < headers.length; j++) {
-        let uniqueContents = new Set();
-        let countRowsWithData = 0;
+      // רצים שורה שורה לפי מורים (בדיוק כמו בקוד המקורי שלך!)
+      rows.slice(1).forEach(row => {
+        let teacherName = row[1];
+        let hasAnyLesson = false;
+        let teacherLessonsHtml = "";
 
-        rows.slice(1).forEach(row => {
-          let cell = (row[j] || "").trim();
-          if (cell) {
-            countRowsWithData++;
-            const parts = cell.split('-');
-            let cleanText = parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim();
-            if (cleanText) uniqueContents.add(cleanText);
-          }
-        });
+        // רצים על עמודות השעות של המורה הנוכחי
+        for (let j = 2; j < row.length; j++) {
+          let cellData = (row[j] || "").trim();
+          if (cellData) {
+            hasAnyLesson = true;
+            const timeRangeString = headers[j] || "--:--";
 
-        if (uniqueContents.size === 1 && countRowsWithData >= 2) {
-          globalHours[j] = Array.from(uniqueContents)[0]; 
-        }
-      }
+            // בדיקת שעה פעילה
+            let isSlotActive = false;
+            if (timeRangeString.includes('-')) {
+              const [startStr, endStr] = timeRangeString.split('-');
+              const startDecimal = parseTimeToDecimal(startStr);
+              const endDecimal = parseTimeToDecimal(endStr);
+              if (currentTimeDecimal >= startDecimal && currentTimeDecimal < endDecimal) {
+                isSlotActive = true;
+              }
+            }
 
-      // 2. לולאה שרצה על העמודות (השעות)! זה השינוי המרכזי שמייצר שורה לכל שעה
-      for (let j = 2; j < headers.length; j++) {
-        const timeRangeString = headers[j];
-        if (!timeRangeString) continue;
+            const parts = cellData.split('-');
+            let roomInfo = parts.length > 1 ? parts[0].trim() : "";
+            let contentInfo = parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim();
 
-        let isRowActive = false;
-        if (timeRangeString.includes('-')) {
-          const [startStr, endStr] = timeRangeString.split('-');
-          const startDecimal = parseTimeToDecimal(startStr);
-          const endDecimal = parseTimeToDecimal(endStr);
-          if (currentTimeDecimal >= startDecimal && currentTimeDecimal < endDecimal) {
-            isRowActive = true;
-          }
-        }
-
-        let hasDataInHour = false;
-        let slotsHtml = "";
-
-        // אם זו הפסקה כללית מערכתית
-        if (globalHours[j]) {
-          hasDataInHour = true;
-          slotsHtml += `
-            <div class="slot-card shadow-sm w-100 text-center py-2" style="border-color: #bbf7d0; background-color: #f0fdf4;">
-              <div class="slot-content fw-bold text-success" style="font-size: 1.05rem;">
-                <i class="fa-solid fa-utensils me-2"></i>${globalHours[j]}
-              </div>
-            </div>`;
-        } else {
-          // אחרת, אוספים את כל המורים שיש להם שיעור בשעה הזו (j)
-          rows.slice(1).forEach(row => {
-            if (row[j] && row[j].trim()) {
-              hasDataInHour = true;
-              let teacherInfo = row[1]; // שם המורה
-              const parts = row[j].split('-');
-              let subjectOrRoom = parts.length > 1 ? parts[0].trim() : "";
-              let info = parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim(); // שם התלמיד/תוכן
-
-              slotsHtml += `
+            // מבנה השיעור: קונטיינר רוחבי קומפקטי -> שעה מימין (time-label-card) -> כרטיס תוכן משמאל (slot-card)
+            teacherLessonsHtml += `
+              <div class="lesson-slot-container ${isSlotActive ? 'active-slot' : ''}">
+                <div class="time-label-card">
+                  <i class="fa-regular fa-clock"></i>
+                  <span>${timeRangeString}</span>
+                </div>
                 <div class="slot-card shadow-sm">
                   <div class="slot-content">
                     <div class="slot-combined-line">
-                      <span class="slot-info-inline" style="opacity: 0.85;"><i class="fa-solid fa-id-card text-secondary me-1"></i>${teacherInfo}</span>
-                      <span class="slot-info-inline"><i class="fa-solid fa-user text-primary me-1"></i><b>${info}</b></span>
-                      ${subjectOrRoom ? `<span class="slot-room-inline"><i class="fa-solid fa-door-open me-1"></i>${subjectOrRoom}</span>` : ''}
+                      <span class="slot-info-inline"><b>${contentInfo}</b></span>
+                      ${roomInfo ? `<span class="slot-room-inline"><i class="fa-solid fa-door-open me-1"></i>${roomInfo}</span>` : ''}
                     </div>
                   </div>
-                </div>`;
-            }
-          });
+                </div>
+              </div>`;
+          }
         }
 
-        // אם נמצאו נתונים כלשהם בשעה הזו, מייצרים שורה ייעודית שבה השעה מקובעת מימין
-        if (hasDataInHour) {
-          const activeRowClass = isRowActive ? 'active-row' : '';
+        // אם למורה יש שיעורים ביום הזה, מציגים את השורה שלו
+        if (hasAnyLesson) {
           contentHtml += `
-            <div class="teacher-row shadow-sm ${activeRowClass}">
-              <div class="time-label-card">
-                <i class="fa-regular fa-clock"></i>
-                <span>${timeRangeString}</span>
+            <div class="teacher-row shadow-sm">
+              <div class="teacher-row-header">
+                <i class="fa-solid fa-id-card text-secondary me-2"></i>${teacherName}
               </div>
-              <div class="slots-grid-container">
-                ${slotsHtml}
-              </div>
+              ${teacherLessonsHtml}
             </div>`;
         }
-      }
+      });
 
     } else {
       contentHtml += `<p class="text-center text-muted py-5">אין נתונים להצגה ליום ${activeDay}</p>`;
