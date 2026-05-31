@@ -11,7 +11,7 @@
   <style>
     :root {
       --primary: #1e3a8a;
-      --primary-light: #f0f4f8;
+      --primary-light: #f1f5f9;
       --accent: #0d9488;
       --text-main: #1f2937;
       --text-muted: #64748b;
@@ -55,7 +55,7 @@
     .day-card:hover { transform: translateY(-3px); box-shadow: 0 12px 20px -8px rgba(0,0,0,0.05); border-color: #cbd5e1; }
     .lesson-box { background: #f0fdf4; padding: 14px; border-radius: 10px; margin-bottom: 12px; border-right: 4px solid var(--primary); font-size: 0.95rem; font-weight: 500; }
 
-    /* שורת זמן ראשית - מבוססת שעה ברורה */
+    /* שורת זמן ראשית - מבוססת שעה בצד ימין */
     .time-block-row {
       background: var(--card-bg);
       border-radius: var(--radius-md);
@@ -63,18 +63,18 @@
       display: flex;
       align-items: stretch;
       gap: 20px;
-      padding: 12px 18px;
+      padding: 14px 20px;
       margin-bottom: 15px;
       transition: var(--transition);
     }
     
-    /* קוביית השעה הגדולה והברורה בצד ימין */
+    /* קוביית השעה בצד ימין - נקייה ועדינה ללא כחול מסיבי */
     .time-row-header {
-      font-size: 1.25rem;
+      font-size: 1.3rem;
       font-weight: 800;
       color: var(--primary);
-      min-width: 130px;
-      max-width: 130px;
+      min-width: 140px;
+      max-width: 140px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -83,7 +83,7 @@
       padding: 10px;
       text-align: center;
       flex-shrink: 0;
-      border: 1px solid rgba(30, 58, 138, 0.05);
+      border: 1px solid #e2e8f0;
     }
 
     /* קונטיינר למשבצות השיעורים של אותה השעה */
@@ -95,36 +95,36 @@
       align-items: center;
     }
 
-    /* משבצת שיעור מינימליסטית ועדינה */
+    /* משבצת שיעור מינימליסטית, עדינה ומוגדלת */
     .lesson-slot-card {
       background: #fafafa;
       border: 1px solid #e2e8f0;
       border-radius: 8px;
-      padding: 10px 16px;
-      min-width: 260px;
+      padding: 12px 18px;
+      min-width: 280px;
       flex-grow: 0;
       transition: var(--transition);
       display: flex;
       flex-direction: column;
       justify-content: center;
     }
-    .lesson-slot-card:hover { border-color: #cbd5e1; background: #ffffff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
+    .lesson-slot-card:hover { border-color: #cbd5e1; background: #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
 
-    /* שורה עליונה במשבצת: חדר ומורה בעדינות */
+    /* חלק עליון של המשבצת: מורה ומיקום */
     .slot-top-line {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 4px;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
     }
-    .slot-teacher-text { color: var(--text-muted); font-weight: 500; }
+    .slot-teacher-text { color: var(--text-main); font-weight: 700; }
     .slot-room-text { color: var(--accent); font-weight: 700; }
 
-    /* שורה תחתונה במשבצת: המקצוע והתלמידים בגדול וברור יותר לתצוגה */
+    /* חלק מרכזי של המשבצת: תוכן השיעור / תלמיד */
     .slot-main-info {
       color: var(--text-main);
-      font-size: 1.05rem;
+      font-size: 1.15rem;
       font-weight: 700;
       white-space: nowrap;
       overflow: hidden;
@@ -140,6 +140,7 @@
     .time-block-row.active-time-row .time-row-header {
       background: var(--accent);
       color: white;
+      border-color: var(--accent);
     }
     .time-block-row.active-time-row .lesson-slot-card {
       background: #ffffff;
@@ -200,15 +201,15 @@
     }
     .day-share-icon-btn:hover { background-color: #eff6ff; color: var(--primary); }
 
-    /* התאמות מיוחדות להגדלת תצוגה במסך מלא (Kiosk Mode) */
+    /* התאמות מיוחדות להגדלת תצוגה במסך מלא (Kiosk Mode) - ניצול שטח מקסימלי */
     body.kiosk-mode { background-color: #ffffff !important; padding: 0 !important; margin: 0 !important; }
     body.kiosk-mode #topNav, body.kiosk-mode .no-print, body.kiosk-mode .nav-pills, body.kiosk-mode .site-header-area { display: none !important; }
-    body.kiosk-mode .main-container { max-width: 100% !important; width: 100vw !important; min-height: 100vh !important; margin: 0 !important; padding: 25px !important; border-radius: 0 !important; box-shadow: none !important; }
-    body.kiosk-mode .time-block-row { padding: 16px 24px; margin-bottom: 20px; }
-    body.kiosk-mode .time-row-header { font-size: 1.5rem; min-width: 160px; max-width: 160px; padding: 14px; }
-    body.kiosk-mode .lesson-slot-card { min-width: 300px; padding: 14px 20px; }
-    body.kiosk-mode .slot-main-info { font-size: 1.25rem; }
-    body.kiosk-mode .slot-top-line { font-size: 0.95rem; margin-bottom: 6px; }
+    body.kiosk-mode .main-container { max-width: 100% !important; width: 100vw !important; min-height: 100vh !important; margin: 0 !important; padding: 30px !important; border-radius: 0 !important; box-shadow: none !important; }
+    body.kiosk-mode .time-block-row { padding: 20px 25px; margin-bottom: 22px; }
+    body.kiosk-mode .time-row-header { font-size: 1.65rem; min-width: 170px; max-width: 170px; padding: 15px; }
+    body.kiosk-mode .lesson-slot-card { min-width: 320px; padding: 16px 22px; }
+    body.kiosk-mode .slot-main-info { font-size: 1.4rem; }
+    body.kiosk-mode .slot-top-line { font-size: 1.05rem; margin-bottom: 6px; }
 
     body.teacher-view-mode #topNav, body.teacher-view-mode .site-header-area { display: none !important; }
     body.teacher-view-mode .main-container { margin-top: 20px !important; padding-top: 20px !important; }
@@ -484,7 +485,7 @@
     return parseInt(parts[0], 10) + (parseInt(parts[1], 10) / 60);
   }
 
-  // הפונקציה החדשה - רצה לפי שעות בצורה רוחבית, נקייה ומוגדלת!
+  // תיקון יסודי ואמיתי: הלולאה הראשית רצה אך ורק לפי שעות (Time-First)
   function drawDaily(activeDay) {
     currentActiveDayGlobal = activeDay;
     const days = ["ראשון", "שני", "שלישי", "רביעי", "חמישי"];
@@ -533,16 +534,16 @@
     const rows = GLOBAL_DB.schedule[activeDay] || [];
     
     if (rows.length > 1) {
-      const headers = rows[0]; 
+      const headers = rows[0]; // שורת הכותרת שמכילה את השעות
       const now = new Date();
       const currentTimeDecimal = now.getHours() + (now.getMinutes() / 60);
 
-      // רצים עמודה-עמודה לפי השעות (החל מאינדקס 2)
+      // לולאה ראשית: רצים עמודה-עמודה לפי זמני השיעורים (אינדקס 2 ומעלה)
       for (let j = 2; j < headers.length; j++) {
         const timeRangeString = (headers[j] || "").trim();
         if (!timeRangeString) continue;
 
-        // חישוב האם השעה הזו פעילה כרגע
+        // בדיקה האם השעה הזו פעילה כרגע ביום
         let isTimeRowActive = false;
         if (timeRangeString.includes('-')) {
           const [startStr, endStr] = timeRangeString.split('-');
@@ -556,8 +557,9 @@
         let hourlyLessonsHtml = "";
         let hasAnyLessonInHour = false;
 
-        // עוברים על כל המורים בשעה הספציפית הזו
-        rows.slice(1).forEach(row => {
+        // לולאה פנימית: אוספים את כל השיעורים שקורים בשעה j אצל כל המורים
+        for (let i = 1; i < rows.length; i++) {
+          const row = rows[i];
           let teacherName = row[1];
           let cellData = (row[j] || "").trim();
 
@@ -567,6 +569,7 @@
             let roomInfo = parts.length > 1 ? parts[0].trim() : "";
             let contentInfo = parts.length > 1 ? parts.slice(1).join('-').trim() : parts[0].trim();
 
+            // יצירת קוביית שיעור מעודנת: שם המורה בולט, צבעים רכים
             hourlyLessonsHtml += `
               <div class="lesson-slot-card">
                 <div class="slot-top-line">
@@ -578,9 +581,9 @@
                 </div>
               </div>`;
           }
-        });
+        }
 
-        // מציגים את שורת השעה רק אם קיימים בה שיעורים
+        // מציגים שורת זמן רק אם אכן יש בה לפחות שיעור אחד
         if (hasAnyLessonInHour) {
           contentHtml += `
             <div class="time-block-row shadow-sm ${isTimeRowActive ? 'active-time-row' : ''}">
