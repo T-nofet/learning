@@ -118,13 +118,14 @@
     .slot-teacher-text { color: var(--text-muted); font-weight: 600; }
     .slot-room-text { color: var(--accent); font-weight: 700; }
 
+    /* שורת המידע במסך רגיל - מעודכנת לאפשר ירידת שורה חלקה ללא נקודות */
     .slot-main-info {
       color: var(--text-main);
       font-size: 1.05rem;
       font-weight: 700;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      white-space: normal; /* שונה מ-nowrap ל-normal כדי לאפשר ירידת שורה במסך רגיל */
+      overflow: visible;
+      text-overflow: clip;
     }
 
     .time-block-row.active-time-row {
