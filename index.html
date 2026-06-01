@@ -10,15 +10,15 @@
   
   <style>
     :root {
-      --primary: #0f172a;       /* כחול-נייבי פחם עמוק, חזק, יוקרתי וברור */
+      --primary: #1e3a8a;       /* כחול רויאל עמוק - מקצועי, ברור ולא כהה מדי */
       --primary-light: #f1f5f9; /* רקע שורות נקי */
-      --accent: #047857;        /* ירוק חזק, חי וברור יותר להדגשת השעה הנוכחית */
-      --text-main: #000000;     /* שחור מוחלט לטקסט קריא בצורה מקסימלית */
-      --text-muted: #334155;    /* אפור כהה מאוד למורים (לא עדין מדי) */
-      --bg-main: #e2e8f0;       /* רקע כללי קצת יותר כהה הנותן קונטרסט מצוין לכרטיסיות הלבנות */
+      --accent: #0d9488;        /* ירוק טורקיז חי וברור להדגשת השעה הנוכחית */
+      --text-main: #1f2937;     /* אפור-שחור קלאסי וקריא */
+      --text-muted: #475569;    /* אפור גרפיט ברור לשמות המורים */
+      --bg-main: #f8fafc;       /* רקע כללי בהיר, נקי ונעים לעין */
       --card-bg: #ffffff;
-      --radius-lg: 14px;
-      --radius-md: 8px;         /* פינות מהודקות יותר למראה קומפקטי */
+      --radius-lg: 16px;
+      --radius-md: 10px;        /* פינות מעוגלות במידה נכונה */
       --transition: all 0.15s ease-in-out;
     }
 
@@ -30,12 +30,12 @@
     }
 
     .main-container { 
-      max-width: 1450px; 
-      margin: 15px auto; 
+      max-width: 1400px; 
+      margin: 20px auto; 
       background: var(--card-bg); 
-      padding: 16px;            /* צמצום פדינג כללי להצלת מקום */
+      padding: 24px; 
       border-radius: var(--radius-lg); 
-      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06); 
+      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04); 
     }
     
     .auth-card {
@@ -47,127 +47,123 @@
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
     }
 
-    .nav-pills { background: #cbd5e1; padding: 4px; border-radius: 30px; border: none; }
-    .nav-pills .nav-link { border-radius: 24px; color: #1e293b; font-weight: 700; transition: var(--transition); border: none; padding: 8px 16px; }
-    .nav-pills .nav-link.active { background-color: var(--primary) !important; color: white; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); }
+    .nav-pills { background: #e2e8f0; padding: 5px; border-radius: 30px; border: none; }
+    .nav-pills .nav-link { border-radius: 24px; color: var(--text-muted); font-weight: 600; transition: var(--transition); border: none; padding: 10px 20px; }
+    .nav-pills .nav-link.active { background-color: var(--primary) !important; color: white; box-shadow: 0 4px 12px rgba(30, 41, 59, 0.2); }
 
-    .day-card { background: var(--card-bg); border: 1px solid #cbd5e1; border-radius: var(--radius-md); padding: 12px; height: 100%; transition: var(--transition); }
-    .day-card:hover { border-color: #94a3b8; }
-    .lesson-box { background: #f8fafc; padding: 10px; border-radius: 6px; margin-bottom: 8px; border-right: 4px solid var(--primary); font-size: 0.95rem; font-weight: 600; border: 1px solid #cbd5e1; border-right-width: 4px; }
+    .day-card { background: var(--card-bg); border: 1px solid #e2e8f0; border-radius: var(--radius-md); padding: 18px; height: 100%; transition: var(--transition); }
+    .day-card:hover { border-color: #cbd5e1; }
+    .lesson-box { background: #f8fafc; padding: 12px; border-radius: 8px; margin-bottom: 10px; border-right: 4px solid var(--primary); font-size: 0.95rem; font-weight: 500; border: 1px solid #edf2f7; border-right-width: 4px; }
 
-    /* שורת זמן ראשית - מסך רגיל (מהודק למניעת גלילה) */
+    /* שורת זמן ראשית - מסך רגיל (קומפקטי ומותאם למניעת גלילה) */
     .time-block-row {
       background: var(--card-bg);
       border-radius: var(--radius-md);
-      border: 1px solid #cbd5e1;
+      border: 1px solid #e2e8f0;
       display: flex;
       align-items: stretch;
-      gap: 8px;                 /* צמצום המרווחים בין הכרטיסיות */
-      padding: 6px 12px;        /* צמצום הפדינג האנכי מ-10 ל-6 */
-      margin-bottom: 8px;       /* צמצום המרווח בין השורות */
+      gap: 14px;
+      padding: 10px 18px;
+      margin-bottom: 12px;
       transition: var(--transition);
     }
     
     .time-row-header {
-      font-size: 1.05rem;
-      font-weight: 800;
-      color: #ffffff;           /* טקסט לבן על רקע כהה לקריאות מירבית */
-      background: var(--primary);
-      min-width: 110px;
-      max-width: 110px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary);
+      min-width: 120px;
+      max-width: 120px;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 6px;
-      padding: 4px;
+      background: #f1f5f9;
+      border-radius: 8px;
+      padding: 6px;
       text-align: center;
       flex-shrink: 0;
-      gap: 4px;
+      border: 1px solid #e2e8f0;
+      gap: 6px;
     }
 
     .time-lessons-container {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 12px;
       flex-grow: 1;
       align-items: center;
     }
 
     .lesson-slot-card {
       background: #f8fafc;
-      border: 1px solid #cbd5e1;
-      border-radius: 6px;
-      padding: 6px 12px;
-      min-width: 200px;
-      max-width: 300px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 10px 16px;
+      min-width: 240px;
+      max-width: 320px;
       flex-grow: 1;
       transition: var(--transition);
       display: flex;
       flex-direction: column;
       justify-content: center;
     }
-    .lesson-slot-card:hover { border-color: #94a3b8; background: #ffffff; }
+    .lesson-slot-card:hover { border-color: #cbd5e1; background: #ffffff; }
 
     .slot-top-line {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 2px;
+      margin-bottom: 4px;
       font-size: 0.85rem;
     }
-    .slot-teacher-text { color: var(--text-muted); font-weight: 700; }
-    .slot-room-text { color: #ffffff; font-weight: 800; background: #0369a1; padding: 1px 8px; border-radius: 10px; font-size: 0.8rem; }
+    .slot-teacher-text { color: var(--text-muted); font-weight: 600; }
+    .slot-room-text { color: var(--accent); font-weight: 700; background: #f0fdfa; padding: 2px 8px; border-radius: 12px; }
 
+    /* טקסט השיעור - מאפשר ירידת שורה חופשית ונקייה */
     .slot-main-info {
       color: var(--text-main);
-      font-size: 1.02rem;
+      font-size: 1.05rem;
       font-weight: 700;
       white-space: normal; 
       overflow: visible;
       text-overflow: clip;
     }
 
-    /* עיצוב שורה פעילה נוכחית - צבעים חזקים, ברורים ומודגשים מאוד */
+    /* עיצוב שורה פעילה נוכחית - בולט, מאוזן ואינטליגנטי */
     .time-block-row.active-time-row {
       border-color: var(--accent);
-      border-width: 2px;
-      background: #d1fae5;       /* רקע ירוק בהיר וחזק שלא יתפספס */
-      box-shadow: 0 4px 12px rgba(4, 120, 87, 0.15);
+      background: #f0fdfa;       /* רקע ירוק-מנטה עדין ויוקרתי */
+      box-shadow: 0 4px 15px rgba(15, 118, 110, 0.06);
     }
     .time-block-row.active-time-row .time-row-header {
       background: var(--accent);
       color: white;
+      border-color: var(--accent);
     }
     .time-block-row.active-time-row .lesson-slot-card {
       background: #ffffff;
-      border-color: var(--accent);
-      border-width: 1.5px;
-    }
-    .time-block-row.active-time-row .slot-teacher-text {
-      color: #047857;
+      border-color: rgba(15, 118, 110, 0.15);
     }
 
-    .form-control { border: 1px solid #94a3b8; background-color: #ffffff; padding: 8px 12px; transition: var(--transition); border-radius: 6px; color: #000000; font-weight: 600; }
-    .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1); }
+    .form-control { border: 1px solid #cbd5e1; background-color: #ffffff; padding: 10px 15px; transition: var(--transition); border-radius: 8px; }
+    .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30, 41, 59, 0.08); }
     
-    /* תיקון פדינג, מרווחים ועיוות רינדור האות כ' בתפריטי בחירה (RTL) */
+    /* תיקון פדינג ועיוות רינדור האות כ' בתפריטי בחירה (RTL) */
     .form-select { 
-      border: 1px solid #94a3b8; 
+      border: 1px solid #cbd5e1; 
       background-color: #ffffff; 
-      padding: 8px 35px 8px 15px; 
+      padding: 10px 35px 10px 15px; 
       transition: var(--transition); 
-      border-radius: 6px; 
-      color: #000000;
-      font-weight: 700;
+      border-radius: 8px; 
       background-position: left 0.75rem center; 
     }
-    .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1); }
+    .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30, 41, 59, 0.08); }
     
-    .btn-primary { background-color: var(--primary); border: none; padding: 6px 20px; font-weight: 700; border-radius: 30px; transition: var(--transition); }
-    .btn-primary:hover { background-color: #000000; }
+    .btn-primary { background-color: var(--primary); border: none; padding: 8px 24px; font-weight: 600; border-radius: 30px; transition: var(--transition); }
+    .btn-primary:hover { background-color: #172554; }
 
-    .badge { font-size: 0.85rem; padding: 6px 14px; border-radius: 20px; cursor: pointer; transition: var(--transition); font-weight: 700; }
-    .bg-custom-teacher { background-color: #e2e8f0 !important; color: #0f172a !important; border: 1px solid #94a3b8; }
+    .badge { font-size: 0.85rem; padding: 6px 14px; border-radius: 20px; cursor: pointer; transition: var(--transition); font-weight: 600; }
+    .bg-custom-teacher { background-color: #e2e8f0 !important; color: #334155 !important; border: 1px solid #cbd5e1; }
 
     .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); display: flex; justify-content: center; align-items: center; z-index: 9999; }
     
@@ -177,25 +173,25 @@
       top: 0;
       background: var(--card-bg);
       z-index: 1020;
-      padding-bottom: 8px;
-      border-bottom: 1px solid #cbd5e1;
-      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e2e8f0;
+      margin-bottom: 16px;
     }
 
     .live-clock-badge {
       font-size: 1rem;
-      font-weight: 800;
+      font-weight: 700;
       background-color: #f1f5f9;
       color: var(--primary);
-      padding: 4px 12px;
+      padding: 6px 14px;
       border-radius: 30px;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      border: 1px solid #cbd5e1;
+      gap: 8px;
+      border: 1px solid #e2e8f0;
     }
 
-    .day-share-icon-btn { background: none; border: none; color: #64748b; font-size: 1rem; padding: 4px; cursor: pointer; border-radius: 50%; }
+    .day-share-icon-btn { background: none; border: none; color: var(--text-muted); font-size: 1rem; padding: 4px; cursor: pointer; border-radius: 50%; }
 
     /* ==========================================
        התאמות דינמיות למצב מסך מלא (Kiosk Mode)
@@ -208,7 +204,7 @@
       width: 100vw !important; 
       height: 100vh !important; 
       margin: 0 !important; 
-      padding: 16px !important; 
+      padding: 20px !important; 
       border-radius: 0 !important; 
       box-shadow: none !important; 
       display: flex; 
@@ -221,11 +217,11 @@
       flex-direction: column; 
       justify-content: space-between; 
       overflow: hidden; 
-      gap: 8px;
+      gap: 10px;
     }
     
     body.kiosk-mode .time-block-row { 
-      padding: 6px 16px; 
+      padding: 8px 20px; 
       margin-bottom: 0px; 
       flex-grow: 1; 
       flex-shrink: 1;
@@ -235,19 +231,19 @@
     }
     
     body.kiosk-mode .time-row-header { 
-      font-size: 1.35rem; 
-      min-width: 150px; 
-      max-width: 150px; 
-      padding: 8px; 
-      height: 90%; 
+      font-size: 1.4rem; 
+      min-width: 160px; 
+      max-width: 160px; 
+      padding: 10px; 
+      height: 85%; 
     }
     
     body.kiosk-mode .time-lessons-container { 
-      gap: 10px; 
+      gap: 12px; 
       display: flex; 
       flex-wrap: nowrap; 
       overflow: hidden;
-      height: 90%;
+      height: 85%;
       align-items: center; 
     }
     
@@ -256,13 +252,13 @@
       max-width: 32% !important; 
       flex-shrink: 1; 
       flex-grow: 1; 
-      padding: 8px 14px;
+      padding: 10px 16px;
       height: 100%;
       justify-content: center; 
     }
     
     body.kiosk-mode .slot-main-info { 
-      font-size: calc(1rem + 0.25vw) !important; 
+      font-size: calc(1.05rem + 0.2vw) !important; 
       white-space: normal !important;      
       overflow: visible !important;        
       text-overflow: clip !important;       
@@ -272,13 +268,13 @@
       line-height: 1.2 !important;
     }
     
-    body.kiosk-mode .slot-top-line { font-size: 0.95rem; margin-bottom: 2px; }
+    body.kiosk-mode .slot-top-line { font-size: 1rem; margin-bottom: 4px; }
 
     body.teacher-view-mode #topNav, body.teacher-view-mode .site-header-area { display: none !important; }
-    body.teacher-view-mode .main-container { margin-top: 10px !important; padding-top: 10px !important; }
+    body.teacher-view-mode .main-container { margin-top: 15px !important; padding-top: 15px !important; }
 
     @media (max-width: 768px) {
-      .time-block-row { flex-direction: column; align-items: stretch; gap: 6px; }
+      .time-block-row { flex-direction: column; align-items: stretch; gap: 8px; }
       .time-row-header { min-width: 100%; max-width: 100%; }
       .time-lessons-container { justify-content: center; }
       .lesson-slot-card { min-width: 100%; max-width: 100%; }
