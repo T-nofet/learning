@@ -10,16 +10,16 @@
   
   <style>
     :root {
-      --primary: #1e3a8a;
-      --primary-light: #f1f5f9;
-      --accent: #0d9488;
-      --text-main: #1f2937;
-      --text-muted: #64748b;
-      --bg-main: #f8fafc;
+      --primary: #1e293b;       /* כחול-סלייט עמוק, בוגר ומכבד (במקום כחול מוסדי) */
+      --primary-light: #f8fafc; /* רקע שורות נקי ורך */
+      --accent: #0f766e;        /* ירוק-אזמרגד עמוק ומתוחכם לאלמנטים מודгשים */
+      --text-main: #0f172a;     /* שחור-פחם אינטליגנטי וקריא */
+      --text-muted: #64748b;    /* אפור מעודן לטקסט משני */
+      --bg-main: #f1f5f9;       /* רקע כללי רך שאינו מעייף את העין */
       --card-bg: #ffffff;
       --radius-lg: 16px;
-      --radius-md: 10px;
-      --transition: all 0.15s ease-in-out;
+      --radius-md: 12px;        /* עיגול פינות מעט רך ויוקרתי יותר */
+      --transition: all 0.2s ease-in-out;
     }
 
     body { 
@@ -31,11 +31,11 @@
 
     .main-container { 
       max-width: 1400px; 
-      margin: 15px auto; 
+      margin: 20px auto; 
       background: var(--card-bg); 
-      padding: 20px; 
+      padding: 24px; 
       border-radius: var(--radius-lg); 
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 2px 10px -1px rgba(0, 0, 0, 0.02); 
+      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 10px -1px rgba(15, 23, 42, 0.02); 
     }
     
     .auth-card {
@@ -47,13 +47,13 @@
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
     }
 
-    .nav-pills { background: #f1f5f9; padding: 4px; border-radius: 30px; border: 1px solid #e2e8f0; }
-    .nav-pills .nav-link { border-radius: 24px; color: var(--text-muted); font-weight: 600; transition: var(--transition); border: none; padding: 8px 16px; }
-    .nav-pills .nav-link.active { background-color: var(--primary) !important; color: white; box-shadow: 0 4px 12px rgba(30, 58, 138, 0.15); }
+    .nav-pills { background: #e2e8f0; padding: 5px; border-radius: 30px; border: none; }
+    .nav-pills .nav-link { border-radius: 24px; color: var(--text-muted); font-weight: 600; transition: var(--transition); border: none; padding: 10px 20px; }
+    .nav-pills .nav-link.active { background-color: var(--primary) !important; color: white; box-shadow: 0 4px 12px rgba(30, 41, 59, 0.2); }
 
-    .day-card { background: var(--card-bg); border: 1px solid #e2e8f0; border-radius: var(--radius-md); padding: 15px; height: 100%; transition: var(--transition); }
+    .day-card { background: var(--card-bg); border: 1px solid #e2e8f0; border-radius: var(--radius-md); padding: 18px; height: 100%; transition: var(--transition); }
     .day-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -5px rgba(0,0,0,0.05); border-color: #cbd5e1; }
-    .lesson-box { background: #f0fdf4; padding: 10px; border-radius: 8px; margin-bottom: 10px; border-right: 4px solid var(--primary); font-size: 0.9rem; font-weight: 500; }
+    .lesson-box { background: #f8fafc; padding: 12px; border-radius: 8px; margin-bottom: 10px; border-right: 4px solid var(--primary); font-size: 0.95rem; font-weight: 500; border-top: 1px solid #edf2f7; border-left: 1px solid #edf2f7; border-bottom: 1px solid #edf2f7; }
 
     /* שורת זמן ראשית - מסך רגיל */
     .time-block-row {
@@ -62,42 +62,43 @@
       border: 1px solid #e2e8f0;
       display: flex;
       align-items: stretch;
-      gap: 12px;
-      padding: 8px 15px;
-      margin-bottom: 10px;
+      gap: 14px;
+      padding: 10px 18px;
+      margin-bottom: 12px;
       transition: var(--transition);
     }
     
     .time-row-header {
-      font-size: 1.15rem;
-      font-weight: 800;
+      font-size: 1.1rem;
+      font-weight: 700;
       color: var(--primary);
       min-width: 120px;
       max-width: 120px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: var(--primary-light);
-      border-radius: 6px;
+      background: #f1f5f9;
+      border-radius: 8px;
       padding: 6px;
       text-align: center;
       flex-shrink: 0;
       border: 1px solid #e2e8f0;
+      gap: 6px;
     }
 
     .time-lessons-container {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 12px;
       flex-grow: 1;
       align-items: center;
     }
 
     .lesson-slot-card {
-      background: #fafafa;
+      background: #f8fafc;
       border: 1px solid #e2e8f0;
-      border-radius: 6px;
-      padding: 8px 14px;
+      border-radius: 8px;
+      padding: 10px 16px;
       min-width: 240px;
       max-width: 320px;
       flex-grow: 1;
@@ -106,32 +107,33 @@
       flex-direction: column;
       justify-content: center;
     }
-    .lesson-slot-card:hover { border-color: #cbd5e1; background: #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
+    .lesson-slot-card:hover { border-color: #cbd5e1; background: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
 
     .slot-top-line {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 2px;
+      margin-bottom: 4px;
       font-size: 0.85rem;
     }
     .slot-teacher-text { color: var(--text-muted); font-weight: 600; }
-    .slot-room-text { color: var(--accent); font-weight: 700; }
+    .slot-room-text { color: var(--accent); font-weight: 700; background: #f0fdfa; padding: 2px 8px; border-radius: 12px; }
 
-    /* שורת המידע במסך רגיל - מעודכנת לאפשר ירידת שורה חלקה ללא נקודות */
+    /* שורת המידע במסך רגיל - מאפשרת ירידת שורה חלקה ללא שלוש נקודות */
     .slot-main-info {
       color: var(--text-main);
       font-size: 1.05rem;
       font-weight: 700;
-      white-space: normal; /* שונה מ-nowrap ל-normal כדי לאפשר ירידת שורה במסך רגיל */
+      white-space: normal; 
       overflow: visible;
       text-overflow: clip;
     }
 
+    /* עיצוב שורה פעילה נוכחית - חם, נעים ומכבד */
     .time-block-row.active-time-row {
       border-color: var(--accent);
       background: #f0fdfa;
-      box-shadow: 0 4px 10px rgba(13, 148, 136, 0.05);
+      box-shadow: 0 4px 15px rgba(15, 118, 110, 0.06);
     }
     .time-block-row.active-time-row .time-row-header {
       background: var(--accent);
@@ -140,17 +142,28 @@
     }
     .time-block-row.active-time-row .lesson-slot-card {
       background: #ffffff;
-      border-color: rgba(13, 148, 136, 0.2);
+      border-color: rgba(15, 118, 110, 0.15);
     }
 
-    .form-control, .form-select { border: 1px solid #e2e8f0; background-color: #ffffff; padding: 10px 15px; transition: var(--transition); }
-    .form-control:focus, .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.08); }
+    .form-control { border: 1px solid #cbd5e1; background-color: #ffffff; padding: 10px 15px; transition: var(--transition); border-radius: 8px; }
+    .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30, 41, 59, 0.08); }
     
-    .btn-primary { background-color: var(--primary); border: none; padding: 8px 20px; font-weight: 600; border-radius: 30px; transition: var(--transition); }
-    .btn-primary:hover { background-color: #1e40af; transform: translateY(-1px); }
+    /* תיקון פדינג ועיוות רינדור האות כ' בכיווניות RTL עבור תפריטי בחירה */
+    .form-select { 
+      border: 1px solid #cbd5e1; 
+      background-color: #ffffff; 
+      padding: 10px 35px 10px 15px; /* הרחבת המרווח מימין כדי להרחיק את הטקסט מחץ הבחירה */
+      transition: var(--transition); 
+      border-radius: 8px; 
+      background-position: left 0.75rem center; /* מיקום אופטימלי של החץ בצד שמאל */
+    }
+    .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30, 41, 59, 0.08); }
+    
+    .btn-primary { background-color: var(--primary); border: none; padding: 8px 24px; font-weight: 600; border-radius: 30px; transition: var(--transition); }
+    .btn-primary:hover { background-color: #0f172a; transform: translateY(-1px); }
 
-    .badge { font-size: 0.8rem; padding: 6px 12px; border-radius: 20px; cursor: pointer; transition: var(--transition); font-weight: 500; }
-    .bg-custom-teacher { background-color: #f1f5f9 !important; color: #475569 !important; border: 1px solid #e2e8f0; }
+    .badge { font-size: 0.85rem; padding: 6px 14px; border-radius: 20px; cursor: pointer; transition: var(--transition); font-weight: 600; }
+    .bg-custom-teacher { background-color: #e2e8f0 !important; color: #334155 !important; border: 1px solid #cbd5e1; }
 
     .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); display: flex; justify-content: center; align-items: center; z-index: 9999; }
     
@@ -160,28 +173,28 @@
       top: 0;
       background: var(--card-bg);
       z-index: 1020;
-      padding-bottom: 8px;
+      padding-bottom: 12px;
       border-bottom: 1px solid #e2e8f0;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
     }
 
     .live-clock-badge {
       font-size: 1rem;
       font-weight: 700;
-      background-color: #eff6ff;
+      background-color: #f1f5f9;
       color: var(--primary);
-      padding: 4px 12px;
+      padding: 6px 14px;
       border-radius: 30px;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      border: 1px solid rgba(30, 58, 138, 0.15);
+      gap: 8px;
+      border: 1px solid #e2e8f0;
     }
 
     .day-share-icon-btn { background: none; border: none; color: var(--text-muted); font-size: 1rem; padding: 4px; cursor: pointer; border-radius: 50%; }
 
     /* ==========================================
-       התאמות דינמיות למצב מסך מלא (Kiosk Mode) - חישוב גובה אוטומטי ותיקון שמות
+       התאמות דינמיות למצב מסך מלא (Kiosk Mode)
        ========================================== */
     body.kiosk-mode { background-color: #ffffff !important; padding: 0 !important; margin: 0 !important; overflow: hidden; }
     body.kiosk-mode #topNav, body.kiosk-mode .no-print, body.kiosk-mode .nav-pills, body.kiosk-mode .site-header-area { display: none !important; }
@@ -191,75 +204,71 @@
       width: 100vw !important; 
       height: 100vh !important; 
       margin: 0 !important; 
-      padding: 15px !important; 
+      padding: 20px !important; 
       border-radius: 0 !important; 
       box-shadow: none !important; 
       display: flex; 
       flex-direction: column; 
     }
     
-    /* קונטיינר השורות - מתפרס אופטימלית על כל יתרת הגובה הפנוי במסך */
     body.kiosk-mode .daily-rows-scroll-area { 
       flex-grow: 1; 
       display: flex; 
       flex-direction: column; 
       justify-content: space-between; 
       overflow: hidden; 
-      gap: 8px;
+      gap: 10px;
     }
     
-    /* כל שורה מקבלת גובה יחסי שווה בהתאם לכמות השורות הקיימות */
     body.kiosk-mode .time-block-row { 
-      padding: 6px 15px; 
+      padding: 8px 20px; 
       margin-bottom: 0px; 
       flex-grow: 1; 
       flex-shrink: 1;
       display: flex;
       align-items: center; 
-      min-height: 0; /* מונע מהדפדפן לחרוג מגבולות המסך */
+      min-height: 0;
     }
     
     body.kiosk-mode .time-row-header { 
       font-size: 1.4rem; 
-      min-width: 150px; 
-      max-width: 150px; 
-      padding: 8px; 
-      height: 90%; 
+      min-width: 160px; 
+      max-width: 160px; 
+      padding: 10px; 
+      height: 85%; 
     }
     
     body.kiosk-mode .time-lessons-container { 
-      gap: 10px; 
+      gap: 12px; 
       display: flex; 
       flex-wrap: nowrap; 
       overflow: hidden;
-      height: 90%;
-      align-items: stretch;
-      flex-grow: 1;
+      height: 85%;
+      align-items: center; /* יישור אנכי שמונע עיוותים של אלמנטים פנימיים */
     }
     
-    /* התאמת כרטיסיית השיעור למצב מסך מלא גמיש ללא חיתוך שמות */
     body.kiosk-mode .lesson-slot-card { 
       min-width: 20%; 
-      max-width: 32% !important; /* הרחבה קלה של המקסימום כדי לתת לשמות ארוכים מקום לרוץ */
+      max-width: 32% !important; 
       flex-shrink: 1; 
       flex-grow: 1; 
-      padding: 6px 14px;
+      padding: 10px 16px;
       height: 100%;
-      justify-content: center !important;
+      justify-content: center; 
     }
     
     body.kiosk-mode .slot-main-info { 
-      font-size: calc(1.05rem + 0.2vw) !important; /* גודל גופן דינמי ורספונסיבי שמתאים את עצמו למסך */
-      white-space: normal !important;      /* מבטל את הגבלת השורה האחת ומאפשר ירידת שורה */
-      overflow: visible !important;        /* מבטל את הסתרת הטקסט הגולש */
-      text-overflow: clip !important;       /* מעלים את 3 הנקודות לחלוטין */
+      font-size: calc(1.05rem + 0.2vw) !important; 
+      white-space: normal !important;      
+      overflow: visible !important;        
+      text-overflow: clip !important;       
       display: -webkit-box !important;
-      -webkit-line-clamp: 2 !important;     /* מאפשר לשם להתפרס על עד 2 שורות במידת הצורך */
+      -webkit-line-clamp: 2 !important;     
       -webkit-box-orient: vertical !important;
       line-height: 1.2 !important;
     }
     
-    body.kiosk-mode .slot-top-line { font-size: 0.95rem; margin-bottom: 2px; }
+    body.kiosk-mode .slot-top-line { font-size: 1rem; margin-bottom: 4px; }
 
     body.teacher-view-mode #topNav, body.teacher-view-mode .site-header-area { display: none !important; }
     body.teacher-view-mode .main-container { margin-top: 15px !important; padding-top: 15px !important; }
