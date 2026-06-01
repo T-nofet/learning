@@ -10,12 +10,12 @@
   
   <style>
     :root {
-      --primary: #2563eb;       /* כחול בהיר דינמי לטאבים ולכפתורים */
+      --primary: #2563eb;       
       --primary-light: #f1f5f9; 
-      --accent: #0f766e;        /* טורקיז עמוק וברור לשעה הפעילה */
-      --text-main: #334155;     /* אפור גרפיט כהה - קריא, רך ולא כבד מדי */
-      --text-muted: #64748b;    /* אפור מעודן למורים */
-      --bg-main: #f8fafc;       /* רקע כללי נקי ורענן */
+      --accent: #0f766e;        
+      --text-main: #334155;     
+      --text-muted: #64748b;    
+      --bg-main: #f8fafc;       
       --card-bg: #ffffff;
       --radius-lg: 14px;
       --radius-md: 8px;
@@ -54,7 +54,7 @@
     .day-card { background: var(--card-bg); border: 1px solid #e2e8f0; border-radius: var(--radius-md); padding: 14px; height: 100%; }
     .lesson-box { background: #f8fafc; padding: 10px; border-radius: 6px; margin-bottom: 8px; border-right: 4px solid var(--primary); font-size: 0.95rem; font-weight: 500; border: 1px solid #edf2f7; border-right-width: 4px; }
 
-    /* שורת זמן ראשית - סופר קומפקטית למניעת גלילה במסך רגיל */
+    /* שורת זמן ראשית - סופר קומפקטית */
     .time-block-row {
       background: var(--card-bg);
       border-radius: var(--radius-md);
@@ -62,22 +62,21 @@
       display: flex;
       align-items: stretch;
       gap: 10px;
-      padding: 4px 12px;        /* צמצום הפדינג האנכי למינימום */
-      margin-bottom: 6px;       /* צמצום המרווח כדי להעלות את השורות התחתונות */
+      padding: 4px 12px;        
+      margin-bottom: 6px;       
       transition: var(--transition);
     }
     
-    /* בלוק השעה השמאלי - מעודן, חצי שקוף ונוח לעין */
     .time-row-header {
       font-size: 0.95rem;
       font-weight: 700;
-      color: #1e40af;           /* כחול עמוק קריא */
+      color: #1e40af;           
       min-width: 110px;
       max-width: 110px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #e0e7ff;      /* רקע כחול-רך מעודן מאוד */
+      background: #e0e7ff;      
       border-radius: 6px;
       padding: 4px;
       text-align: center;
@@ -93,12 +92,11 @@
       align-items: center;
     }
 
-    /* כרטיסיית שיעור בודד */
     .lesson-slot-card {
       background: #f8fafc;
       border: 1px solid #e2e8f0;
       border-radius: 6px;
-      padding: 6px 12px;        /* פדינג פנימי מהודק */
+      padding: 6px 12px;        
       min-width: 230px;
       max-width: 310px;
       flex-grow: 1;
@@ -117,7 +115,6 @@
     .slot-teacher-text { color: var(--text-muted); font-weight: 600; }
     .slot-room-text { color: #0284c7; font-weight: 700; background: #e0f2fe; padding: 1px 6px; border-radius: 10px; font-size: 0.78rem; }
 
-    /* תוכן השיעור הראשי - ברור ולא משתלט */
     .slot-main-info {
       color: var(--text-main);
       font-size: 1rem;
@@ -127,10 +124,10 @@
       overflow: visible;
     }
 
-    /* עיצוב שורה פעילה נוכחית - שילוב מדויק של מנטה וטורקיז */
+    /* עיצוב שורה פעילה נוכחית */
     .time-block-row.active-time-row {
       border-color: var(--accent);
-      background: #ccfbf1;       /* רקע מנטה בהיר ורך */
+      background: #ccfbf1;       
       box-shadow: 0 2px 8px rgba(15, 118, 110, 0.05);
     }
     .time-block-row.active-time-row .time-row-header {
@@ -180,14 +177,21 @@
 
     .day-share-icon-btn { background: none; border: none; color: var(--text-muted); font-size: 1rem; padding: 4px; cursor: pointer; }
 
-    /* ==========================================
-       התאמות דינמיות למצב מסך מלא (Kiosk Mode)
-       ========================================== */
-    body.kiosk-mode { background-color: #ffffff !important; padding: 0 !important; margin: 0 !important; overflow: hidden; }
+    /* =======================================================
+       ✨ תיקון קריטי: התאמות דינמיות למצב מסך מלא וירטואלי מוחלט
+       ======================================================= */
+    body.kiosk-mode { 
+      background-color: #ffffff !important; 
+      padding: 0 !important; 
+      margin: 0 !important; 
+      overflow: hidden !important; 
+    }
     body.kiosk-mode #topNav, body.kiosk-mode .no-print, body.kiosk-mode .nav-pills, body.kiosk-mode .site-header-area { display: none !important; }
     
     body.kiosk-mode .main-container { 
-      max-width: 100% !important; 
+      position: fixed !important;   /* כפיית מסך מלא וירטואלי מעל הכל */
+      top: 0 !important;
+      left: 0 !important;
       width: 100vw !important; 
       height: 100vh !important; 
       margin: 0 !important; 
@@ -195,7 +199,8 @@
       border-radius: 0 !important; 
       box-shadow: none !important; 
       display: flex; 
-      flex-direction: column; 
+      flex-direction: column;
+      z-index: 99999 !important;     /* מבטיח פריסה עליונה מוחלטת */
     }
     
     body.kiosk-mode .daily-rows-scroll-area { 
@@ -647,10 +652,13 @@
 
   function toggleKioskMode(activeDay) {
     const isActivating = !document.body.classList.contains('kiosk-mode');
-    document.body.toggle('kiosk-mode');
+    document.body.classList.toggle('kiosk-mode');
+    
     if (isActivating) {
       if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen().catch(err => console.log("Fullscreen error:", err));
+        document.documentElement.requestFullscreen().catch(err => {
+          console.log("פיצ'ר מסך מלא חומרי נחסם על ידי הדפדפן - מפעיל מסך מלא וירטואלי", err);
+        });
       }
     } else {
       if (document.fullscreenElement && document.exitFullscreen) {
@@ -662,9 +670,12 @@
 
   document.addEventListener('fullscreenchange', () => {
     if (!document.fullscreenElement) {
-      document.body.classList.remove('kiosk-mode');
-      if (isTeacherMode) document.body.classList.add('teacher-view-mode');
-      drawDaily(currentActiveDayGlobal);
+      // אם יצאנו ממסך מלא אמיתי, נבדוק אם ה-Class של הקיאוסק עדיין קיים וננקה אותו
+      if (document.body.classList.contains('kiosk-mode')) {
+        document.body.classList.remove('kiosk-mode');
+        if (isTeacherMode) document.body.classList.add('teacher-view-mode');
+        drawDaily(currentActiveDayGlobal);
+      }
     }
   });
 
