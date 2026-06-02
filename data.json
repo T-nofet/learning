@@ -10493,8 +10493,8 @@
       "month": "06/2026",
       "teacher": "אינסה נוביקוב",
       "studentName": "12-13",
-      "content": "עומרי Unseen  |  |  |  | ",
-      "allText": "02/06/2026 11:58:56 אינסה נוביקוב 12-13 עומרי unseen        "
+      "content": "עומרי Unseen  | נור Unseen  |  |  | ",
+      "allText": "02/06/2026 11:58:56 אינסה נוביקוב 12-13 עומרי unseen  נור unseen       "
     },
     {
       "timestamp": "02/06/2026 11:58:58",
@@ -10516,9 +10516,9 @@
       "timestamp": "02/06/2026 12:14:55",
       "month": "06/2026",
       "teacher": "אינסה נוביקוב",
-      "studentName": "12-13",
-      "content": "נור Unseen  |  |  |  | ",
-      "allText": "02/06/2026 12:14:55 אינסה נוביקוב 12-13 נור unseen        "
+      "studentName": "13-14",
+      "content": "נור Unseen  | עומרי Unseen  |  |  | ",
+      "allText": "02/06/2026 12:14:55 אינסה נוביקוב 13-14 נור unseen  עומרי unseen       "
     },
     {
       "timestamp": "02/06/2026 12:43:13",
