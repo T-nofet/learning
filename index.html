@@ -11,7 +11,7 @@
   <style>
     :root {
       --primary: #2563eb;       
-      --primary-light: #f1f5f9; 
+      --primary-light: #f1f5f9;  
       --accent: #0f766e;        
       --text-main: #334155;     
       --text-muted: #64748b;    
@@ -177,9 +177,6 @@
 
     .day-share-icon-btn { background: none; border: none; color: var(--text-muted); font-size: 1rem; padding: 4px; cursor: pointer; }
 
-    /* =======================================================
-       ✨ תיקון קריטי: התאמות דינמיות למצב מסך מלא וירטואלי מוחלט
-       ======================================================= */
     body.kiosk-mode { 
       background-color: #ffffff !important; 
       padding: 0 !important; 
@@ -189,7 +186,7 @@
     body.kiosk-mode #topNav, body.kiosk-mode .no-print, body.kiosk-mode .nav-pills, body.kiosk-mode .site-header-area { display: none !important; }
     
     body.kiosk-mode .main-container { 
-      position: fixed !important;   /* כפיית מסך מלא וירטואלי מעל הכל */
+      position: fixed !important;   
       top: 0 !important;
       left: 0 !important;
       width: 100vw !important; 
@@ -200,7 +197,7 @@
       box-shadow: none !important; 
       display: flex; 
       flex-direction: column;
-      z-index: 99999 !important;     /* מבטיח פריסה עליונה מוחלטת */
+      z-index: 99999 !important;     
     }
     
     body.kiosk-mode .daily-rows-scroll-area { 
@@ -382,6 +379,7 @@
       const urlPw = urlParams.get('pw') || "";
       const urlId = urlParams.get('id') || "";
       const urlDay = urlParams.get('day') || "";
+      const urlView = urlParams.get('view') || "";
 
       document.getElementById('loader').style.display = 'none';
 
@@ -390,16 +388,26 @@
         currentActiveDayGlobal = urlDay;
       }
 
-      if (urlDay && validDays.includes(urlDay)) {
+      // 1. בדיקה אם מדובר באיש צוות (משתמש בסיסמת התלמיד + הפרמטר view=staff)
+      if (urlPw === GLOBAL_DB.studentPw && urlView === "staff") {
+        isStudentMode = false;
+        isTeacherMode = false;
+        document.body.classList.remove('teacher-view-mode');
+        startApp();
+      }
+      // 2. בדיקה אם מדובר במצב מורה (מבט יומי)
+      else if (urlDay && validDays.includes(urlDay)) {
         isTeacherMode = true;
         document.body.classList.add('teacher-view-mode');
         startApp();
       } 
+      // 3. בדיקה אם מדובר בתלמיד רגיל מוגן
       else if (urlPw === GLOBAL_DB.studentPw && urlId && GLOBAL_DB.studentsMapping[urlId]) {
         isStudentMode = true;
         identifiedStudent = GLOBAL_DB.studentsMapping[urlId];
         startApp();
       } 
+      // 4. אחרת - הצגת מסך התחברות רגיל
       else {
         document.getElementById('authScreen').style.display = 'block';
       }
@@ -632,7 +640,8 @@
           contentHtml += `
             <div class="time-block-row shadow-sm ${isTimeRowActive ? 'active-time-row' : ''}">
               <div class="time-row-header">
-                <i class="fa-regular fa-clock me-1" style="font-size: 0.95rem;"></i> ${timeRangeString}
+                <i class="fa-regular fa-clock d-none d-sm-inline"></i>
+                ${timeRangeString}
               </div>
               <div class="time-lessons-container">
                 ${hourlyLessonsHtml}
@@ -640,111 +649,75 @@
             </div>`;
         }
       }
-
     } else {
-      contentHtml += `<p class="text-center text-muted py-4">אין נתונים להצגה ליום ${activeDay}</p>`;
+      contentHtml += `<div class="text-center text-muted py-5">אין נתונים להצגה עבור יום זה</div>`;
     }
     contentHtml += `</div>`;
-    
+
     document.getElementById('dailyContent').innerHTML = tabsHtml + contentHtml;
-    updateLiveClock(); 
   }
 
   function toggleKioskMode(activeDay) {
-    const isActivating = !document.body.classList.contains('kiosk-mode');
     document.body.classList.toggle('kiosk-mode');
-    
-    if (isActivating) {
-      if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen().catch(err => {
-          console.log("פיצ'ר מסך מלא חומרי נחסם על ידי הדפדפן - מפעיל מסך מלא וירטואלי", err);
-        });
-      }
-    } else {
-      if (document.fullscreenElement && document.exitFullscreen) {
-        document.exitFullscreen().catch(err => console.log("Fullscreen exit error:", err));
-      }
-    }
     drawDaily(activeDay);
-  }
-
-  document.addEventListener('fullscreenchange', () => {
-    if (!document.fullscreenElement) {
-      // אם יצאנו ממסך מלא אמיתי, נבדוק אם ה-Class של הקיאוסק עדיין קיים וננקה אותו
-      if (document.body.classList.contains('kiosk-mode')) {
-        document.body.classList.remove('kiosk-mode');
-        if (isTeacherMode) document.body.classList.add('teacher-view-mode');
-        drawDaily(currentActiveDayGlobal);
-      }
-    }
-  });
-
-  setInterval(() => {
-    const dailyTab = document.getElementById('tab-daily');
-    if (dailyTab && dailyTab.classList.contains('active') && dailyTab.style.display !== 'none') {
-      drawDaily(currentActiveDayGlobal);
-    }
-  }, 30000);
-
-  function renderSummary(reports, containerId) {
-    const container = document.getElementById(containerId);
-    if (!reports || reports.length === 0) { container.innerHTML = ""; return; }
-    const stats = { total: reports.length, teachers: {} };
-    reports.forEach(r => { stats.teachers[r.teacher] = (stats.teachers[r.teacher] || 0) + 1; });
-
-    let html = `<span class="badge bg-primary me-2 mb-2 shadow-sm" onclick="filterByTeacherBubble('ALL', '${containerId}')">כל הדיווחים (${stats.total})</span>`;
-    Object.keys(stats.teachers).sort().forEach(t => {
-      html += `<span class="badge bg-custom-teacher me-2 mb-2 shadow-sm" onclick="filterByTeacherBubble('${t}', '${containerId}')">${t} (${stats.teachers[t]})</span>`;
-    });
-    container.innerHTML = html;
-  }
-
-  function filterByTeacherBubble(teacherName, containerId) {
-    const isPersonal = (containerId === 'pSummary');
-    document.getElementById(isPersonal ? 'pTeacher' : 'fTeacher').value = teacherName;
-    const filtered = (teacherName === 'ALL') ? lastSearchResults : lastSearchResults.filter(r => r.teacher === teacherName);
-    displayReportList(filtered, isPersonal ? 'pReportsList' : 'archiveContent');
-  }
-
-  function displayReportList(reports, listId) {
-    const list = document.getElementById(listId);
-    if (reports.length > 0) {
-      list.innerHTML = reports.map(r => `
-        <div class="report-item p-3 border-bottom">
-          <div class="d-flex justify-content-between small mb-2">
-            <span class="fw-bold text-primary" style="font-size:1rem">${r.teacher} | תלמיד: ${r.studentName}</span>
-            <span class="text-muted"><i class="fa-regular fa-clock me-1"></i>${r.timestamp}</span>
-          </div>
-          <div class="text-dark bg-light p-2.5 rounded-2" style="font-size:0.95rem;">${r.content}</div>
-        </div>
-      `).join('');
-    } else {
-      list.innerHTML = `<p class="text-center p-4 text-muted">אין דיווחים מתאימים בנמצא.</p>`;
-    }
   }
 
   function filterPersonalReports() {
     const q = document.getElementById('pSearch').value.trim().toLowerCase();
-    const m = document.getElementById('pMonth').value;
-    const t = document.getElementById('pTeacher').value;
-    lastSearchResults = GLOBAL_DB.reports.filter(r => r.allText.includes(q) && (m === "ALL" || r.month === m));
-    renderSummary(lastSearchResults, 'pSummary');
-    const finalFiltered = (t === "ALL") ? lastSearchResults : lastSearchResults.filter(r => r.teacher === t);
-    displayReportList(finalFiltered, 'pReportsList');
+    const selMonth = document.getElementById('pMonth').value;
+    const selTeacher = document.getElementById('pTeacher').value;
+    const listEl = document.getElementById('pReportsList');
+    const summaryEl = document.getElementById('pSummary');
+    
+    if (!GLOBAL_DB.reports) return;
+
+    const filtered = GLOBAL_DB.reports.filter(r => {
+      if (r.studentName.toLowerCase() !== q) return false;
+      if (selMonth !== "ALL" && r.month !== selMonth) return false;
+      if (selTeacher !== "ALL" && r.teacher !== selTeacher) return false;
+      return true;
+    });
+
+    let html = '<table class="table table-striped table-hover m-0" style="font-size:0.9rem;">';
+    html += '<thead class="table-light sticky-top"><tr><th>תאריך</th><th>מורה</th><th>תוכן הדיווח</th></tr></thead><tbody>';
+    
+    filtered.forEach(r => {
+      html += `<tr><td style="white-space:nowrap;">${r.timestamp}</td><td style="white-space:nowrap;">${r.teacher}</td><td>${r.content}</td></tr>`;
+    });
+    html += '</tbody></table>';
+    if(filtered.length === 0) html = '<div class="text-center text-muted py-4">אין דיווחים קודמים העונים לדרישות הסינון.</div>';
+    listEl.innerHTML = html;
+
+    summaryEl.innerHTML = `<span class="badge bg-primary">סה"כ דיווחים: ${filtered.length}</span>`;
   }
 
   function applyFilters() {
     const m = document.getElementById('fMonth').value;
     const t = document.getElementById('fTeacher').value;
-    const q = document.getElementById('fSearch').value.trim().toLowerCase();
+    const s = document.getElementById('fSearch').value.trim().toLowerCase();
+    const listEl = document.getElementById('archiveContent');
+    const summaryEl = document.getElementById('fSummary');
+
+    if (!GLOBAL_DB.reports) return;
+
+    const filtered = GLOBAL_DB.reports.filter(r => {
+      if (m !== "ALL" && r.month !== m) return false;
+      if (t !== "ALL" && r.teacher !== t) return false;
+      if (s && !r.allText.includes(s)) return false;
+      return true;
+    });
+
+    let html = '<table class="table table-striped table-hover m-0" style="font-size:0.9rem;">';
+    html += '<thead class="table-light sticky-top"><tr><th>תאריך</th><th>מורה</th><th>תלמיד</th><th>תוכן הדיווח</th></tr></thead><tbody>';
     
-    let filtered = GLOBAL_DB.reports;
-    if (m !== "ALL") filtered = filtered.filter(r => r.month === m);
-    lastSearchResults = filtered.filter(r => r.allText.includes(q));
-    
-    renderSummary(lastSearchResults, 'fSummary');
-    const finalFiltered = (t === "ALL") ? lastSearchResults : lastSearchResults.filter(r => r.teacher === t);
-    displayReportList(finalFiltered, 'archiveContent');
+    filtered.forEach(r => {
+      html += `<tr><td style="white-space:nowrap;">${r.timestamp}</td><td style="white-space:nowrap;">${r.teacher}</td><td style="white-space:nowrap;" class="fw-bold text-secondary">${r.studentName}</td><td>${r.content}</td></tr>`;
+    });
+    html += '</tbody></table>';
+    if(filtered.length === 0) html = '<div class="text-center text-muted py-4">אין דיווחים בארכיון העונים לדרישות הסינון.</div>';
+    listEl.innerHTML = html;
+
+    summaryEl.innerHTML = `<span class="badge bg-primary">נמצאו ${filtered.length} דיווחים בארכיון</span>`;
   }
 </script>
 </body>
