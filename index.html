@@ -54,7 +54,7 @@
     .day-card { background: var(--card-bg); border: 1px solid #e2e8f0; border-radius: var(--radius-md); padding: 14px; height: 100%; }
     .lesson-box { background: #f8fafc; padding: 10px; border-radius: 6px; margin-bottom: 8px; border-right: 4px solid var(--primary); font-size: 0.95rem; font-weight: 500; border: 1px solid #edf2f7; border-right-width: 4px; }
 
-    /* שורת זמן ראשית - סופר קומפקטית */
+    /* שורת זמן ראשית */
     .time-block-row {
       background: var(--card-bg);
       border-radius: var(--radius-md);
@@ -124,7 +124,6 @@
       overflow: visible;
     }
 
-    /* עיצוב שורה פעילה נוכחית */
     .time-block-row.active-time-row {
       border-color: var(--accent);
       background: #ccfbf1;       
@@ -298,7 +297,7 @@
   <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2 no-print site-header-area">
     <div class="d-flex align-items-center gap-2">
       <div class="bg-primary text-white p-2 rounded-3"><i class="fa-solid fa-graduation-cap"></i></div>
-      <h5 class="fw-bold m-0 text-dark">קมפוס למידה דיגיטלי</h5>
+      <h5 class="fw-bold m-0 text-dark">קמפוס למידה דיגיטלי</h5>
     </div>
     <div class="d-flex align-items-center gap-3">
       <div class="live-clock-badge">
@@ -395,26 +394,22 @@
         currentActiveDayGlobal = urlDay;
       }
 
-      // 1. בדיקה אם מדובר באיש צוות (משתמש בסיסמת התלמיד + הפרמטר view=staff)
       if (urlPw === GLOBAL_DB.studentPw && urlView === "staff") {
         isStudentMode = false;
         isTeacherMode = false;
         document.body.classList.remove('teacher-view-mode');
         startApp();
       }
-      // 2. בדיקה אם מדובר במצב מורה (מבט יומי)
       else if (urlDay && validDays.includes(urlDay)) {
         isTeacherMode = true;
         document.body.classList.add('teacher-view-mode');
         startApp();
       } 
-      // 3. בדיקה אם מדובר בתלמיד רגיל מוגן
       else if (urlPw === GLOBAL_DB.studentPw && urlId && GLOBAL_DB.studentsMapping[urlId]) {
         isStudentMode = true;
         identifiedStudent = GLOBAL_DB.studentsMapping[urlId];
         startApp();
       } 
-      // 4. אחרת - הצגת מסך התחברות רגיל
       else {
         document.getElementById('authScreen').style.display = 'block';
       }
@@ -692,8 +687,9 @@
     
     if (!GLOBAL_DB.reports) return;
 
+    // שינוי הלוגיקה להתאמה חלקית וחכמה (includes) כדי שחיפוש כמו "שיר" יעבוד וימשוך נתונים!
     const filtered = GLOBAL_DB.reports.filter(r => {
-      if (r.studentName.toLowerCase() !== q) return false;
+      if (!r.studentName.toLowerCase().includes(q)) return false;
       if (selMonth !== "ALL" && r.month !== selMonth) return false;
       if (selTeacher !== "ALL" && r.teacher !== selTeacher) return false;
       return true;
@@ -709,7 +705,7 @@
     if(filtered.length === 0) html = '<div class="text-center text-muted py-4">אין דיווחים קודמים העונים לדרישות הסינון.</div>';
     listEl.innerHTML = html;
 
-    // בניית בועות הסיכום והמורים כפי שהיה במקור
+    // חישוב דינמי של בועות המורים על בסיס הדיווחים שסוננו
     let teacherCounts = {};
     filtered.forEach(r => {
       teacherCounts[r.teacher] = (teacherCounts[r.teacher] || 0) + 1;
