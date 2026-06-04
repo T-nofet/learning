@@ -176,6 +176,8 @@
     }
 
     .day-share-icon-btn { background: none; border: none; color: var(--text-muted); font-size: 1rem; padding: 4px; cursor: pointer; }
+    .staff-share-btn { background: none; border: none; color: #64748b; font-size: 0.9rem; padding: 2px 6px; cursor: pointer; transition: var(--transition); vertical-align: middle; }
+    .staff-share-btn:hover { color: var(--primary); }
 
     body.kiosk-mode { 
       background-color: #ffffff !important; 
@@ -308,7 +310,14 @@
   </div>
 
   <ul class="nav nav-pills nav-justified mb-3 no-print" id="topNav">
-    <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-personal">👤 מבט תלמיד אישי</button></li>
+    <li class="nav-item">
+      <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-personal">
+        👤 מבט תלמיד אישי
+        <span class="staff-share-btn" title="העתק קישור ישיר למדריכים" onclick="copyStaffUrl(event)">
+          <i id="staffLockIcon" class="fa-solid fa-key"></i>
+        </span>
+      </button>
+    </li>
     <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-daily" onclick="drawDaily(currentActiveDayGlobal)">📅 לוח זמנים יומי</button></li>
     <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-archive" onclick="applyFilters()">📊 ארכיון דיווחים</button></li>
   </ul>
@@ -523,6 +532,19 @@
     navigator.clipboard.writeText(finalUrl);
     copyBtn.innerHTML = "✅ הקישור הועתק!";
     setTimeout(() => copyBtn.innerHTML = '<i class="fa-solid fa-link me-1"></i> העתק קישור מוגן לתלמיד', 2500);
+  }
+
+  function copyStaffUrl(event) {
+    event.stopPropagation(); // מונע מעבר טאב בלחיצה על המפתח
+    const iconEl = document.getElementById('staffLockIcon');
+    const baseUrl = window.location.href.split('?')[0];
+    const finalUrl = `${baseUrl}?pw=${GLOBAL_DB.studentPw}&view=staff`;
+    navigator.clipboard.writeText(finalUrl);
+    
+    if (iconEl) {
+      iconEl.className = "fa-solid fa-check text-success";
+      setTimeout(() => { iconEl.className = "fa-solid fa-key"; }, 2000);
+    }
   }
 
   function copyDayUrl(dayName) {
