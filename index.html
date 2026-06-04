@@ -54,7 +54,6 @@
     .day-card { background: var(--card-bg); border: 1px solid #e2e8f0; border-radius: var(--radius-md); padding: 14px; height: 100%; }
     .lesson-box { background: #f8fafc; padding: 10px; border-radius: 6px; margin-bottom: 8px; border-right: 4px solid var(--primary); font-size: 0.95rem; font-weight: 500; border: 1px solid #edf2f7; border-right-width: 4px; }
 
-    /* שורת זמן ראשית */
     .time-block-row {
       background: var(--card-bg);
       border-radius: var(--radius-md);
@@ -687,9 +686,10 @@
     
     if (!GLOBAL_DB.reports) return;
 
-    // שינוי הלוגיקה להתאמה חלקית וחכמה (includes) כדי שחיפוש כמו "שיר" יעבוד וימשוך נתונים!
+    // כאן בוצע התיקון הקריטי: חיפוש חלקי ובדיקה של שם התלמיד גם בתוך טקסט הדיווח (r.content)!
     const filtered = GLOBAL_DB.reports.filter(r => {
-      if (!r.studentName.toLowerCase().includes(q)) return false;
+      const studentMatch = r.studentName.toLowerCase().includes(q) || r.content.toLowerCase().includes(q);
+      if (!studentMatch) return false;
       if (selMonth !== "ALL" && r.month !== selMonth) return false;
       if (selTeacher !== "ALL" && r.teacher !== selTeacher) return false;
       return true;
@@ -705,7 +705,7 @@
     if(filtered.length === 0) html = '<div class="text-center text-muted py-4">אין דיווחים קודמים העונים לדרישות הסינון.</div>';
     listEl.innerHTML = html;
 
-    // חישוב דינמי של בועות המורים על בסיס הדיווחים שסוננו
+    // חישוב והצגת בועות המורים
     let teacherCounts = {};
     filtered.forEach(r => {
       teacherCounts[r.teacher] = (teacherCounts[r.teacher] || 0) + 1;
@@ -730,7 +730,8 @@
     const filtered = GLOBAL_DB.reports.filter(r => {
       if (m !== "ALL" && r.month !== m) return false;
       if (t !== "ALL" && r.teacher !== t) return false;
-      if (s && !r.allText.includes(s)) return false;
+      // כאן הוספנו חיפוש חלקי חכם שבודק גם את שדה הסטודנט וגם את הדיווח
+      if (s && !r.allText.includes(s) && !r.content.toLowerCase().includes(s) && !r.studentName.toLowerCase().includes(s)) return false;
       return true;
     });
 
@@ -744,7 +745,17 @@
     if(filtered.length === 0) html = '<div class="text-center text-muted py-4">אין דיווחים בארכיון העונים לדרישות הסינון.</div>';
     listEl.innerHTML = html;
 
-    summaryEl.innerHTML = `<span class="badge bg-primary">נמצאו ${filtered.length} דיווחים בארכיון</span>`;
+    // חישוב בועות מורים גם עבור הארכיון הכללי
+    let teacherCounts = {};
+    filtered.forEach(r => {
+      teacherCounts[r.teacher] = (teacherCounts[r.teacher] || 0) + 1;
+    });
+
+    let summaryHtml = `<span class="badge bg-primary">נמצאו ${filtered.length} דיווחים בארכיון</span>`;
+    for (let teacher in teacherCounts) {
+      summaryHtml += ` <span class="badge bg-custom-teacher text-dark">${teacher}: ${teacherCounts[teacher]}</span>`;
+    }
+    summaryEl.innerHTML = summaryHtml;
   }
 </script>
 </body>
