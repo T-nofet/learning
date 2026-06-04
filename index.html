@@ -176,8 +176,8 @@
     }
 
     .day-share-icon-btn { background: none; border: none; color: var(--text-muted); font-size: 1rem; padding: 4px; cursor: pointer; }
-    .staff-share-btn { background: none; border: none; color: #64748b; font-size: 0.9rem; padding: 2px 6px; cursor: pointer; transition: var(--transition); vertical-align: middle; }
-    .staff-share-btn:hover { color: var(--primary); }
+    .staff-share-btn { background: none; border: none; color: #64748b; font-size: 0.9rem; padding: 0 4px; cursor: pointer; transition: var(--transition); display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: #f1f5f9; margin-right: 6px; }
+    .staff-share-btn:hover { color: var(--primary); background: #e2e8f0; }
 
     body.kiosk-mode { 
       background-color: #ffffff !important; 
@@ -298,7 +298,7 @@
   <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2 no-print site-header-area">
     <div class="d-flex align-items-center gap-2">
       <div class="bg-primary text-white p-2 rounded-3"><i class="fa-solid fa-graduation-cap"></i></div>
-      <h5 class="fw-bold m-0 text-dark">קמפוס למידה דיגיטלי</h5>
+      <h5 class="fw-bold m-0 text-dark">קมפוס למידה דיגיטלי</h5>
     </div>
     <div class="d-flex align-items-center gap-3">
       <div class="live-clock-badge">
@@ -310,12 +310,10 @@
   </div>
 
   <ul class="nav nav-pills nav-justified mb-3 no-print" id="topNav">
-    <li class="nav-item">
-      <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-personal">
-        👤 מבט תלמיד אישי
-        <span class="staff-share-btn" title="העתק קישור ישיר למדריכים" onclick="copyStaffUrl(event)">
-          <i id="staffLockIcon" class="fa-solid fa-key"></i>
-        </span>
+    <li class="nav-item d-flex align-items-center justify-content-center bg-transparent">
+      <button class="nav-link active w-100" data-bs-toggle="pill" data-bs-target="#tab-personal">👤 מבט תלמיד אישי</button>
+      <button class="staff-share-btn no-print" title="העתק קישור ישיר למדריכים" onclick="copyStaffUrl(event)">
+        <i id="staffLockIcon" class="fa-solid fa-key" style="font-size: 0.75rem;"></i>
       </button>
     </li>
     <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-daily" onclick="drawDaily(currentActiveDayGlobal)">📅 לוח זמנים יומי</button></li>
@@ -535,7 +533,8 @@
   }
 
   function copyStaffUrl(event) {
-    event.stopPropagation(); // מונע מעבר טאב בלחיצה על המפתח
+    event.preventDefault();
+    event.stopPropagation(); 
     const iconEl = document.getElementById('staffLockIcon');
     const baseUrl = window.location.href.split('?')[0];
     const finalUrl = `${baseUrl}?pw=${GLOBAL_DB.studentPw}&view=staff`;
@@ -710,7 +709,17 @@
     if(filtered.length === 0) html = '<div class="text-center text-muted py-4">אין דיווחים קודמים העונים לדרישות הסינון.</div>';
     listEl.innerHTML = html;
 
-    summaryEl.innerHTML = `<span class="badge bg-primary">סה"כ דיווחים: ${filtered.length}</span>`;
+    // בניית בועות הסיכום והמורים כפי שהיה במקור
+    let teacherCounts = {};
+    filtered.forEach(r => {
+      teacherCounts[r.teacher] = (teacherCounts[r.teacher] || 0) + 1;
+    });
+
+    let summaryHtml = `<span class="badge bg-primary">סה"כ דיווחים: ${filtered.length}</span>`;
+    for (let teacher in teacherCounts) {
+      summaryHtml += ` <span class="badge bg-custom-teacher text-dark">${teacher}: ${teacherCounts[teacher]}</span>`;
+    }
+    summaryEl.innerHTML = summaryHtml;
   }
 
   function applyFilters() {
