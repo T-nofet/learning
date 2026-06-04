@@ -144,8 +144,8 @@
     .btn-primary { background-color: var(--primary); border: none; padding: 6px 20px; font-weight: 600; border-radius: 30px; }
     .btn-primary:hover { background-color: #1d4ed8; }
 
-    .badge { font-size: 0.85rem; padding: 5px 12px; border-radius: 20px; cursor: pointer; font-weight: 600; }
-    .bg-custom-teacher { background-color: #e2e8f0 !important; color: #475569 !important; border: 1px solid #cbd5e1; }
+    .badge { font-size: 0.85rem; padding: 6px 14px; border-radius: 20px; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; }
+    .bg-custom-teacher { background-color: #f1f5f9 !important; color: #334155 !important; border: 1px solid #cbd5e1; }
 
     .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); display: flex; justify-content: center; align-items: center; z-index: 9999; }
     
@@ -310,7 +310,7 @@
   <ul class="nav nav-pills nav-justified mb-3 no-print" id="topNav">
     <li class="nav-item d-flex align-items-center justify-content-center bg-transparent">
       <button class="nav-link active w-100" data-bs-toggle="pill" data-bs-target="#tab-personal">👤 מבט תלמיד אישי</button>
-      <button class="staff-share-btn no-print" title="העתק קישור ישיר למדריכים" onclick="copyStaffUrl(event)">
+      <button class="staff-share-btn no-print" id="staffMainBtnElement" title="העתק קישור ישיר למדריכים" onclick="copyStaffUrl(event)">
         <i id="staffLockIcon" class="fa-solid fa-key" style="font-size: 0.75rem;"></i>
       </button>
     </li>
@@ -345,7 +345,7 @@
           <div class="col-6"><select id="pMonth" class="form-select border-0 shadow-sm" onchange="filterPersonalReports()"><option value="ALL">כל החודשים</option></select></div>
           <div class="col-6"><select id="pTeacher" class="form-select border-0 shadow-sm" onchange="filterPersonalReports()"><option value="ALL">כל המורים</option></select></div>
         </div>
-        <div id="pSummary" class="d-flex flex-wrap gap-1 mb-2"></div>
+        <div id="pSummary" class="d-flex flex-wrap gap-2 mb-2 align-items-center"></div>
         <div id="pReportsList" class="overflow-auto border rounded-3 bg-white" style="max-height: 350px;"></div>
       </div>
     </div>
@@ -360,7 +360,7 @@
         <div class="col-md-4"><select id="fTeacher" class="form-select border-0 shadow-sm" onchange="applyFilters()"><option value="ALL">כל המורים</option></select></div>
         <div class="col-md-4"><input type="text" id="fSearch" class="form-control border-0 shadow-sm" placeholder="חיפוש חופשי בתוכן הדיווח..." onkeyup="applyFilters()"></div>
       </div>
-      <div id="fSummary" class="d-flex flex-wrap gap-1 mb-2 no-print"></div>
+      <div id="fSummary" class="d-flex flex-wrap gap-2 mb-2 no-print align-items-center"></div>
       <div id="archiveContent" class="overflow-auto border rounded-3 bg-white" style="max-height: 450px;"></div>
     </div>
   </div>
@@ -372,6 +372,7 @@
   let lastSearchResults = [];
   let isStudentMode = false;
   let isTeacherMode = false;
+  let isStaffUrlMode = false;
   let identifiedStudent = "";
   let currentActiveDayGlobal = "ראשון";
 
@@ -396,6 +397,7 @@
       if (urlPw === GLOBAL_DB.studentPw && urlView === "staff") {
         isStudentMode = false;
         isTeacherMode = false;
+        isStaffUrlMode = true; 
         document.body.classList.remove('teacher-view-mode');
         startApp();
       }
@@ -439,6 +441,7 @@
     if (inputPw === GLOBAL_DB.adminPw) {
       isStudentMode = false;
       isTeacherMode = false;
+      isStaffUrlMode = false;
       document.body.classList.remove('teacher-view-mode');
       document.getElementById('authScreen').style.display = 'none';
       startApp();
@@ -468,6 +471,11 @@
         dailyTriggerBtn.click(); 
         return;
       }
+    }
+
+    if (isStaffUrlMode) {
+      const staffBtn = document.getElementById('staffMainBtnElement');
+      if (staffBtn) staffBtn.remove();
     }
 
     if (isStudentMode) {
@@ -508,7 +516,9 @@
     if (!studentMode) {
        document.getElementById('adminReportsArea').style.display = 'block';
        filterPersonalReports();
-       document.getElementById('shareArea').style.display = 'block';
+       if (!isStaffUrlMode) {
+         document.getElementById('shareArea').style.display = 'block';
+       }
     }
   }
 
@@ -686,7 +696,6 @@
     
     if (!GLOBAL_DB.reports) return;
 
-    // כאן בוצע התיקון הקריטי: חיפוש חלקי ובדיקה של שם התלמיד גם בתוך טקסט הדיווח (r.content)!
     const filtered = GLOBAL_DB.reports.filter(r => {
       const studentMatch = r.studentName.toLowerCase().includes(q) || r.content.toLowerCase().includes(q);
       if (!studentMatch) return false;
@@ -705,15 +714,14 @@
     if(filtered.length === 0) html = '<div class="text-center text-muted py-4">אין דיווחים קודמים העונים לדרישות הסינון.</div>';
     listEl.innerHTML = html;
 
-    // חישוב והצגת בועות המורים
     let teacherCounts = {};
     filtered.forEach(r => {
       teacherCounts[r.teacher] = (teacherCounts[r.teacher] || 0) + 1;
     });
 
-    let summaryHtml = `<span class="badge bg-primary">סה"כ דיווחים: ${filtered.length}</span>`;
+    let summaryHtml = `<span class="badge bg-primary shadow-sm">סה"כ דיווחים: ${filtered.length}</span>`;
     for (let teacher in teacherCounts) {
-      summaryHtml += ` <span class="badge bg-custom-teacher text-dark">${teacher}: ${teacherCounts[teacher]}</span>`;
+      summaryHtml += ` <span class="badge bg-custom-teacher text-dark shadow-sm">${teacher}: ${teacherCounts[teacher]}</span>`;
     }
     summaryEl.innerHTML = summaryHtml;
   }
@@ -730,7 +738,6 @@
     const filtered = GLOBAL_DB.reports.filter(r => {
       if (m !== "ALL" && r.month !== m) return false;
       if (t !== "ALL" && r.teacher !== t) return false;
-      // כאן הוספנו חיפוש חלקי חכם שבודק גם את שדה הסטודנט וגם את הדיווח
       if (s && !r.allText.includes(s) && !r.content.toLowerCase().includes(s) && !r.studentName.toLowerCase().includes(s)) return false;
       return true;
     });
@@ -745,15 +752,14 @@
     if(filtered.length === 0) html = '<div class="text-center text-muted py-4">אין דיווחים בארכיון העונים לדרישות הסינון.</div>';
     listEl.innerHTML = html;
 
-    // חישוב בועות מורים גם עבור הארכיון הכללי
     let teacherCounts = {};
     filtered.forEach(r => {
       teacherCounts[r.teacher] = (teacherCounts[r.teacher] || 0) + 1;
     });
 
-    let summaryHtml = `<span class="badge bg-primary">נמצאו ${filtered.length} דיווחים בארכיון</span>`;
+    let summaryHtml = `<span class="badge bg-primary shadow-sm">נמצאו ${filtered.length} דיווחים בארכיון</span>`;
     for (let teacher in teacherCounts) {
-      summaryHtml += ` <span class="badge bg-custom-teacher text-dark">${teacher}: ${teacherCounts[teacher]}</span>`;
+      summaryHtml += ` <span class="badge bg-custom-teacher text-dark shadow-sm">${teacher}: ${teacherCounts[teacher]}</span>`;
     }
     summaryEl.innerHTML = summaryHtml;
   }
