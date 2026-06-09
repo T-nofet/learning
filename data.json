@@ -10805,16 +10805,16 @@
       "month": "06/2026",
       "teacher": "אינסה נוביקוב",
       "studentName": "10-11",
-      "content": "תאמר Prepositions, exercise  | כאידLetters, Sounds  |  |  | ",
-      "allText": "09/06/2026 11:04:10 אינסה נוביקוב 10-11 תאמר prepositions, exercise  כאידletters, sounds       "
+      "content": "תאמר Prepositions, exercise  | כאיד Letters, Sounds  |  |  | ",
+      "allText": "09/06/2026 11:04:10 אינסה נוביקוב 10-11 תאמר prepositions, exercise  כאיד letters, sounds       "
     },
     {
       "timestamp": "09/06/2026 11:07:33",
       "month": "06/2026",
       "teacher": "אינסה נוביקוב",
       "studentName": "11-12",
-      "content": "שקדUnseen | עליהUnssen | כאיד, Letters, sounds  | ,תאמר Unseen  | ",
-      "allText": "09/06/2026 11:07:33 אינסה נוביקוב 11-12 שקדunseen עליהunssen כאיד, letters, sounds  ,תאמר unseen     "
+      "content": "שקד Unseen | עליה Unssen | כאיד , Letters, sounds  | ,תאמר  Unseen  | ",
+      "allText": "09/06/2026 11:07:33 אינסה נוביקוב 11-12 שקד unseen עליה unssen כאיד , letters, sounds  ,תאמר  unseen     "
     },
     {
       "timestamp": "09/06/2026 11:14:20",
@@ -10879,6 +10879,22 @@
       "studentName": "13-14",
       "content": "ללא תלמידים (תמיר לא נכנס) |  |  |  | ",
       "allText": "09/06/2026 13:01:45 אילנה שחר 13-14 ללא תלמידים (תמיר לא נכנס)       "
+    },
+    {
+      "timestamp": "09/06/2026 14:29:15",
+      "month": "06/2026",
+      "teacher": "אינסה נוביקוב",
+      "studentName": "12-13",
+      "content": "ללא תלמידים  |  |  |  | ",
+      "allText": "09/06/2026 14:29:15 אינסה נוביקוב 12-13 ללא תלמידים        "
+    },
+    {
+      "timestamp": "09/06/2026 14:29:47",
+      "month": "06/2026",
+      "teacher": "אינסה נוביקוב",
+      "studentName": "13-14",
+      "content": "ללא תלמידים  |  |  |  | ",
+      "allText": "09/06/2026 14:29:47 אינסה נוביקוב 13-14 ללא תלמידים        "
     }
   ],
   "studentsMapping": {
