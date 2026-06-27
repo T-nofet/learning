@@ -197,7 +197,7 @@
       box-shadow: none !important; 
       display: flex; 
       flex-direction: column;
-      z-index: 99999 !important;     
+      z-index: 99999 !important;      
     }
     
     body.kiosk-mode .daily-rows-scroll-area { 
@@ -250,7 +250,7 @@
       font-size: calc(1.05rem + 0.2vw) !important; 
       white-space: normal !important;      
       overflow: visible !important;        
-      text-overflow: clip !important;       
+      text-overflow: clip !important;        
       display: -webkit-box !important;
       -webkit-line-clamp: 2 !important;     
       -webkit-box-orient: vertical !important;
@@ -315,6 +315,7 @@
       </button>
     </li>
     <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-daily" onclick="drawDaily(currentActiveDayGlobal)">📅 לוח זמנים יומי</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-exams">📅 לוח בחינות ואירועים</button></li>
     <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-archive" onclick="applyFilters()">📊 ארכיון דיווחים</button></li>
   </ul>
 
@@ -352,6 +353,12 @@
 
     <div class="tab-pane fade" id="tab-daily">
       <div id="dailyContent" class="p-1"></div>
+    </div>
+
+    <div class="tab-pane fade" id="tab-exams">
+      <div class="ratio ratio-16x9 border rounded-3 overflow-hidden shadow-sm bg-white" style="height: 75vh; --bs-aspect-ratio: none;">
+        <iframe src="exams.html" title="לוח בחינות ואירועים" class="w-100 h-100 border-0"></iframe>
+      </div>
     </div>
 
     <div class="tab-pane fade" id="tab-archive">
