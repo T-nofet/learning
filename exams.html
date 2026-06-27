@@ -12,7 +12,6 @@
       font-family: 'Assistant', sans-serif; 
       color: #333; 
       padding-bottom: 40px;
-      /* פרופורציות עדינות שמתאימות ל-iframe */
       transform: scale(0.88);
       transform-origin: top center;
       width: 113.63%;
@@ -20,13 +19,26 @@
     
     header { display: none !important; }
     
-    /* מאלץ את הגריד להסתדר מימין לשמאל */
+    /* סידור שורת החיפוש ב-Flexbox יציב למניעת חפיפות */
+    .search-container {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .search-wrapper {
+      flex: 0 1 400px;
+      min-width: 280px;
+    }
+
     #examList {
       direction: rtl !important;
       text-align: right !important;
     }
 
-    /* עידון מבנה הכרטיסיות וצמצום הגובה שלהן */
     .exam-card { 
       border: none; 
       border-radius: 16px; 
@@ -35,8 +47,8 @@
       flex-direction: column; 
       border-right: 5px solid #dee2e6; 
       position: relative;
-      background: #white;
-      min-height: 160px; /* גובה מקסימלי מעודן שלא ייראו מסיביות */
+      background: white;
+      min-height: 160px;
     }
     .exam-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
     
@@ -55,21 +67,23 @@
 <body>
 
 <div class="container mt-4">
-  <div class="row g-2 mb-4 justify-content-center align-items-center" style="direction: rtl;">
-    <div class="col-md-5">
+  
+  <div class="search-container">
+    <div class="search-wrapper">
       <input type="text" id="searchInput" oninput="applyFilters()" class="form-control search-pill" placeholder="חיפוש לפי נושא או שם נער...">
     </div>
-    <div class="col-md-auto">
+    <div>
       <div class="filter-box shadow-sm">
         <div class="form-check form-switch m-0 d-flex align-items-center">
           <input class="form-check-input" type="checkbox" id="regOnly" onchange="applyFilters()">
-          <label class="form-check-label small fw-bold ms-2 text-primary" for="regOnly" style="margin-right: 8px;">רשומים בלבד</label>
+          <label class="form-check-label small fw-bold ms-2 text-primary" for="regOnly" style="margin-right: 8px; white-space: nowrap;">רשומים בלבד</label>
         </div>
       </div>
     </div>
-    <div class="col-12 mt-2">
-      <div id="statusCount" class="text-muted small fw-light">טוען נתונים מקמפוס גוגל...</div>
-    </div>
+  </div>
+  
+  <div class="text-center mb-4">
+    <div id="statusCount" class="text-muted small fw-light">טוען נתונים מקמפוס גוגל...</div>
   </div>
 
   <div id="examList" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-3 text-start"></div>
@@ -150,11 +164,18 @@
     const term = document.getElementById('searchInput').value.toLowerCase();
     const onlyReg = document.getElementById('regOnly').checked;
     let count = 0;
+    
     document.querySelectorAll('.card-wrapper').forEach(c => {
       const sMatch = c.getAttribute('data-search').includes(term);
       const rMatch = !onlyReg || c.getAttribute('data-reg') === "y";
-      if(sMatch && rMatch) { c.style.display = "block"; count++; }
-      else c.style.display = "none";
+      
+      // שימוש ב-d-none של Bootstrap על מנת לאלץ החבאה מוחלטת
+      if(sMatch && rMatch) { 
+        c.classList.remove('d-none'); 
+        count++; 
+      } else { 
+        c.classList.add('d-none'); 
+      }
     });
     document.getElementById('statusCount').innerText = `מציג ${count} אירועים`;
   }
