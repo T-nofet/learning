@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body { background-color: #f4f7f6; font-family: 'Assistant', sans-serif; color: #333; padding-bottom: 60px; }
+    header { background: white; border-radius: 0 0 30px 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); padding: 1.5rem; margin-bottom: 2rem; position: relative; }
+    
+    .exam-card { border: none; border-radius: 20px; transition: 0.3s; height: 100%; display: flex; flex-direction: column; border-right: 6px solid #dee2e6; position: relative; }
+    .exam-card:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0,0,0,0.1); }
+    
+    .type-מבחן { border-right-color: #ff4d4d; background-color: #fff5f5; }
+    .type-בוחן { border-right-color: #ffd43b; background-color: #fffdf2; }
+    .type-אירוע { border-right-color: #51cf66; background-color: #f2fbf3; }
+
+    .status-badge { font-size: 0.7rem; padding: 4px 10px; border-radius: 10px; font-weight: 700; margin-bottom: 8px; display: inline-block; }
+    .past-event { opacity: 0.6; }
+    .today-event { border: 2px solid #fab005 !important; box-shadow: 0 0 15px rgba(250, 176, 5, 0.3); }
+
+    .search-pill { border-radius: 50px; padding: 12px 25px; border: 1px solid #ddd; box-shadow: 0 4px 10px rgba(0,0,0,0.03); width: 100%; }
+    .filter-box { background: white; border-radius: 50px; padding: 10px 20px; border: 1px solid #ddd; display: inline-flex; align-items: center; }
+  </style>
+</head>
+<body>
+
+<header class="text-center">
+  <h1 class="fw-bold m-0 h3">לוח בחינות ואירועים</h1>
+  <p id="statusCount" class="text-muted small mt-2">טוען נתונים מקמפוס גוגל...</p>
+</header>
+
+<div class="container text-center">
+  <div class="row g-3 mb-5 justify-content-center align-items-center">
+    <div class="col-md-5">
+      <input type="text" id="searchInput" oninput="applyFilters()" class="form-control search-pill" placeholder="חיפוש לפי נושא או שם נער...">
+    </div>
+    <div class="col-md-auto">
+      <div class="filter-box shadow-sm">
+        <div class="form-check form-switch m-0">
+          <input class="form-check-input" type="checkbox" id="regOnly" onchange="applyFilters()">
+          <label class="form-check-label small fw-bold ms-2 text-primary" for="regOnly">רשומים בלבד</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="examList" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4 text-start"></div>
+</div>
+
+<script>
+  // הכתובת המעודכנת של ה-API שלך מגוגל סקריפט:
+  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwSfdF_IVDWMgvtnlLBQYYrXJFvMJatjGuYzfeSUqrLJk5KDBOq2NESc3C74o3WZI6sfQ/exec"; 
+
+  let allExams = [];
+
+  window.onload = () => {
+    loadData();
+  };
+
+  function parseDateHe(s) {
+    const p = s.split('/');
+    if(p.length < 3) return new Date(0);
+    let d = parseInt(p[0]), m = parseInt(p[1]) - 1, y = parseInt(p[2]);
+    if(y < 100) y += 2000;
+    return new Date(y, m, d);
+  }
+
+  function loadData() {
+    fetch(`${GOOGLE_SCRIPT_URL}?action=getExams`)
+      .then(response => {
+        if (!response.ok) throw new Error("תגובת שרת לא תקינה");
+        return response.json();
+      })
+      .then(data => {
+        allExams = data.sort((a,b) => parseDateHe(a.date) - parseDateHe(b.date));
+        draw();
+      })
+      .catch(err => {
+        document.getElementById('statusCount').innerText = "שגיאה בטעינת הנתונים: " + err.message;
+        console.error(err);
+      });
+  }
+
+  function draw() {
+    const list = document.getElementById('examList');
+    const today = new Date(); today.setHours(0,0,0,0);
+    list.innerHTML = '';
+
+    allExams.forEach(ex => {
+      const d = parseDateHe(ex.date);
+      const diff = Math.ceil((d - today) / 86400000);
+      let bTxt = diff === 0 ? "היום" : (diff === 1 ? "מחר" : (diff < 0 ? "עבר" : `בעוד ${diff} ימים`));
+      let bClass = diff === 0 ? "bg-warning text-dark" : (diff < 0 ? "bg-light text-muted" : "bg-primary text-white");
+
+      const col = document.createElement('div');
+      col.className = "col card-wrapper";
+      if(diff < 0) col.classList.add('past-event');
+      col.setAttribute('data-search', `${ex.description} ${ex.students} ${ex.type}`.toLowerCase());
+      col.setAttribute('data-reg', ex.students && ex.students.trim() !== "" ? "y" : "n");
+
+      col.innerHTML = `
+        <div class="card exam-card shadow-sm type-${ex.type} ${diff===0?'today-event':''}">
+          <div class="card-body p-4">
+            <span class="status-badge ${bClass}">${bTxt}</span>
+            <div class="text-muted small fw-bold mb-1">${ex.day} | ${ex.date}</div>
+            <h5 class="fw-bold mb-3 h6" style="line-height:1.4">${ex.description}</h5>
+            <div class="mt-auto p-2 bg-white bg-opacity-50 rounded-3 small">
+              <strong style="font-size:0.65rem" class="text-primary d-block mb-1">רשומים:</strong>
+              ${ex.students || '<span class="text-muted italic">אין רשומים</span>'}
+            </div>
+          </div>
+        </div>`;
+      list.appendChild(col);
+    });
+    applyFilters();
+  }
+
+  function applyFilters() {
+    const term = document.getElementById('searchInput').value.toLowerCase();
+    const onlyReg = document.getElementById('regOnly').checked;
+    let count = 0;
+    document.querySelectorAll('.card-wrapper').forEach(c => {
+      const sMatch = c.getAttribute('data-search').includes(term);
+      const rMatch = !onlyReg || c.getAttribute('data-reg') === "y";
+      if(sMatch && rMatch) { c.style.display = "block"; count++; }
+      else c.style.display = "none";
+    });
+    document.getElementById('statusCount').innerText = `מציג ${count} אירועים`;
+  }
+</script>
+</body>
+</html>
