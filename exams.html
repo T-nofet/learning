@@ -13,7 +13,7 @@
       color: #333; 
       padding-bottom: 40px;
       transform: scale(0.88);
-      transform-origin: top center;
+      transform-origin: top right; /* תיקון: נעילת העוגן לימין למניעת בריחה שמאלה וגלילה מיותרת */
       width: 113.63%;
     }
     
@@ -86,7 +86,7 @@
 
 <div class="container mt-2">
   
-  <div class="search-container {">
+  <div class="search-container">
     <div class="search-wrapper">
       <input type="text" id="searchInput" oninput="applyFilters()" class="form-control search-pill" placeholder="חיפוש לפי נושא או שם נער...">
     </div>
