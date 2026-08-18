@@ -119,7 +119,6 @@
     let n1 = parseInt(p[0], 10), n2 = parseInt(p[1], 10), y = parseInt(p[2], 10);
     if(y < 100) y += 2000;
     
-    // טיפול תואם גם לפורמט אמריקאי וגם לישראלי
     if (n1 > 12) return new Date(y, n2 - 1, n1);
     if (n2 > 12) return new Date(y, n1 - 1, n2);
     return new Date(y, n2 - 1, n1);
@@ -164,13 +163,14 @@
       const type = ex.type || 'מבחן';
       const students = ex.students || '';
       const day = ex.day || '';
+      const notes = ex.notes || '';
 
       const col = document.createElement('div');
       col.className = "col card-wrapper";
       if(diff < 0) col.classList.add('past-event');
       
-      // חיפוש כולל ומורחב לכל הנתונים
-      col.setAttribute('data-search', `${desc} ${students} ${type} ${day} ${rawDate}`.toLowerCase());
+      // חיפוש כולל: תיאור, תלמידים, סוג, יום, תאריך והערות
+      col.setAttribute('data-search', `${desc} ${students} ${type} ${day} ${rawDate} ${notes}`.toLowerCase());
       col.setAttribute('data-reg', students.trim() !== "" ? "y" : "n");
 
       col.innerHTML = `
@@ -202,10 +202,10 @@
       const rMatch = !onlyReg || c.getAttribute('data-reg') === "y";
       
       if(sMatch && rMatch) { 
-        c.classList.remove('d-none'); 
+        c.style.display = "block"; 
         count++; 
       } else { 
-        c.classList.add('d-none'); 
+        c.style.display = "none"; 
       }
     });
     document.getElementById('statusCount').innerText = `מציג ${count} אירועים`;
