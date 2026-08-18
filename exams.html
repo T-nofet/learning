@@ -19,7 +19,6 @@
     
     header { display: none !important; }
     
-    /* שורת סינון ממורכזת ויציבה */
     .search-container {
       display: flex;
       flex-direction: row;
@@ -36,7 +35,6 @@
       flex-grow: 1;
     }
 
-    /* קופסת סינון מעודנת */
     .filter-box { 
       background: white; 
       border-radius: 50px; 
@@ -49,14 +47,12 @@
       min-width: 150px !important; 
     }
 
-    /* יישור הצידוד של הגריד כולו לימין באופן טבעי */
     #examList {
       direction: rtl !important;
       justify-content: flex-start !important;
       text-align: right !important;
     }
 
-    /* עיצוב כרטיסיות קומפקטי ומותאם ל-100% רוחב */
     .exam-card { 
       border: none; 
       border-radius: 14px; 
@@ -108,7 +104,6 @@
 </div>
 
 <script>
-  // הקישור המעודכן ל-Apps Script
   const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyLaC4Ml1fRqsxvv1ITtC4JSJ1vjblgkhWHbOw9_faYrgcH0e_7lcHXQcOquZBp1-g/exec"; 
 
   let allExams = [];
@@ -119,7 +114,7 @@
 
   function parseDateHe(s) {
     if (!s) return new Date(0);
-    const p = s.toString().split('/');
+    const p = s.toString().trim().split('/');
     if(p.length < 3) return new Date(0);
     let d = parseInt(p[0], 10), m = parseInt(p[1], 10) - 1, y = parseInt(p[2], 10);
     if(y < 100) y += 2000;
@@ -169,7 +164,9 @@
       const col = document.createElement('div');
       col.className = "col card-wrapper";
       if(diff < 0) col.classList.add('past-event');
-      col.setAttribute('data-search', `${desc} ${students} ${type}`.toLowerCase());
+      
+      // חיפוש חכם כולל תיאור, תלמידים, סוג ויום
+      col.setAttribute('data-search', `${desc} ${students} ${type} ${day}`.toLowerCase());
       col.setAttribute('data-reg', students.trim() !== "" ? "y" : "n");
 
       col.innerHTML = `
@@ -192,7 +189,7 @@
   }
 
   function applyFilters() {
-    const term = document.getElementById('searchInput').value.toLowerCase();
+    const term = document.getElementById('searchInput').value.toLowerCase().trim();
     const onlyReg = document.getElementById('regOnly').checked;
     let count = 0;
     
