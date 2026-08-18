@@ -125,7 +125,7 @@
   }
 
   function loadData() {
-    fetch(`${GOOGLE_SCRIPT_URL}?action=getExams`)
+    fetch(`${GOOGLE_SCRIPT_URL}?action=getExams&pw=111`)
       .then(response => {
         if (!response.ok) throw new Error("תגובת שרת לא תקינה");
         return response.json();
