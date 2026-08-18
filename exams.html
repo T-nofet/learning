@@ -112,31 +112,17 @@
     loadData();
   };
 
-  // מנגנון זיהוי תאריכים חסין שגיאות
   function parseDateHe(s) {
     if (!s) return new Date(0);
-    
-    // במידה והנתון כבר הגיע כאובייקט Date מפורמט ב-JSON
-    let dObj = new Date(s);
-    if (!isNaN(dObj.getTime())) return dObj;
-
     const p = s.toString().trim().split('/');
     if(p.length < 3) return new Date(0);
-    
     let n1 = parseInt(p[0], 10), n2 = parseInt(p[1], 10), y = parseInt(p[2], 10);
     if(y < 100) y += 2000;
-
-    // זיהוי אם התאריך נכתב בפורמט אמריקאי (MM/DD/YYYY) או ישראלי (DD/MM/YYYY)
-    if (n1 > 12) {
-      // n1 הוא היום (למשל 19/8/2026)
-      return new Date(y, n2 - 1, n1);
-    } else if (n2 > 12) {
-      // n2 הוא היום (למשל 8/19/2026)
-      return new Date(y, n1 - 1, n2);
-    } else {
-      // ברירת מחדל לפורמט ישראלי DD/MM/YYYY
-      return new Date(y, n2 - 1, n1);
-    }
+    
+    // טיפול תואם גם לפורמט אמריקאי וגם לישראלי
+    if (n1 > 12) return new Date(y, n2 - 1, n1);
+    if (n2 > 12) return new Date(y, n1 - 1, n2);
+    return new Date(y, n2 - 1, n1);
   }
 
   function loadData() {
@@ -183,7 +169,8 @@
       col.className = "col card-wrapper";
       if(diff < 0) col.classList.add('past-event');
       
-      col.setAttribute('data-search', `${desc} ${students} ${type} ${day}`.toLowerCase());
+      // חיפוש כולל ומורחב לכל הנתונים
+      col.setAttribute('data-search', `${desc} ${students} ${type} ${day} ${rawDate}`.toLowerCase());
       col.setAttribute('data-reg', students.trim() !== "" ? "y" : "n");
 
       col.innerHTML = `
