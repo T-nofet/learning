@@ -511,7 +511,16 @@
       ]
     ]
   },
-  "reports": [],
+  "reports": [
+    {
+      "timestamp": "19/08/2026 11:33:46",
+      "month": "08/2026",
+      "teacher": "גיא אייגנר",
+      "studentName": "15-16",
+      "content": "ככככככככככככככ |  |  |  | ",
+      "allText": "19/08/2026 11:33:46 גיא אייגנר 15-16 ככככככככככככככ       "
+    }
+  ],
   "studentsMapping": {
     "7E4S0O": "אברהם",
     "IQ3L56": "אדם",
@@ -540,8 +549,12 @@
     "1D8R4H": "כאיד",
     "IWMQRR": "נור"
   },
-  "availableMonths": [],
-  "availableTeachers": [],
+  "availableMonths": [
+    "08/2026"
+  ],
+  "availableTeachers": [
+    "גיא אייגנר"
+  ],
   "adminPw": "admin123",
   "studentPw": "student2026"
 }
