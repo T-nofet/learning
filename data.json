@@ -809,6 +809,22 @@
       "studentName": "10-11",
       "content": "שקד |  |  |  | ",
       "allText": "08/09/2026 10:52:59 אינסה נוביקוב 10-11 שקד       "
+    },
+    {
+      "timestamp": "08/09/2026 11:09:15",
+      "month": "09/2026",
+      "teacher": "אינסה נוביקוב",
+      "studentName": "11-12",
+      "content": "לירז Past Simple, exercises  |  |  |  | ",
+      "allText": "08/09/2026 11:09:15 אינסה נוביקוב 11-12 לירז past simple, exercises        "
+    },
+    {
+      "timestamp": "08/09/2026 11:10:06",
+      "month": "09/2026",
+      "teacher": "אילנה שחר",
+      "studentName": "10-11",
+      "content": "אלירז אזרחות 10 |  |  |  | ",
+      "allText": "08/09/2026 11:10:06 אילנה שחר 10-11 אלירז אזרחות 10       "
     }
   ],
   "studentsMapping": {
